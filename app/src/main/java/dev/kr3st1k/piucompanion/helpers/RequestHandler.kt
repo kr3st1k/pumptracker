@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion
+package dev.kr3st1k.piucompanion.helpers
 import io.ktor.client.HttpClient
 import io.ktor.client.features.cookies.ConstantCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies

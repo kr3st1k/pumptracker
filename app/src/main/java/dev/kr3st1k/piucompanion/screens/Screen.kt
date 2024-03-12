@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion
+package dev.kr3st1k.piucompanion.screens
 
 sealed class Screen(val route: String)
 {
