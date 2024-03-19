@@ -23,13 +23,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.MyAlertDialog
+import dev.kr3st1k.piucompanion.helpers.PreferencesManager
+import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.screens.Screen
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
@@ -43,7 +46,7 @@ fun LoginWebViewScreen(navController: NavController) {
     var dialogTitle by remember { mutableStateOf("Вход Провален!") }
     var dialogContent by remember { mutableStateOf("Попробуй авторизоваться на сайте и потом нажать.") }
 
-
+    val pref = PreferencesManager(LocalContext.current)
     Column {
 
         TopAppBar(title = { Text(text = "Как войдете - нажмите на кнопку") },
@@ -69,8 +72,11 @@ fun LoginWebViewScreen(navController: NavController) {
                                     it
                                 )
                             }
-                            if (t == true) {
-                                navController.navigate(Screen.MainAccountScreen.route)
+
+                            if (t!!) {
+                                pref.saveData("cookies", cookies);
+                                webView?.settings?.let { pref.saveData("ua", it.userAgentString) };
+                                navController.navigate(Screen.HomeScreen.route)
                             } else {
                                 showDialog = true
                             }
@@ -94,19 +100,42 @@ fun LoginWebViewScreen(navController: NavController) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
-                WebView(context).apply {
-                    // Настройка WebView
-                    settings.javaScriptEnabled = true
-                    webViewClient = WebViewClient()
-                    loadUrl("about:blank")
-                    loadUrl("https://piugame.com/login.php")
-
-                }
+                WebView(context)
             },
 
             update = { view ->
-                view.loadUrl("https://piugame.com/login.php")
-                webView = view
+                WebView.setWebContentsDebuggingEnabled(true)
+                webView=view.apply {
+                    settings.javaScriptEnabled=true
+                    webViewClient=object:WebViewClient()
+                    {
+                        override fun onPageFinished(view: WebView, url: String)
+                        {
+                            super.onPageFinished(view, url)
+//                            view.evaluateJavascript("if (!window.eruda) {let parent = document.head || document.documentElement; let script = parent.appendChild(document.createElement('script')); script.src = 'https://cdn.jsdelivr.net/npm/eruda'; script.onload = () => eruda.init();}", null);
+                            scope.launch {
+                                val cookieManager = CookieManager.getInstance()
+
+                                val cookies = cookieManager.getCookie("https://piugame.com")
+                                if (cookies != null) {
+                                    val t = webView?.settings?.userAgentString?.let {
+                                        RequestHandler.checkIfLoginSuccess(
+                                            cookies,
+                                            it
+                                        )
+                                    }
+
+                                    if (t!!) {
+                                        pref.saveData("cookies", cookies);
+                                        webView?.settings?.let { pref.saveData("ua", it.userAgentString) };
+                                        navController.navigate(Screen.HomeScreen.route)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    loadUrl("https://piugame.com/login.php")
+                }
             }
         )
     }

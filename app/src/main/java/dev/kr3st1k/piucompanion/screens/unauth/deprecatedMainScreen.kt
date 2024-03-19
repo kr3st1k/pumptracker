@@ -20,7 +20,7 @@ import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.screens.Screen
 
 @Composable
-fun MainScreen(navController: NavController) {
+fun NoMainScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
