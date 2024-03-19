@@ -48,7 +48,7 @@ fun HomeScreen(
 
     val showBottomBar = remember { mutableStateOf(true) }
     val title = remember {
-        mutableStateOf("Home")
+        mutableStateOf("News")
     }
     val navControllerLocal = rememberNavController()
 
