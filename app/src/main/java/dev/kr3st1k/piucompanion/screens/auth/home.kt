@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -14,11 +13,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.components.home.HomeBottomBar
 import dev.kr3st1k.piucompanion.objects.TopLevelDestination
@@ -26,22 +29,28 @@ import dev.kr3st1k.piucompanion.objects.TopLevelDestination
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navigateTo: String
+    navController: NavController
 ) {
     val topLevelDestinations = listOf(
         TopLevelDestination(
             route = Screen.NewsPage.route,
-            selectedIcon = Icons.Rounded.Email,
-            unselectedIcon = Icons.Outlined.Email,
+            selectedIcon = ImageVector.vectorResource(R.drawable.baseline_newspaper_24),
+            unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_newspaper_24),
             iconText = "News"
-        )
+        ),
+        TopLevelDestination(
+            route = Screen.UserPage.route,
+            selectedIcon = ImageVector.vectorResource(R.drawable.baseline_person_24),
+            unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_person_24),
+            iconText = "Player"
+        ),
     )
 
     val showBottomBar = remember { mutableStateOf(true) }
     val title = remember {
         mutableStateOf("Home")
     }
-    val navController = rememberNavController()
+    val navControllerLocal = rememberNavController()
 
     Scaffold(
         topBar = {
@@ -56,17 +65,18 @@ fun HomeScreen(
         bottomBar = {
             if (showBottomBar.value) {
                 HomeBottomBar(destinations = topLevelDestinations,
-                    currentDestination = navController.currentBackStackEntryAsState().value?.destination,
+                    currentDestination = navControllerLocal.currentBackStackEntryAsState().value?.destination,
                     onNavigateToDestination = {
-                        title.value = when (it) {
-                            "sc1" -> "Screen 1"
-                            "sc2" -> "Screen 2"
-                            else -> {
-                                "Screen 3"
-                            }
+                        println(it)
+
+                        val tt = topLevelDestinations.find { t -> t.route == it };
+
+                        if (tt != null) {
+                            title.value = tt.iconText
                         }
-                        navController.navigate(it) {
-                            popUpTo(navController.graph.findStartDestination().id) {
+
+                        navControllerLocal.navigate(it) {
+                            popUpTo(navControllerLocal.graph.findStartDestination().id) {
                                 saveState = true
                             }
                             restoreState = true
@@ -85,7 +95,8 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f),
-                navController = navController,
+                navController = navControllerLocal,
+                navControllerGlobal = navController,
                 startDestination = Screen.NewsPage.route
             )
 

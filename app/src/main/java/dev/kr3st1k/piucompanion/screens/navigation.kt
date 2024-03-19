@@ -32,7 +32,7 @@ fun Navigation(context: Context) {
             LoginWebViewScreen(navController = navController)
         }
         composable(route = Screen.HomeScreen.route) {
-            HomeScreen(Screen.NewsPage.route)
+            HomeScreen(navController = navController)
         }
     }
 }

@@ -15,9 +15,9 @@ import androidx.compose.ui.unit.dp
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
-import dev.kr3st1k.piucompanion.objects.News
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
+import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.screens.components.home.news.LazyNews
 import dev.kr3st1k.piucompanion.screens.components.home.news.NewsSlider
 import kotlinx.coroutines.launch
@@ -41,11 +41,18 @@ fun NewsScreen(navController: NavController)
         if (newsBanners.value.isNotEmpty()) {
             NewsSlider(newsBanners = newsBanners.value);
         }
+        else{
+            YouSpinMeRightRoundBabyRightRound()
+        }
         if (newsBanners.value.isNotEmpty() && news.value.isNotEmpty())
             Spacer(modifier = Modifier.height(8.dp))
         if (news.value.isNotEmpty())
         {
             LazyNews(news = news.value)
+        }
+        else
+        {
+            YouSpinMeRightRoundBabyRightRound()
         }
     }
 }

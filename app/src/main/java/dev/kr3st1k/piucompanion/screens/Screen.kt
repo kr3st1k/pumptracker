@@ -7,4 +7,5 @@ sealed class Screen(val route: String)
     object LoginWebViewScreen : Screen("login_web_view_screen")
 
     object NewsPage : Screen("news_page")
+    object UserPage : Screen("user_page")
 }

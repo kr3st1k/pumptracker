@@ -116,7 +116,7 @@ object RequestHandler{
 
         for (elem in trElements)
         {
-            if (res.count() == 5)
+            if (res.count() == 7)
                 break
             val titleAndLinkElem = elem.select("td.w_tit").select("a");
             val title = titleAndLinkElem.text()
