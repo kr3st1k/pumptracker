@@ -28,7 +28,7 @@ fun NewsThumbnail(news: NewsThumbnailObject)
     Card(modifier = Modifier
         .fillMaxWidth().
         padding(start = 30.dp, end = 30.dp, top = 14.dp).
-        height(80.dp)
+        height(78.dp)
         .clickable {
             val customTabsIntent = CustomTabsIntent.Builder().build()
             customTabsIntent.launchUrl(context, Uri.parse(news.link))
@@ -44,7 +44,7 @@ fun NewsThumbnail(news: NewsThumbnailObject)
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = news.name.trim(),
+                    text = news.name,
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center
                 )
