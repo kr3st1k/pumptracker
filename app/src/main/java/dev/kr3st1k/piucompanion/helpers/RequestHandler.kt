@@ -1,6 +1,10 @@
 package dev.kr3st1k.piucompanion.helpers
+import androidx.compose.ui.text.toUpperCase
+import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
+import dev.kr3st1k.piucompanion.objects.User
+import dev.kr3st1k.piucompanion.screens.components.Utils
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.cookies.ConstantCookiesStorage
@@ -13,6 +17,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -60,20 +65,9 @@ object RequestHandler{
         return stringBody.indexOf("bbs/logout.php") > 0;
     }
 
-    private fun getWrId(url: String): String?
-    {
-        val pattern = Pattern.compile("wr_id=(\\d+)")
-        val matcher: Matcher = pattern.matcher(url)
-
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return ""
-    }
-
-    private fun getBackgroundImgNewsBanner(element: Element): String {
+    private fun getBackgroundImg(element: Element, addDomain: Boolean = true): String {
         val style = element.attr("style")
-        return "https://www.piugame.com" + style.substringAfter("background-image:url('").substringBefore("')");
+        return (if (addDomain) "https://www.piugame.com" else "") + style.substringAfter("background-image:url('").substringBefore("')");
     }
 
     suspend fun getDocument(client: HttpClient, uri: String): Document {
@@ -99,7 +93,7 @@ object RequestHandler{
         }
 
         for (element in uniqueElements) {
-            res.add(NewsBanner(getWrId(element.attr("href"))?.toInt() ?: 0, getBackgroundImgNewsBanner(element), element.attr("href")))
+            res.add(NewsBanner(Utils.getWrId(element.attr("href"))?.toInt() ?: 0, getBackgroundImg(element), element.attr("href")))
         }
         return res;
     }
@@ -123,12 +117,86 @@ object RequestHandler{
             val typeElem = elem.select("td.w_type").select("i")
             val type = typeElem.text()
             val link = titleAndLinkElem.attr("href")
-            val id = getWrId(titleAndLinkElem.attr("href"))!!.toInt()
+            val id = Utils.getWrId(titleAndLinkElem.attr("href"))!!.toInt()
 
             if (type == "Notice" || type == "Event")
                 res.add(NewsThumbnailObject(title, id, type, link))
         }
 
         return res;
+    }
+
+    suspend fun getUserInfo(cookie: String, ua: String): User
+    {
+        val client = getClientWithCookies(cookie, ua)
+        val t = this.getDocument(client, "https://www.piugame.com/my_page/play_data.php")
+
+        val profileBox = t.select("div.box0.inner.flex.vc.bgfix")
+        val avatarBox = t.select("div.re.bgfix")
+
+        val backgroundUri = getBackgroundImg(profileBox.first()!!)
+        val avatarUri = getBackgroundImg(avatarBox.first()!!, false)
+        val titleName = t.select("p.t1.en.col4").first()!!.text()
+        val username = t.select("p.t2.en").first()!!.text()
+        val recentGame = t.select("div.time_w").select("li").last()!!.text()
+        val coinValue = t.select("i.tt.en").first()!!.text()
+
+        return User(username, titleName, backgroundUri, avatarUri, recentGame, coinValue, true)
+    }
+
+
+
+    suspend fun getLatestScores(cookie: String, ua: String, length: Int): MutableList<LatestScore>
+    {
+        val client = getClientWithCookies(cookie, ua)
+        val res: MutableList<LatestScore> = mutableListOf();
+
+        val t = this.getDocument(client,"https://www.piugame.com/my_page/recently_played.php")
+
+        val scoreTable = t.select("ul.recently_playeList.flex.wrap")
+        val scores = scoreTable.select("li").filter { element ->
+            element.select("div.wrap_in").count() == 1
+        }
+        for (element in scores)
+        {
+            if (res.count() == length)
+                break
+            val songName = element.select("div.song_name.flex").select("p").text()
+
+            val typeDiffImgUri = element.select("div.tw").select("img").attr("src")
+
+            val typeDiff = Utils.parseTypeDifficultyFromUri(typeDiffImgUri)
+
+            val bg = getBackgroundImg(element.select("div.in.bgfix").first()!!, false)
+
+            val diffElems = element.select("div.imG")
+
+            var diff = ""
+
+            for (i in diffElems)
+            {
+                diff += Utils.parseDifficultyFromUri(i.select("img").attr("src"))
+            }
+
+            diff = typeDiff!!.uppercase(Locale.ENGLISH) + diff
+
+            val scoreRankElement = element.select("div.li_in.ac")
+
+            val score = scoreRankElement.select("i.tx").text()
+
+            var rank = ""
+
+            if ("STAGE BREAK" !in score)
+            {
+                val rankImg = scoreRankElement.first()!!.select("img").attr("src")
+                rank = Utils.parseRankFromUri(rankImg).toString()
+                rank = rank.uppercase(Locale.ENGLISH).replace("_p","+").replace("_P","+").replace("X_", "Broken ")
+            }
+
+            val datePlay = element.select("p.recently_date_tt").text()
+            res.add(LatestScore(songName,bg,diff,score,rank,datePlay))
+        }
+
+        return res
     }
 }
