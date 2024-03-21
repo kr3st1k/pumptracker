@@ -22,10 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import dev.kr3st1k.piucompanion.objects.User
 
 @Composable
@@ -43,7 +46,13 @@ fun UserCard(user: User)
             modifier = Modifier.fillMaxWidth()
         ) {
             AsyncImage(
-                model = user.backgroundUri,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(user.backgroundUri)
+                    .memoryCacheKey(user.backgroundUri)
+                    .diskCacheKey(user.backgroundUri)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -56,7 +65,13 @@ fun UserCard(user: User)
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
-                    model = user.avatarUri,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(user.avatarUri)
+                        .memoryCacheKey(user.avatarUri)
+                        .diskCacheKey(user.avatarUri)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,

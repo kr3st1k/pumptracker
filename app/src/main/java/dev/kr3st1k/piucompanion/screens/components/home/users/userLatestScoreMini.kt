@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,7 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import dev.kr3st1k.piucompanion.objects.LatestScore
+import okhttp3.Dispatcher
 
 @Composable
 fun MiniScore(score: LatestScore)
@@ -62,7 +66,13 @@ fun MiniScore(score: LatestScore)
                 .wrapContentHeight()
         ) {
             AsyncImage(
-                model = score.songBackgroundUri,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(score.songBackgroundUri)
+                    .memoryCacheKey(score.songBackgroundUri)
+                    .diskCacheKey(score.songBackgroundUri)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 colorFilter = ColorFilter.colorMatrix(ColorMatrix(colorMatrix)),
@@ -87,6 +97,7 @@ fun MiniScore(score: LatestScore)
                             text = score.songName,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = Color.White,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -109,6 +120,7 @@ fun MiniScore(score: LatestScore)
                         Text(
                             text = score.score,
                             fontSize = 16.sp,
+                            color = Color.White,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.End
                         )

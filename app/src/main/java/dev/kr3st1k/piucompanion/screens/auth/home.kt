@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -37,6 +39,11 @@ fun HomeScreen(
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_newspaper_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_newspaper_24),
             iconText = "News"
+        ),TopLevelDestination(
+            route = Screen.ActivityPage.route,
+            selectedIcon = Icons.Filled.List,
+            unselectedIcon = Icons.Outlined.List,
+            iconText = "History"
         ),
         TopLevelDestination(
             route = Screen.UserPage.route,
@@ -44,6 +51,7 @@ fun HomeScreen(
             unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_person_24),
             iconText = "Player"
         ),
+
     )
 
     val showBottomBar = remember { mutableStateOf(true) }

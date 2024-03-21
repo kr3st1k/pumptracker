@@ -24,6 +24,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -48,7 +50,13 @@ fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
         ) {
 
             AsyncImage(
-                model = newsBanners[page].pictureUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(newsBanners[page].pictureUrl)
+                    .memoryCacheKey(newsBanners[page].pictureUrl)
+                    .diskCacheKey(newsBanners[page].pictureUrl)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth().height(130.dp)

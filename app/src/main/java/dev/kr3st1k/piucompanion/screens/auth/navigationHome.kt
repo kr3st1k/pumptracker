@@ -28,5 +28,9 @@ fun HomeNavHost(
             UserScreen(navController = navController, navControllerGlobal = navControllerGlobal)
         }
 
+        composable(route = Screen.ActivityPage.route) {
+            ActivityPage(navController = navController, navControllerGlobal = navControllerGlobal)
+        }
+
     }
 }
