@@ -1,10 +1,13 @@
-package dev.kr3st1k.piucompanion.screens.components.home.users
+package dev.kr3st1k.piucompanion.screens.components.home.scores
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,21 +46,14 @@ import okhttp3.Dispatcher
 @Composable
 fun MiniScore(score: LatestScore)
 {
-    val brightness = -140f
-    val colorMatrix = floatArrayOf(
-        1f, 0f, 0f, 0f, brightness,
-        0f, 1f, 0f, 0f, brightness,
-        0f, 0f, 1f, 0f, brightness,
-        0f, 0f, 0f, 1f, 0f
-    )
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp, start = 16.dp, end = 16.dp)
             .clip(RoundedCornerShape(8.dp)).height(100.dp).border(
                 width = 1.dp,
-                color = Color.Gray,
-                shape = RoundedCornerShape(8.dp)
+                color = Color(0xffadadad),
+                shape = RoundedCornerShape(9.dp)
             )
     ) {
         Box(
@@ -65,22 +61,30 @@ fun MiniScore(score: LatestScore)
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(score.songBackgroundUri)
-                    .memoryCacheKey(score.songBackgroundUri)
-                    .diskCacheKey(score.songBackgroundUri)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                colorFilter = ColorFilter.colorMatrix(ColorMatrix(colorMatrix)),
-                modifier = Modifier.fillMaxSize()
-            )
+            Box()
+            {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(score.songBackgroundUri)
+                        .memoryCacheKey(score.songBackgroundUri)
+                        .diskCacheKey(score.songBackgroundUri)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.7f))
+                )
+            }
+
             Column(
                 modifier = Modifier
-                    .fillMaxWidth().padding(16.dp)
+                    .fillMaxWidth().padding(top=21.dp, start = 16.dp, end=16.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -88,33 +92,31 @@ fun MiniScore(score: LatestScore)
                         .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp)
-                    ) {
-                        Text(
-                            text = score.songName,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = score.difficulty,
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-
+                        Column(
+                            modifier = Modifier
+                                .weight(2f).padding(end = 8.dp)
+                        ) {
+                            Text(
+                                text = score.songName,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = score.difficulty,
+                                fontSize = 16.sp,
+                                color = Color(0xffd1cfcf),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically).width(40.dp),
+                            .width(20.dp).fillMaxHeight(),
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
@@ -126,17 +128,30 @@ fun MiniScore(score: LatestScore)
                         )
                         Text(
                             text = score.rank,
-                            fontSize = 14.sp,
-                            color = Color.Gray,
+                            fontSize = 16.sp,
+                            color = Color(0xffd1cfcf),
                             textAlign = TextAlign.End
                         )
+                        Spacer(modifier = Modifier.size(4.dp))
                         Text(
                             text = score.datetime,
                             fontSize = 12.sp,
-                            color = Color.Gray,
+                            color = Color(0xffadadad),
                             textAlign = TextAlign.End
                         )
                     }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+                    Text(
+                        text = score.datetime,
+                        fontSize = 12.sp,
+                        color = Color(0xffc2c0c0),
+                        textAlign = TextAlign.End
+                    )
                 }
             }
         }

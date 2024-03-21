@@ -1,5 +1,9 @@
 package dev.kr3st1k.piucompanion.screens.components
 
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -26,6 +30,20 @@ object Utils
             return matcher.group(1)
         }
         return ""
+    }
+
+    fun convertDateFromSite(date: String): String {
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val inputZoneOffset = date.substring(date.lastIndexOf("(") + 1, date.lastIndexOf(")"))
+        val inputZoneId = ZoneId.of(inputZoneOffset)
+        val inputDateTime = LocalDateTime.parse(date.substring(0, 19), inputFormatter)
+        val inputZonedDateTime = ZonedDateTime.of(inputDateTime, inputZoneId)
+
+        val outputZoneId = ZoneId.systemDefault()
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val outputDateTime = inputZonedDateTime.withZoneSameInstant(outputZoneId)
+
+        return outputDateTime.format(outputFormatter)
     }
 
 }

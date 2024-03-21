@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -14,12 +13,11 @@ import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.LatestScore
-import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
 import dev.kr3st1k.piucompanion.objects.User
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.screens.components.home.users.LazyLatestScoreMini
+import dev.kr3st1k.piucompanion.screens.components.home.scores.LazyLatestScoreMini
 import dev.kr3st1k.piucompanion.screens.components.home.users.UserCard
 import kotlinx.coroutines.launch
 
@@ -32,7 +30,7 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
     val checkingLogin = remember {
         mutableStateOf(true)
     }
-    val checkLogin = remember { mutableStateOf(false) };
+    val checkLogin = remember { mutableStateOf(false) }
     val user = remember {
         mutableStateOf(User())
     }
@@ -45,7 +43,7 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
         modifier = Modifier.fillMaxSize()
     ) {
         if (checkingLogin.value) {
-            YouSpinMeRightRoundBabyRightRound()
+            YouSpinMeRightRoundBabyRightRound("Check if you logged in...")
         } else {
             if (checkLogin.value) {
                 scope.launch {
@@ -63,18 +61,18 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
                     }
                     else
                     {
-                        YouSpinMeRightRoundBabyRightRound()
+                        YouSpinMeRightRoundBabyRightRound("Getting 5 Latest scores...")
                     }
                 }
                 else
                 {
-                    YouSpinMeRightRoundBabyRightRound()
+                    YouSpinMeRightRoundBabyRightRound("Getting User Info...")
                 }
             } else {
                 MyAlertDialog(
                     showDialog = !checkLogin.value,
-                    title = "Авторизуйтесь заново",
-                    content = "Вам необходимо зайти заново",
+                    title = "Login failed!",
+                    content = "You need to authorize again",
                     onDismiss = {
                         navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
                     }

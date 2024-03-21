@@ -22,9 +22,8 @@ fun MyAlertDialog(
             confirmButton = {
                 Button(onClick = {
                     onDismiss()
-                    // Действие при нажатии на кнопку "Подтвердить"
                 }) {
-                    Text(text = "Ща зайду, пажжи")
+                    Text(text = "OK")
                 }
             }
         )

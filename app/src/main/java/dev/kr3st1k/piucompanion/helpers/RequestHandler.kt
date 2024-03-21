@@ -165,7 +165,7 @@ object RequestHandler{
 
             val typeDiffImgUri = element.select("div.tw").select("img").attr("src")
 
-            val typeDiff = Utils.parseTypeDifficultyFromUri(typeDiffImgUri)
+            val typeDiff = Utils.parseTypeDifficultyFromUri(typeDiffImgUri)!!
 
             val bg = getBackgroundImg(element.select("div.in.bgfix").first()!!, false)
 
@@ -178,13 +178,13 @@ object RequestHandler{
                 diff += Utils.parseDifficultyFromUri(i.select("img").attr("src"))
             }
 
-            diff = typeDiff!!.uppercase(Locale.ENGLISH) + diff
+            diff = typeDiff.uppercase(Locale.ENGLISH) + diff
 
             val scoreRankElement = element.select("div.li_in.ac")
 
             val score = scoreRankElement.select("i.tx").text()
 
-            var rank = ""
+            var rank = "F"
 
             if ("STAGE BREAK" !in score)
             {
@@ -194,7 +194,7 @@ object RequestHandler{
             }
 
             val datePlay = element.select("p.recently_date_tt").text()
-            res.add(LatestScore(songName,bg,diff,score,rank,datePlay))
+            res.add(LatestScore(songName,bg,diff,score,rank,Utils.convertDateFromSite(datePlay)))
         }
 
         return res

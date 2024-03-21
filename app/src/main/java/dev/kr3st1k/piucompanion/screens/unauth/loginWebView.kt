@@ -43,13 +43,11 @@ fun LoginWebViewScreen(navController: NavController) {
 
     var webView: WebView? by remember { mutableStateOf(null) }
     var showDialog by remember { mutableStateOf(false) }
-    var dialogTitle by remember { mutableStateOf("Вход Провален!") }
-    var dialogContent by remember { mutableStateOf("Попробуй авторизоваться на сайте и потом нажать.") }
 
     val pref = PreferencesManager(LocalContext.current)
     Column {
 
-        TopAppBar(title = { Text(text = "Как войдете - нажмите на кнопку") },
+        TopAppBar(title = { Text(text = "Authorize in site") },
 
             colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
@@ -60,8 +58,6 @@ fun LoginWebViewScreen(navController: NavController) {
 
                     val cookies = cookieManager.getCookie("https://piugame.com")
                     if (cookies == null) {
-                        dialogTitle = "Вход Провален!"
-                        dialogContent = "Попробуй авторизоваться на сайте и потом нажать."
                         showDialog = true
                     } else {
                         scope.launch {
@@ -74,8 +70,8 @@ fun LoginWebViewScreen(navController: NavController) {
                             }
 
                             if (t!!) {
-                                pref.saveData("cookies", cookies);
-                                webView?.settings?.let { pref.saveData("ua", it.userAgentString) };
+                                pref.saveData("cookies", cookies)
+                                webView?.settings?.let { pref.saveData("ua", it.userAgentString) }
                                 navController.navigate(Screen.HomeScreen.route)
                             } else {
                                 showDialog = true
@@ -93,8 +89,8 @@ fun LoginWebViewScreen(navController: NavController) {
 
         MyAlertDialog(
             showDialog = showDialog,
-            title = dialogTitle,
-            content = dialogContent,
+            title = "Login failed!",
+            content = "Maybe try authorize in site?",
             onDismiss = { showDialog = false })
 
         AndroidView(
@@ -126,8 +122,8 @@ fun LoginWebViewScreen(navController: NavController) {
                                     }
 
                                     if (t!!) {
-                                        pref.saveData("cookies", cookies);
-                                        webView?.settings?.let { pref.saveData("ua", it.userAgentString) };
+                                        pref.saveData("cookies", cookies)
+                                        webView?.settings?.let { pref.saveData("ua", it.userAgentString) }
                                         navController.navigate(Screen.HomeScreen.route)
                                     }
                                 }

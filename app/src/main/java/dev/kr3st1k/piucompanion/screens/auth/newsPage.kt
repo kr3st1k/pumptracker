@@ -42,7 +42,7 @@ fun NewsScreen(navController: NavController)
             NewsSlider(newsBanners = newsBanners.value);
         }
         else{
-            YouSpinMeRightRoundBabyRightRound()
+            YouSpinMeRightRoundBabyRightRound("Getting news banners...")
         }
         if (newsBanners.value.isNotEmpty() && news.value.isNotEmpty())
             Spacer(modifier = Modifier.height(8.dp))
@@ -52,7 +52,7 @@ fun NewsScreen(navController: NavController)
         }
         else
         {
-            YouSpinMeRightRoundBabyRightRound()
+            YouSpinMeRightRoundBabyRightRound("Getting news...")
         }
     }
 }
