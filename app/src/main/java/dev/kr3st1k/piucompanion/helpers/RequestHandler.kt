@@ -56,6 +56,11 @@ object RequestHandler{
 
     suspend fun checkIfLoginSuccess(cookie: String, ua: String): Boolean {
 
+        println(cookie.split(";").size)
+
+        if (cookie == "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c")
+            return false
+
         val client = getClientWithCookies(cookie, ua)
 
         println(ua);

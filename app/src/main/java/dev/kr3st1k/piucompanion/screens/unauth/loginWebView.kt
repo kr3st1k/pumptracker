@@ -61,25 +61,31 @@ fun LoginWebViewScreen(navController: NavController) {
                         showDialog = true
                     } else {
                         scope.launch {
+                            if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
+                                println(cookies)
+                                val t = webView?.settings?.userAgentString?.let {
+                                    RequestHandler.checkIfLoginSuccess(
+                                        cookies,
+                                        it
+                                    )
+                                }
 
-                            val t = webView?.settings?.userAgentString?.let {
-                                RequestHandler.checkIfLoginSuccess(
-                                    cookies,
-                                    it
-                                )
+                                if (t!!) {
+                                    pref.saveData("cookies", cookies)
+                                    webView?.settings?.let {
+                                        pref.saveData(
+                                            "ua",
+                                            it.userAgentString
+                                        )
+                                    }
+                                    navController.navigate(Screen.HomeScreen.route)
+                                } else {
+                                    showDialog = true
+                                }
+
+                                println(t)
                             }
-
-                            if (t!!) {
-                                pref.saveData("cookies", cookies)
-                                webView?.settings?.let { pref.saveData("ua", it.userAgentString) }
-                                navController.navigate(Screen.HomeScreen.route)
-                            } else {
-                                showDialog = true
-                            }
-
-                            println(t)
                         }
-
                     }
                 }) {
                     Icon(imageVector = Icons.Filled.Check, contentDescription = "")
@@ -114,17 +120,26 @@ fun LoginWebViewScreen(navController: NavController) {
 
                                 val cookies = cookieManager.getCookie("https://piugame.com")
                                 if (cookies != null) {
-                                    val t = webView?.settings?.userAgentString?.let {
-                                        RequestHandler.checkIfLoginSuccess(
-                                            cookies,
-                                            it
-                                        )
-                                    }
+                                    if (cookies.contains("nullsid")  || cookies.split(";").size >= 5) {
+                                        println(cookies)
+                                        val t = webView?.settings?.userAgentString?.let {
 
-                                    if (t!!) {
-                                        pref.saveData("cookies", cookies)
-                                        webView?.settings?.let { pref.saveData("ua", it.userAgentString) }
-                                        navController.navigate(Screen.HomeScreen.route)
+                                            RequestHandler.checkIfLoginSuccess(
+                                                cookies,
+                                                it
+                                            )
+                                        }
+
+                                        if (t!!) {
+                                            pref.saveData("cookies", cookies)
+                                            webView?.settings?.let {
+                                                pref.saveData(
+                                                    "ua",
+                                                    it.userAgentString
+                                                )
+                                            }
+                                            navController.navigate(Screen.HomeScreen.route)
+                                        }
                                     }
                                 }
                             }

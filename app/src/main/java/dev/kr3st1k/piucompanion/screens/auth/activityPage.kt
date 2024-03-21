@@ -66,7 +66,7 @@ fun ActivityPage(navController: NavController, navControllerGlobal: NavControlle
                 MyAlertDialog(
                     showDialog = !checkLogin.value,
                     title = "Login failed!",
-                    content = "You need to authorize again",
+                    content = "You need to authorize",
                     onDismiss = {
                         navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
                     }

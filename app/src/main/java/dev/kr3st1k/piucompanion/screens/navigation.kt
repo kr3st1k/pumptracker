@@ -15,19 +15,19 @@ fun Navigation(context: Context) {
     val navController = rememberNavController()
     val pref = PreferencesManager(context)
 
-    var startDist = Screen.WelcomeScreen.route;
-
-    if (pref.getData("first_run", "true") == "false")
-    {
-        //TODO Login check with db
-        startDist = Screen.HomeScreen.route
-    }
+    var startDist = Screen.HomeScreen.route;
+//
+//    if (pref.getData("first_run", "true") == "false")
+//    {
+//        //TODO Login check with db
+//        startDist = Screen.HomeScreen.route
+//    }
 
     NavHost(navController = navController, startDestination = startDist)
     {
-        composable(route = Screen.WelcomeScreen.route) {
-            OnboardScreen(navController = navController)
-        }
+//        composable(route = Screen.WelcomeScreen.route) {
+//            OnboardScreen(navController = navController)
+//        }
         composable(route = Screen.LoginWebViewScreen.route) {
             LoginWebViewScreen(navController = navController)
         }

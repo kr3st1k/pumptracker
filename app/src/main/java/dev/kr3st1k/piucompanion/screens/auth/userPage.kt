@@ -17,7 +17,6 @@ import dev.kr3st1k.piucompanion.objects.User
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.screens.components.home.scores.LazyLatestScoreMini
 import dev.kr3st1k.piucompanion.screens.components.home.users.UserCard
 import kotlinx.coroutines.launch
 
@@ -55,14 +54,9 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
                     scope.launch {
                         scores.value = RequestHandler.getLatestScores(pref.getData("cookies", ""), pref.getData("ua", ""), 5)
                     }
-//                    if (scores.value.isNotEmpty())
-//                    {
-//                        LazyLatestScoreMini(scores.value)
-//                    }
-//                    else
-//                    {
-//                        YouSpinMeRightRoundBabyRightRound("Getting 5 Latest scores...")
-//                    }
+
+                    //SMTH
+
                 }
                 else
                 {
@@ -72,7 +66,7 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
                 MyAlertDialog(
                     showDialog = !checkLogin.value,
                     title = "Login failed!",
-                    content = "You need to authorize again",
+                    content = "You need to authorize",
                     onDismiss = {
                         navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
                     }
