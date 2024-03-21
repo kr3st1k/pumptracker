@@ -38,7 +38,11 @@ fun NewsThumbnail(news: NewsThumbnailObject)
             modifier = Modifier.padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Column {
+            Column (
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = news.name.trim(),
                     fontSize = 20.sp,
