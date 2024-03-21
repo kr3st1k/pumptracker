@@ -55,14 +55,14 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
                     scope.launch {
                         scores.value = RequestHandler.getLatestScores(pref.getData("cookies", ""), pref.getData("ua", ""), 5)
                     }
-                    if (scores.value.isNotEmpty())
-                    {
-                        LazyLatestScoreMini(scores.value)
-                    }
-                    else
-                    {
-                        YouSpinMeRightRoundBabyRightRound("Getting 5 Latest scores...")
-                    }
+//                    if (scores.value.isNotEmpty())
+//                    {
+//                        LazyLatestScoreMini(scores.value)
+//                    }
+//                    else
+//                    {
+//                        YouSpinMeRightRoundBabyRightRound("Getting 5 Latest scores...")
+//                    }
                 }
                 else
                 {

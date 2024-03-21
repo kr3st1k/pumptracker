@@ -48,7 +48,12 @@ fun NewsScreen(navController: NavController)
             Spacer(modifier = Modifier.height(8.dp))
         if (news.value.isNotEmpty())
         {
-            LazyNews(news = news.value)
+            LazyNews(news = news.value, onRefresh = {
+                scope.launch {
+                    news.value = mutableListOf()
+                    news.value = RequestHandler.getNewsList(pref.getData("cookies", ""), pref.getData("ua", ""))
+                }
+            })
         }
         else
         {

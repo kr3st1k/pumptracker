@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "dev.kr3st1k.piucompanion"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "dev.kr3st1k.piucompanion"
@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("eu.bambooapps:compose-material3-pullrefresh:1.0.1")
     testImplementation("junit:junit:4.13.2")
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("io.coil-kt:coil-compose:2.2.0")

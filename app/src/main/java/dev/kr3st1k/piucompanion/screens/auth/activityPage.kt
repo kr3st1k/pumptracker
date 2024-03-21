@@ -49,7 +49,16 @@ fun ActivityPage(navController: NavController, navControllerGlobal: NavControlle
                     )
                 }
                 if (scores.value.isNotEmpty()) {
-                    LazyLatestScoreMini(scores.value)
+                    LazyLatestScoreMini(scores.value, onRefresh = {
+                        scope.launch {
+                            scores.value = mutableListOf()
+                            scores.value = RequestHandler.getLatestScores(
+                                pref.getData("cookies", ""),
+                                pref.getData("ua", ""),
+                                50
+                            )
+                        }
+                    })
                 } else {
                     YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
                 }
