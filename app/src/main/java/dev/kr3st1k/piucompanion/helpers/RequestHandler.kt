@@ -9,7 +9,6 @@ import dev.kr3st1k.piucompanion.objects.User
 import dev.kr3st1k.piucompanion.screens.components.Utils
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.cookies.ConstantCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.request.get
@@ -170,6 +169,18 @@ object RequestHandler {
 
     private fun parseBestUserScores(t: Document, res: MutableList<BestUserScore>, bgs: MutableList<BgInfo>): Boolean {
 
+        if (t.select("div.no_con").isNotEmpty()) {
+            res.add(
+                BestUserScore(
+                    "No scores",
+                    "https://www.piugame.com/l_img/bg1.png",
+                    "No scores",
+                    "000,000",
+                    "SSS+"
+                )
+            )
+            return true
+        }
         val scoreTable = t.select("ul.my_best_scoreList.flex.wrap")
         val scores = scoreTable.select("li").filter { element ->
             element.select("div.in").count() == 1
@@ -182,7 +193,7 @@ object RequestHandler {
             print(songName)
             var bg = bgs.find { tt -> tt.song_name == songName }?.jacket
             if (bg == null)
-                bg = ""
+                bg = "https://www.piugame.com/l_img/bg1.png"
 
             val diffElems = element.select("div.numw.flex.vc.hc")
 
@@ -222,7 +233,7 @@ object RequestHandler {
 
         }
 
-        return t.select("button.icon").isNotEmpty()
+        return t.select("button.icon").isEmpty()
     }
 
     suspend fun getBestUserScores(cookie: String, ua: String, page: Int? = null, lvl: String = "", res: MutableList<BestUserScore> = mutableListOf(), bgs: MutableList<BgInfo>): Pair<MutableList<BestUserScore>, Boolean> {
@@ -232,13 +243,15 @@ object RequestHandler {
         uri += "?lv=$lvl"
         if (page == null) {
             for (i in 0..1) {
-                uri += if (uri.contains("&page"))
-                    uri.dropLast(1) + i
-                else
-                    "&page=$i"
-                val t =
-                    this.getDocument(client, uri)
-                isRecent = parseBestUserScores(t, res, bgs=bgs)
+                if (!isRecent) {
+                    uri += if (uri.contains("&page"))
+                        uri.dropLast(1) + i
+                    else
+                        "&page=$i"
+                    val t =
+                        this.getDocument(client, uri)
+                    isRecent = parseBestUserScores(t, res, bgs = bgs)
+                }
             }
         }
         else

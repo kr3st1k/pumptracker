@@ -82,8 +82,8 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
     val scoresNormal = remember {
         mutableStateOf(scores.first.toList())
     }
-    val loadMore = remember {
-        mutableStateOf(true)
+    val isRecent = remember {
+        mutableStateOf(false)
     }
     var selectedOption by remember { mutableStateOf(Pair("All", "")) }
 
@@ -115,7 +115,6 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
     bgs.value = readBgJson(context)
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh =
     {
-        onRefresh()
         scope.launch {
             scoresNormal.value = mutableListOf()
             val additionalScores = RequestHandler.getBestUserScores(
@@ -124,7 +123,7 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
                 lvl = selectedOption.second,
                 bgs = bgs.value
             )
-            loadMore.value = additionalScores.second
+            isRecent.value = additionalScores.second
             pages.intValue = 2
             scoresNormal.value = additionalScores.first.toList()
         }
@@ -167,7 +166,6 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             selectedOption = Pair(name, value)
-                            onRefresh()
                             scope.launch {
                                 scoresNormal.value = mutableListOf()
                                 val additionalScores = RequestHandler.getBestUserScores(
@@ -176,7 +174,7 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
                                     lvl = selectedOption.second,
                                     bgs = bgs.value
                                 )
-                                loadMore.value = additionalScores.second
+                                isRecent.value = additionalScores.second
                                 pages.intValue = 2
                                 scoresNormal.value = additionalScores.first.toList()
                             }
@@ -194,8 +192,8 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
             snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull() }
                 .collect { lastVisibleItem ->
                     lastVisibleItem?.let {
-                        if (it.index == listState.layoutInfo.totalItemsCount - 5) {
-                            if (loadMore.value) {
+                        if (it.index == listState.layoutInfo.totalItemsCount - 1) {
+                            if (!isRecent.value) {
                                 val additionalScores = RequestHandler.getBestUserScores(
                                     pref.getData("cookies", ""),
                                     pref.getData("ua", ""),
@@ -204,10 +202,10 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
                                     page = pages.intValue
                                 )
                                 scoresNormal.value += additionalScores.first.toList()
-                                if (additionalScores.second)
+                                if (!additionalScores.second)
                                     pages.intValue += 1
                                 else
-                                    loadMore.value = false
+                                    isRecent.value = true
                             }
                         }
                     }
