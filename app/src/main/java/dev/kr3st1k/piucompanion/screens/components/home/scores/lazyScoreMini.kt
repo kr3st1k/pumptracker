@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +23,7 @@ import dev.kr3st1k.piucompanion.objects.BestUserScore
 import dev.kr3st1k.piucompanion.objects.BgInfo
 import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.readBgJson
+import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -68,7 +68,7 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
     val bgs = remember {
         mutableStateOf<MutableList<BgInfo>>(mutableListOf())
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
+
     val context = LocalContext.current
     val scoresNormal = remember {
         mutableStateOf(scores.first.toList())
@@ -77,6 +77,20 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
         mutableStateOf(true)
     }
     bgs.value = readBgJson(context)
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh =
+    {
+        onRefresh()
+        scope.launch {
+            scoresNormal.value = mutableListOf()
+            val additionalScores = RequestHandler.getBestUserScores(
+                pref.getData("cookies", ""),
+                pref.getData("ua", ""),
+                bgs = bgs.value
+            )
+            loadMore.value = additionalScores.second
+            scoresNormal.value = additionalScores.first.toList()
+        }
+    })
     Box (
         contentAlignment = Alignment.TopCenter,
     ) {
@@ -102,14 +116,18 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
                     }
                 }
         }
-        LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
-            items(scoresNormal.value) { data ->
-                MiniBestScore(data)
+        if (scoresNormal.value.isNotEmpty()) {
+            LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
+                items(scoresNormal.value) { data ->
+                    MiniBestScore(data)
+                }
             }
+            PullRefreshIndicator(
+                refreshing = isRefreshing,
+                state = state
+            )
+        } else {
+            YouSpinMeRightRoundBabyRightRound("Getting best scores...")
         }
-        PullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = state
-        )
     }
 }
