@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -46,15 +49,16 @@ fun HomeBottomBar(
                     }
                     Icon(
                         imageVector = icon,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(24.dp),
                         contentDescription = null
                     )
                 },
-                label = {
-                    Text(
-                        text = destination.iconText
-                    )
-                })
+//                label = {
+//                    Text(
+//                        text = destination.iconText
+//                    )
+//                }
+            )
         }
     }
 }

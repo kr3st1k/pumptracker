@@ -40,9 +40,14 @@ fun HomeScreen(
             unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_newspaper_24),
             iconText = "News"
         ),TopLevelDestination(
+            route = Screen.BestUserPage.route,
+            selectedIcon = ImageVector.vectorResource(R.drawable.baseline_format_list_numbered_24),
+            unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_format_list_numbered_24),
+            iconText = "Best Scores"
+        ),TopLevelDestination(
             route = Screen.ActivityPage.route,
-            selectedIcon = Icons.Filled.List,
-            unselectedIcon = Icons.Outlined.List,
+            selectedIcon = ImageVector.vectorResource(R.drawable.baseline_history_24),
+            unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_history_24),
             iconText = "History"
         ),
         TopLevelDestination(

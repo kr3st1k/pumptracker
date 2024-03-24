@@ -3,6 +3,10 @@ package dev.kr3st1k.piucompanion.screens.auth
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -15,6 +19,7 @@ import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.User
 import dev.kr3st1k.piucompanion.screens.Screen
+import dev.kr3st1k.piucompanion.screens.components.Button
 import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.screens.components.home.users.UserCard
@@ -33,7 +38,6 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
     val user = remember {
         mutableStateOf(User())
     }
-    val scores = remember { mutableStateOf<MutableList<LatestScore>>(mutableListOf()) }
     scope.launch {
         checkLogin.value = RequestHandler.checkIfLoginSuccess(pref.getData("cookies", ""), pref.getData("ua", ""))
         checkingLogin.value = false
@@ -51,12 +55,42 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
                 if (user.value.trueUser)
                 {
                     UserCard(user.value)
-                    scope.launch {
-                        scores.value = RequestHandler.getLatestScores(pref.getData("cookies", ""), pref.getData("ua", ""), 5)
-                    }
-
-                    //SMTH
-
+                    Button(
+                        icon = Icons.Default.Info,
+                        title = "Здесь фиг знает че сунуть",
+                        summary = "Лучшие скоры будут снизу, мб всякие топы с сайта",
+                        onClick = {}
+                    )
+                    Button(
+                        icon = Icons.Default.Info,
+                        title = "Titles",
+                        summary = "wow. button",
+                        onClick = {}
+                    )
+                    Button(
+                        icon = Icons.Default.Info,
+                        title = "Avatar Shop",
+                        summary = "wow. button",
+                        onClick = {}
+                    )
+                    Button(
+                        icon = Icons.Default.Settings,
+                        title = "Settings",
+                        summary = "wow. button",
+                        onClick = {}
+                    )
+                    Button(
+                        icon = Icons.Default.Info,
+                        title = "Logout from account",
+                        summary = "wow. button",
+                        onClick = {}
+                    )
+                    Button(
+                        icon = Icons.Default.Info,
+                        title = "About",
+                        summary = "wow. button",
+                        onClick = {}
+                    )
                 }
                 else
                 {

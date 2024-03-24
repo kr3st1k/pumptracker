@@ -11,7 +11,9 @@ import java.util.regex.Pattern
 object Utils
 {
     private const val DIFFICULTY = "https://www\\.piugame\\.com/l_img/stepball/full/[a-zA-Z]_num_([0-9])\\.png"
+//    private const val DIFFICULTYBEST = "https://piugame\\.com/l_img/stepball/full/[a-zA-Z]_num_([0-9])\\.png"
     private const val DIFFICULTYTYPE = "https://www\\.piugame\\.com\\/l_img\\/stepball\\/full\\/([a-zA-Z])_text\\.png"
+    private const val DIFFICULTYTYPEBEST = "https://www.piugame\\.com\\/l_img\\/stepball\\/full\\/([a-zA-Z])_bg\\.png"
     private const val RANK = "https://www\\.piugame\\.com\\/l_img\\/grade\\/(\\w+)\\.png"
     fun parseDifficultyFromUri(uri: String): String? = getFirstRegex(DIFFICULTY, uri)
 
@@ -19,6 +21,7 @@ object Utils
 
     fun parseTypeDifficultyFromUri(uri: String): String? = getFirstRegex(DIFFICULTYTYPE, uri)
 
+    fun parseTypeDifficultyFromUriBestScore(uri: String): String? = getFirstRegex(DIFFICULTYTYPEBEST, uri)
 
     fun getWrId(url: String): String? = getFirstRegex("wr_id=(\\d+)", url)
 

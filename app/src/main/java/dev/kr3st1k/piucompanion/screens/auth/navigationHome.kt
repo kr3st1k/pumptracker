@@ -29,7 +29,11 @@ fun HomeNavHost(
         }
 
         composable(route = Screen.ActivityPage.route) {
-            ActivityPage(navController = navController, navControllerGlobal = navControllerGlobal)
+            ActivityPage(navControllerGlobal = navControllerGlobal)
+        }
+
+        composable(route = Screen.BestUserPage.route) {
+            BestUserPage(navControllerGlobal = navControllerGlobal)
         }
 
     }

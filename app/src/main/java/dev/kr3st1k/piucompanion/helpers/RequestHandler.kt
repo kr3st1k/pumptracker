@@ -1,5 +1,7 @@
 package dev.kr3st1k.piucompanion.helpers
-import androidx.compose.ui.text.toUpperCase
+
+import dev.kr3st1k.piucompanion.objects.BestUserScore
+import dev.kr3st1k.piucompanion.objects.BgInfo
 import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
@@ -7,21 +9,21 @@ import dev.kr3st1k.piucompanion.objects.User
 import dev.kr3st1k.piucompanion.screens.components.Utils
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.cookies.ConstantCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.request.get
 import io.ktor.http.Cookie
 import io.ktor.http.HttpHeaders
 import io.ktor.http.headers
+import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.util.Locale
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
-object RequestHandler{
+object RequestHandler {
     private fun getClientWithCookies(cookie: String, ua: String): HttpClient {
         val pairs = cookie.split(";").filter { it.isNotEmpty() }
         val cookieList = ArrayList<String>();
@@ -48,10 +50,24 @@ object RequestHandler{
                 }
 
 
-
             }
         }
         return client
+    }
+
+    suspend fun getUpdateInfo(): String {
+        val client = HttpClient()
+        val response = client.get("https://kr3st1k.me/piu/update.txt")
+        return response.body<String>()
+    }
+
+    suspend fun getBgJson(): MutableList<BgInfo> {
+        val client = HttpClient()
+        val response = client.get("https://kr3st1k.me/piu/piu_bg_database.json")
+        val res = response.body<String>()
+        val JSON = Json {isLenient = true}
+        val list = JSON.decodeFromString(res) as MutableList<BgInfo>
+        return list
     }
 
     suspend fun checkIfLoginSuccess(cookie: String, ua: String): Boolean {
@@ -72,7 +88,8 @@ object RequestHandler{
 
     private fun getBackgroundImg(element: Element, addDomain: Boolean = true): String {
         val style = element.attr("style")
-        return (if (addDomain) "https://www.piugame.com" else "") + style.substringAfter("background-image:url('").substringBefore("')");
+        return (if (addDomain) "https://www.piugame.com" else "") + style.substringAfter("background-image:url('")
+            .substringBefore("')");
     }
 
     suspend fun getDocument(client: HttpClient, uri: String): Document {
@@ -81,8 +98,7 @@ object RequestHandler{
         return Jsoup.parse(reqBody);
     }
 
-    suspend fun getNewsBanners(cookie: String, ua: String): MutableList<NewsBanner>
-    {
+    suspend fun getNewsBanners(cookie: String, ua: String): MutableList<NewsBanner> {
         val client = getClientWithCookies(cookie, ua)
 
         val t = this.getDocument(client, "https://www.piugame.com")
@@ -98,13 +114,18 @@ object RequestHandler{
         }
 
         for (element in uniqueElements) {
-            res.add(NewsBanner(Utils.getWrId(element.attr("href"))?.toInt() ?: 0, getBackgroundImg(element), element.attr("href")))
+            res.add(
+                NewsBanner(
+                    Utils.getWrId(element.attr("href"))?.toInt() ?: 0,
+                    getBackgroundImg(element),
+                    element.attr("href")
+                )
+            )
         }
         return res;
     }
 
-    suspend fun getNewsList(cookie: String, ua: String): MutableList<NewsThumbnailObject>
-    {
+    suspend fun getNewsList(cookie: String, ua: String): MutableList<NewsThumbnailObject> {
         val client = getClientWithCookies(cookie, ua)
         val res: MutableList<NewsThumbnailObject> = mutableListOf();
 
@@ -113,8 +134,7 @@ object RequestHandler{
 
         val trElements: Elements = table.select("tr")
 
-        for (elem in trElements)
-        {
+        for (elem in trElements) {
             if (res.count() == 7)
                 break
             val titleAndLinkElem = elem.select("td.w_tit").select("a");
@@ -131,8 +151,7 @@ object RequestHandler{
         return res;
     }
 
-    suspend fun getUserInfo(cookie: String, ua: String): User
-    {
+    suspend fun getUserInfo(cookie: String, ua: String): User {
         val client = getClientWithCookies(cookie, ua)
         val t = this.getDocument(client, "https://www.piugame.com/my_page/play_data.php")
 
@@ -149,21 +168,101 @@ object RequestHandler{
         return User(username, titleName, backgroundUri, avatarUri, recentGame, coinValue, true)
     }
 
+    private fun parseBestUserScores(t: Document, res: MutableList<BestUserScore>, bgs: MutableList<BgInfo>): Boolean {
 
+        val scoreTable = t.select("ul.my_best_scoreList.flex.wrap")
+        val scores = scoreTable.select("li").filter { element ->
+            element.select("div.in").count() == 1
+        }
 
-    suspend fun getLatestScores(cookie: String, ua: String, length: Int): MutableList<LatestScore>
-    {
+        for (element in scores) {
+
+            val songName = element.select("div.song_name").select("p").first()!!.text()
+
+            print(songName)
+            var bg = bgs.find { tt -> tt.song_name == songName }?.jacket
+            if (bg == null)
+                bg = ""
+
+            val diffElems = element.select("div.numw.flex.vc.hc")
+
+            var diff = ""
+
+            val typeDiffImgUri = getBackgroundImg(
+                element.select("div.stepBall_in.flex.vc.col.hc.wrap.bgfix.cont").first()!!, false
+            )
+
+            val typeDiff = Utils.parseTypeDifficultyFromUriBestScore(typeDiffImgUri)!!
+
+            for (i in diffElems.select("img")) {
+                diff += Utils.parseDifficultyFromUri(i.attr("src"))
+            }
+
+            diff = typeDiff.uppercase(Locale.ENGLISH) + diff
+
+            val scoreInfoElement = element.select("ul.list.flex.vc.hc.wrap")
+
+            val score = scoreInfoElement.select("span.num").text()
+
+            var rank = ""
+
+            val rankImg = scoreInfoElement.select("img").first()!!.attr("src")
+            rank = Utils.parseRankFromUri(rankImg).toString()
+            rank = rank.uppercase(Locale.ENGLISH).replace("_p", "+").replace("_P", "+")
+
+            res.add(
+                BestUserScore(
+                    songName,
+                    bg,
+                    diff,
+                    score,
+                    rank
+                )
+            )
+
+        }
+
+        return t.select("button.icon").isNotEmpty()
+    }
+
+    suspend fun getBestUserScores(cookie: String, ua: String, page: Int? = null, lvl: String = "", res: MutableList<BestUserScore> = mutableListOf(), bgs: MutableList<BgInfo>): Pair<MutableList<BestUserScore>, Boolean> {
+        val client = getClientWithCookies(cookie, ua)
+        var uri = "https://www.piugame.com/my_page/my_best_score.php"
+        var isRecent = false
+        uri += "?lv=$lvl"
+        if (page == null) {
+            for (i in 0..1) {
+                uri += if (uri.contains("&page"))
+                    uri.dropLast(1) + i
+                else
+                    "&page=$i"
+                val t =
+                    this.getDocument(client, uri)
+                isRecent = parseBestUserScores(t, res, bgs=bgs)
+            }
+        }
+        else
+        {
+            uri += "&page=$page"
+            val t =
+                this.getDocument(client, uri)
+            isRecent = parseBestUserScores(t, res, bgs=bgs)
+        }
+        return Pair(res, isRecent)
+
+    }
+
+    suspend fun getLatestScores(cookie: String, ua: String, length: Int): MutableList<LatestScore> {
         val client = getClientWithCookies(cookie, ua)
         val res: MutableList<LatestScore> = mutableListOf();
 
-        val t = this.getDocument(client,"https://www.piugame.com/my_page/recently_played.php")
+        val t = this.getDocument(client, "https://www.piugame.com/my_page/recently_played.php")
 
         val scoreTable = t.select("ul.recently_playeList.flex.wrap")
         val scores = scoreTable.select("li").filter { element ->
             element.select("div.wrap_in").count() == 1
         }
-        for (element in scores)
-        {
+        for (element in scores) {
             if (res.count() == length)
                 break
             val songName = element.select("div.song_name.flex").select("p").text()
@@ -178,8 +277,7 @@ object RequestHandler{
 
             var diff = ""
 
-            for (i in diffElems)
-            {
+            for (i in diffElems) {
                 diff += Utils.parseDifficultyFromUri(i.select("img").attr("src"))
             }
 
@@ -191,15 +289,24 @@ object RequestHandler{
 
             var rank = "F"
 
-            if ("STAGE BREAK" !in score)
-            {
+            if ("STAGE BREAK" !in score) {
                 val rankImg = scoreRankElement.first()!!.select("img").attr("src")
                 rank = Utils.parseRankFromUri(rankImg).toString()
-                rank = rank.uppercase(Locale.ENGLISH).replace("_p","+").replace("_P","+").replace("X_", "Broken ")
+                rank = rank.uppercase(Locale.ENGLISH).replace("_p", "+").replace("_P", "+")
+                    .replace("X_", "Broken ")
             }
 
             val datePlay = element.select("p.recently_date_tt").text()
-            res.add(LatestScore(songName,bg,diff,score,rank,Utils.convertDateFromSite(datePlay)))
+            res.add(
+                LatestScore(
+                    songName,
+                    bg,
+                    diff,
+                    score,
+                    rank,
+                    Utils.convertDateFromSite(datePlay)
+                )
+            )
         }
 
         return res

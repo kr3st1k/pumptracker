@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
 }
 
 class PIUCompanion : Application(), ImageLoaderFactory {
-    @OptIn(ExperimentalCoilApi::class)
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             .memoryCache {
@@ -48,7 +47,7 @@ class PIUCompanion : Application(), ImageLoaderFactory {
             .diskCache {
                 DiskCache.Builder()
                     .directory(cacheDir.resolve("image_cache"))
-                    .maxSizeBytes(5 * 1024 * 1024)
+                    .maxSizeBytes(1500 * 1024 * 1024)
                     .build()
             }
             .logger(DebugLogger())

@@ -6,7 +6,15 @@ data class LatestScore (
     val difficulty: String,
     val score: String,
     val rank: String,
-    val datetime: String //TODO No String. make a Data
+    val datetime: String
+)
+
+data class BestUserScore (
+    val songName: String,
+    val songBackgroundUri: String,
+    val difficulty: String,
+    val score: String,
+    val rank: String
 )
 
 //Spray D19 880,910 Broken A+

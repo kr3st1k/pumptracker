@@ -69,6 +69,7 @@ fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(newsBanners[page].pictureUrl)
+                        .crossfade(true)
                         .memoryCacheKey(newsBanners[page].pictureUrl)
                         .diskCacheKey(newsBanners[page].pictureUrl)
                         .diskCachePolicy(CachePolicy.ENABLED)
