@@ -6,9 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
-import dev.kr3st1k.piucompanion.screens.auth.HomeScreen
+import dev.kr3st1k.piucompanion.screens.auth.home.HomeScreen
 import dev.kr3st1k.piucompanion.screens.unauth.LoginWebViewScreen
-import dev.kr3st1k.piucompanion.screens.unauth.OnboardScreen
 
 @Composable
 fun Navigation(context: Context) {

@@ -200,8 +200,11 @@ object RequestHandler {
 
         val backgroundUri = getBackgroundImg(profileBox.first()!!)
         val avatarUri = getBackgroundImg(avatarBox.first()!!, false)
-        val titleName = t.select("p.t1.en.col4").first()!!.text()
-        val username = t.select("p.t2.en").first()!!.text()
+
+        val profileTitleAndName = t.select("div.name_w").select("p")
+
+        val titleName = profileTitleAndName.first()!!.text()
+        val username = profileTitleAndName.last()!!.text()
         val recentGame = t.select("div.time_w").select("li").last()!!.text()
         val coinValue = t.select("i.tt.en").first()!!.text()
 

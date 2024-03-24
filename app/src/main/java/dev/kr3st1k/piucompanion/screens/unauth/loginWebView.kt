@@ -6,10 +6,15 @@ import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +29,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -46,8 +54,15 @@ fun LoginWebViewScreen(navController: NavController) {
     var webView: WebView? by remember { mutableStateOf(null) }
     var showDialog by remember { mutableStateOf(false) }
 
+    val darkTheme = isSystemInDarkTheme() // or use your theme state
+    val backgroundColor = if (darkTheme) Color.Black else Color.White
+
+    val isLoading = remember { mutableStateOf(true) }
+
     val pref = PreferencesManager(LocalContext.current)
-    Column {
+    Column(
+        modifier = Modifier.background(color = backgroundColor)
+    ) {
 
         TopAppBar(title = { Text(text = "Authorize in site") },
 
@@ -100,7 +115,7 @@ fun LoginWebViewScreen(navController: NavController) {
             title = "Login failed!",
             content = "Maybe try authorize in site?",
             onDismiss = { showDialog = false })
-
+        Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
@@ -108,19 +123,20 @@ fun LoginWebViewScreen(navController: NavController) {
             },
 
             update = { view ->
-                WebView.setWebContentsDebuggingEnabled(true)
-                webView=view.apply {
-                    settings.javaScriptEnabled=true
+                webView = view.apply {
+                    settings.javaScriptEnabled = true
                     this.setWebChromeClient(WebChromeClient());
-                    webViewClient=object:WebViewClient()
-                    {
+                    webViewClient = object : WebViewClient() {
                         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                             super.onPageStarted(view, url, favicon)
+                            view?.setWebChromeClient(WebChromeClient());
 //                            view?.evaluateJavascript("document.querySelector(\"#login_auto_login\").checked = \"true\"", null)
                         }
-                        override fun onPageFinished(view: WebView, url: String)
-                        {
+
+                        override fun onPageFinished(view: WebView, url: String) {
                             super.onPageFinished(view, url)
+                            isLoading.value = false
+                            view.setWebChromeClient(WebChromeClient());
 //                            view.evaluateJavascript("document.querySelector(\"#login_auto_login\").checked = \"true\"", null)
 //                            view.evaluateJavascript("if (!window.eruda) {let parent = document.head || document.documentElement; let script = parent.appendChild(document.createElement('script')); script.src = 'https://cdn.jsdelivr.net/npm/eruda'; script.onload = () => eruda.init();}", null);
                             scope.launch {
@@ -128,7 +144,7 @@ fun LoginWebViewScreen(navController: NavController) {
 
                                 val cookies = cookieManager.getCookie("https://am-pass.net")
                                 if (cookies != null) {
-                                    if (cookies.contains("nullsid")  || cookies.split(";").size >= 5) {
+                                    if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
                                         println(cookies)
                                         val t = webView?.settings?.userAgentString?.let {
 
@@ -154,8 +170,19 @@ fun LoginWebViewScreen(navController: NavController) {
                         }
                     }
                     loadUrl("https://am-pass.net/")
+                    setBackgroundColor(backgroundColor.toArgb())
+                    this.setWebChromeClient(WebChromeClient());
                 }
             }
         )
+        }
+        if (isLoading.value) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .wrapContentSize(),
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }

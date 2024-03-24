@@ -16,4 +16,8 @@ class PreferencesManager(context: Context) {
     fun getData(key: String, defaultValue: String): String {
         return sharedPreferences.getString(key, defaultValue) ?: defaultValue
     }
+
+    fun removeLoginData() {
+        saveData("cookies", "")
+    }
 }

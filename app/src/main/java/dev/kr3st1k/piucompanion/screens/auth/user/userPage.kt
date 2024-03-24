@@ -1,60 +1,70 @@
-package dev.kr3st1k.piucompanion.screens.auth
+package dev.kr3st1k.piucompanion.screens.auth.user
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
-import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.User
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.components.Button
 import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.screens.components.home.users.UserCard
-import kotlinx.coroutines.launch
 
-@SuppressLint("CoroutineCreationDuringComposition", "MutableCollectionMutableState")
 @Composable
-fun UserScreen(navController: NavController, navControllerGlobal: NavController)
-{
-    val scope = rememberCoroutineScope()
-    val pref = PreferencesManager(LocalContext.current)
-    val checkingLogin = remember {
+fun UserScreen(
+    navController: NavController,
+    navControllerGlobal: NavController,
+    lifecycleOwner: LifecycleOwner,
+) {
+
+    val context = LocalContext.current
+    val pref = PreferencesManager(context)
+    val viewModelFactory = UserViewModelFactory(pref)
+    val viewModel = viewModel<UserViewModel>(factory = viewModelFactory)
+
+    var checkingLogin by remember {
         mutableStateOf(true)
     }
-    val checkLogin = remember { mutableStateOf(false) }
-    val user = remember {
+    val checkingLoginObserver = Observer<Boolean> {
+        checkingLogin = it
+    }
+    var checkLogin by remember {
+        mutableStateOf(false)
+    }
+    val checkLoginObserver = Observer<Boolean> {
+        checkLogin = it
+    }
+    var user by remember {
         mutableStateOf(User())
     }
-    scope.launch {
-        checkLogin.value = RequestHandler.checkIfLoginSuccess(pref.getData("cookies", ""), pref.getData("ua", ""))
-        checkingLogin.value = false
+    val userObserver = Observer<User> {
+        user = it
     }
-    Column (
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if (checkingLogin.value) {
-            YouSpinMeRightRoundBabyRightRound("Check if you logged in...")
-        } else {
-            if (checkLogin.value) {
-                scope.launch {
-                    user.value = RequestHandler.getUserInfo(pref.getData("cookies", ""), pref.getData("ua", ""))
-                }
-                if (user.value.trueUser)
-                {
-                    UserCard(user.value)
+    viewModel.checkingLogin.observe(lifecycleOwner, checkingLoginObserver)
+    viewModel.checkLogin.observe(lifecycleOwner, checkLoginObserver)
+    viewModel.user.observe(lifecycleOwner, userObserver)
+
+    if (checkingLogin) {
+        YouSpinMeRightRoundBabyRightRound("Checking if you're logged in...")
+    } else {
+        if (checkLogin) {
+            if (user.trueUser) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    UserCard(user)
                     Button(
                         icon = Icons.Default.Info,
                         title = "Здесь фиг знает че сунуть",
@@ -83,7 +93,10 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
                         icon = Icons.Default.Info,
                         title = "Logout from account",
                         summary = "wow. button",
-                        onClick = {}
+                        onClick = {
+                            viewModel.logout(pref)
+                            navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
+                        }
                     )
                     Button(
                         icon = Icons.Default.Info,
@@ -92,22 +105,18 @@ fun UserScreen(navController: NavController, navControllerGlobal: NavController)
                         onClick = {}
                     )
                 }
-                else
-                {
-                    YouSpinMeRightRoundBabyRightRound("Getting User Info...")
-                }
             } else {
-                MyAlertDialog(
-                    showDialog = !checkLogin.value,
-                    title = "Login failed!",
-                    content = "You need to authorize",
-                    onDismiss = {
-                        navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
-                    }
-                )
+                YouSpinMeRightRoundBabyRightRound("Getting User Info...")
             }
-
-
+        } else {
+            MyAlertDialog(
+                showDialog = true,
+                title = "Login failed!",
+                content = "You need to authorize",
+                onDismiss = {
+                    navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
+                }
+            )
         }
     }
 }

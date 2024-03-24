@@ -70,7 +70,7 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
     }
     val listState = rememberLazyListState()
     val pages = remember {
-        mutableIntStateOf(2)
+        mutableIntStateOf(3)
     }
     val scope = rememberCoroutineScope()
     val pref = PreferencesManager(LocalContext.current)

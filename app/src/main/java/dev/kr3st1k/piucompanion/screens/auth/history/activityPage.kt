@@ -1,10 +1,9 @@
-package dev.kr3st1k.piucompanion.screens.auth
+package dev.kr3st1k.piucompanion.screens.auth.history
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -13,31 +12,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
-import dev.kr3st1k.piucompanion.objects.BestUserScore
-import dev.kr3st1k.piucompanion.objects.BgInfo
 import dev.kr3st1k.piucompanion.objects.LatestScore
-import dev.kr3st1k.piucompanion.objects.checkAndSaveNewUpdatedFiles
-import dev.kr3st1k.piucompanion.objects.readBgJson
+import dev.kr3st1k.piucompanion.screens.Screen
+import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.screens.components.home.scores.LazyBestScoreMini
+import dev.kr3st1k.piucompanion.screens.components.home.scores.LazyLatestScoreMini
 import kotlinx.coroutines.launch
 
-@SuppressLint("MutableCollectionMutableState", "CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "MutableCollectionMutableState")
 @Composable
-fun BestUserPage(navControllerGlobal: NavController)
+fun ActivityPage(navControllerGlobal: NavController)
 {
     val scope = rememberCoroutineScope()
     val pref = PreferencesManager(LocalContext.current)
-    val context = LocalContext.current
     val checkingLogin = remember {
         mutableStateOf(true)
     }
     val checkLogin = remember { mutableStateOf(false) };
-    val scores = remember { mutableStateOf(
-        Pair<MutableList<BestUserScore>, Boolean>(mutableListOf(), false)
-    ) }
+    val scores = remember { mutableStateOf<MutableList<LatestScore>>(mutableListOf()) }
     scope.launch {
-        checkAndSaveNewUpdatedFiles(context)
         checkLogin.value = RequestHandler.checkIfLoginSuccess(pref.getData("cookies", ""), pref.getData("ua", ""))
         checkingLogin.value = false
     }
@@ -49,31 +42,38 @@ fun BestUserPage(navControllerGlobal: NavController)
         } else {
             if (checkLogin.value) {
                 scope.launch {
-                    val bgs = readBgJson(context)
-                    scores.value = RequestHandler.getBestUserScores(
+                    scores.value = RequestHandler.getLatestScores(
                         pref.getData("cookies", ""),
                         pref.getData("ua", ""),
-                        bgs = bgs
+                        50
                     )
                 }
-                if (scores.value.first.isNotEmpty()) {
-                    LazyBestScoreMini(scores.value, onRefresh = {
+                if (scores.value.isNotEmpty()) {
+                    LazyLatestScoreMini(scores.value, onRefresh = {
                         scope.launch {
-                            val bgs = readBgJson(context)
-                            scores.value.first.clear()
-                            scores.value = RequestHandler.getBestUserScores(
+                            scores.value = mutableListOf()
+                            scores.value = RequestHandler.getLatestScores(
                                 pref.getData("cookies", ""),
                                 pref.getData("ua", ""),
-                                bgs = bgs
+                                50
                             )
                         }
                     })
+                } else {
+                    YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
                 }
-                else
-                {
-                    YouSpinMeRightRoundBabyRightRound("Getting best scores...")
-                }
+            } else {
+                MyAlertDialog(
+                    showDialog = !checkLogin.value,
+                    title = "Login failed!",
+                    content = "You need to authorize",
+                    onDismiss = {
+                        navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
+                    }
+                )
             }
+
+
         }
     }
 }

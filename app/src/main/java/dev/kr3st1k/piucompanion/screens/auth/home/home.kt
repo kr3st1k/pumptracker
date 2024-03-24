@@ -1,12 +1,8 @@
-package dev.kr3st1k.piucompanion.screens.auth
+package dev.kr3st1k.piucompanion.screens.auth.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -24,9 +20,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.kr3st1k.piucompanion.R
+import dev.kr3st1k.piucompanion.objects.TopLevelDestination
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.components.home.HomeBottomBar
-import dev.kr3st1k.piucompanion.objects.TopLevelDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
