@@ -37,6 +37,44 @@ object RequestHandler {
         val client = HttpClient {
             install(HttpCookies) {
                 storage = ConstantCookiesStorage(
+                    Cookie(cookieList[0], cookieList[1], domain = ".am-pass.net"),
+                    Cookie(cookieList[0], cookieList[1], domain = ".piugame.com"),
+                    Cookie(cookieList[2], cookieList[3], domain = ".am-pass.net"),
+                    Cookie(cookieList[2], cookieList[3], domain = ".piugame.com"),
+                    Cookie(cookieList[4], cookieList[5], domain = ".am-pass.net"),
+                    Cookie(cookieList[6], cookieList[7], domain = ".piugame.com"),
+                    Cookie(cookieList[6], cookieList[7], domain = ".am-pass.net")
+                )
+
+
+                headers {
+                    append(HttpHeaders.UserAgent, ua)
+                }
+
+
+            }
+        }
+        return client
+    }
+
+    private fun getClientWithSampleInfo(): HttpClient {
+        val cookie = "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c"
+
+        val ua = "Mozilla/5.0 (Android 14; Mobile; rv:68.0) Gecko/68.0 Firefox/124.0"
+
+        val pairs = cookie.split(";").filter { it.isNotEmpty() }
+        val cookieList = ArrayList<String>();
+        for (pair in pairs) {
+            val parts = pair.split("=")
+            if (parts.size == 2) {
+                cookieList.add(parts[0].trim())
+                cookieList.add(parts[1].trim())
+            }
+        }
+
+        val client = HttpClient {
+            install(HttpCookies) {
+                storage = ConstantCookiesStorage(
                     Cookie(cookieList[0], cookieList[1], domain = ".piugame.com"),
                     Cookie(cookieList[2], cookieList[3], domain = ".piugame.com"),
                     Cookie(cookieList[4], cookieList[5], domain = ".piugame.com"),
@@ -53,6 +91,7 @@ object RequestHandler {
         }
         return client
     }
+
 
     suspend fun getUpdateInfo(): String {
         val client = HttpClient()
@@ -73,14 +112,16 @@ object RequestHandler {
 
         println(cookie.split(";").size)
 
-        if (cookie == "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c")
+        if (cookie == "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c"
+            || cookie == ""
+        )
             return false
 
         val client = getClientWithCookies(cookie, ua)
 
         println(ua);
 
-        val t = client.get("https://piugame.com")
+        val t = client.get("https://am-pass.net")
         val stringBody: String = t.body()
         return stringBody.indexOf("bbs/logout.php") > 0;
     }
@@ -97,8 +138,8 @@ object RequestHandler {
         return Jsoup.parse(reqBody);
     }
 
-    suspend fun getNewsBanners(cookie: String, ua: String): MutableList<NewsBanner> {
-        val client = getClientWithCookies(cookie, ua)
+    suspend fun getNewsBanners(): MutableList<NewsBanner> {
+        val client = getClientWithSampleInfo()
 
         val t = this.getDocument(client, "https://www.piugame.com")
 
@@ -124,8 +165,8 @@ object RequestHandler {
         return res;
     }
 
-    suspend fun getNewsList(cookie: String, ua: String): MutableList<NewsThumbnailObject> {
-        val client = getClientWithCookies(cookie, ua)
+    suspend fun getNewsList(): MutableList<NewsThumbnailObject> {
+        val client = getClientWithSampleInfo()
         val res: MutableList<NewsThumbnailObject> = mutableListOf();
 
         val t = this.getDocument(client, "https://www.piugame.com/phoenix_notice")

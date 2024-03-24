@@ -1,7 +1,9 @@
 package dev.kr3st1k.piucompanion.screens.unauth
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.webkit.CookieManager
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Column
@@ -28,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
-import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.screens.Screen
+import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import kotlinx.coroutines.launch
 
 
@@ -56,7 +58,7 @@ fun LoginWebViewScreen(navController: NavController) {
 
                     val cookieManager = CookieManager.getInstance()
 
-                    val cookies = cookieManager.getCookie("https://piugame.com")
+                    val cookies = cookieManager.getCookie("https://am-pass.net")
                     if (cookies == null) {
                         showDialog = true
                     } else {
@@ -109,16 +111,22 @@ fun LoginWebViewScreen(navController: NavController) {
                 WebView.setWebContentsDebuggingEnabled(true)
                 webView=view.apply {
                     settings.javaScriptEnabled=true
+                    this.setWebChromeClient(WebChromeClient());
                     webViewClient=object:WebViewClient()
                     {
+                        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                            super.onPageStarted(view, url, favicon)
+//                            view?.evaluateJavascript("document.querySelector(\"#login_auto_login\").checked = \"true\"", null)
+                        }
                         override fun onPageFinished(view: WebView, url: String)
                         {
                             super.onPageFinished(view, url)
+//                            view.evaluateJavascript("document.querySelector(\"#login_auto_login\").checked = \"true\"", null)
 //                            view.evaluateJavascript("if (!window.eruda) {let parent = document.head || document.documentElement; let script = parent.appendChild(document.createElement('script')); script.src = 'https://cdn.jsdelivr.net/npm/eruda'; script.onload = () => eruda.init();}", null);
                             scope.launch {
                                 val cookieManager = CookieManager.getInstance()
 
-                                val cookies = cookieManager.getCookie("https://piugame.com")
+                                val cookies = cookieManager.getCookie("https://am-pass.net")
                                 if (cookies != null) {
                                     if (cookies.contains("nullsid")  || cookies.split(";").size >= 5) {
                                         println(cookies)
@@ -145,7 +153,7 @@ fun LoginWebViewScreen(navController: NavController) {
                             }
                         }
                     }
-                    loadUrl("https://piugame.com/login.php")
+                    loadUrl("https://am-pass.net/")
                 }
             }
         )

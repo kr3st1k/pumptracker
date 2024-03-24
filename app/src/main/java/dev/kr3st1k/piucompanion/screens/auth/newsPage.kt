@@ -10,12 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.R
-import dev.kr3st1k.piucompanion.helpers.PreferencesManager
+import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
@@ -28,23 +25,11 @@ import kotlinx.coroutines.launch
 fun NewsScreen(navController: NavController)
 {
     val scope = rememberCoroutineScope()
-    val pref = PreferencesManager(LocalContext.current)
-    val context = LocalContext.current;
     val newsBanners = remember { mutableStateOf<MutableList<NewsBanner>>(mutableListOf()) }
     val news = remember { mutableStateOf<MutableList<NewsThumbnailObject>>(mutableListOf()) }
     scope.launch {
-        if (pref.getData("cookies", "") == "") {
-            pref.saveData(
-                "cookies",
-                "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c"
-            )
-            pref.saveData(
-                "ua",
-                "Mozilla/5.0 (Android 14; Mobile; rv:68.0) Gecko/68.0 Firefox/124.0"
-            )
-        }
-        newsBanners.value = RequestHandler.getNewsBanners(pref.getData("cookies", ""), pref.getData("ua", ""))
-        news.value = RequestHandler.getNewsList(pref.getData("cookies", ""), pref.getData("ua", ""))
+        newsBanners.value = RequestHandler.getNewsBanners()
+        news.value = RequestHandler.getNewsList()
     }
     Column (
         modifier = Modifier.fillMaxSize()
@@ -63,7 +48,7 @@ fun NewsScreen(navController: NavController)
             LazyNews(news = news.value, onRefresh = {
                 scope.launch {
                     news.value = mutableListOf()
-                    news.value = RequestHandler.getNewsList(pref.getData("cookies", ""), pref.getData("ua", ""))
+                    news.value = RequestHandler.getNewsList()
                 }
             })
         }
