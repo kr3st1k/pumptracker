@@ -242,12 +242,12 @@ object RequestHandler {
         var isRecent = false
         uri += "?lv=$lvl"
         if (page == null) {
-            for (i in 0..1) {
+            for (i in 1..2) {
                 if (!isRecent) {
-                    uri += if (uri.contains("&page"))
-                        uri.dropLast(1) + i
+                    if (uri.contains("&page"))
+                        uri = uri.dropLast(1) + i
                     else
-                        "&page=$i"
+                        uri += "&page=$i"
                     val t =
                         this.getDocument(client, uri)
                     isRecent = parseBestUserScores(t, res, bgs = bgs)
