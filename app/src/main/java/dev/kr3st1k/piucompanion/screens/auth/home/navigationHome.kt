@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.auth.best.BestUserPage
-import dev.kr3st1k.piucompanion.screens.auth.history.ActivityPage
+import dev.kr3st1k.piucompanion.screens.auth.history.HistoryPage
 import dev.kr3st1k.piucompanion.screens.auth.user.UserScreen
 import dev.kr3st1k.piucompanion.screens.unauth.news.NewsScreen
 
@@ -40,8 +40,11 @@ fun HomeNavHost(
                 )
             }
 
-            composable(route = Screen.ActivityPage.route) {
-                ActivityPage(navControllerGlobal = navControllerGlobal)
+            composable(route = Screen.HistoryPage.route) {
+                HistoryPage(
+                    navControllerGlobal = navControllerGlobal,
+                    lifecycleOwner = lifecycleOwner
+                )
             }
 
             composable(route = Screen.BestUserPage.route) {

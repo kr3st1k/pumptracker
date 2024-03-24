@@ -40,7 +40,7 @@ class UserViewModel(
         }
     }
 
-    fun getUserInfo() {
+    private fun getUserInfo() {
         viewModelScope.launch {
             _user.value =
                 RequestHandler.getUserInfo(pref.getData("cookies", ""), pref.getData("ua", ""))
