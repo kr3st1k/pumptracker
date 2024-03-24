@@ -139,18 +139,6 @@ fun RecentScore(score: LatestScore)
                         )
                     }
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
-                    Text(
-                        text = score.datetime,
-                        fontSize = 12.sp,
-                        color = Color(0xffc2c0c0),
-                        textAlign = TextAlign.End
-                    )
-                }
             }
         }
     }
