@@ -11,10 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import coil.ImageLoader
 import coil.ImageLoaderFactory
-import coil.annotation.ExperimentalCoilApi
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
-import coil.util.DebugLogger
 import dev.kr3st1k.piucompanion.screens.Navigation
 import dev.kr3st1k.piucompanion.ui.theme.PIUCompanionTheme
 
@@ -29,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation(this)
+                    Navigation()
                 }
             }
         }
@@ -50,7 +48,6 @@ class PIUCompanion : Application(), ImageLoaderFactory {
                     .maxSizeBytes(1500 * 1024 * 1024)
                     .build()
             }
-            .logger(DebugLogger())
             .respectCacheHeaders(false)
             .build()
     }

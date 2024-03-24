@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.screens.components.home.scores
+package dev.kr3st1k.piucompanion.screens.components.home.scores.latest
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,20 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -37,20 +31,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import dev.kr3st1k.piucompanion.objects.LatestScore
-import okhttp3.Dispatcher
 
 @Composable
-fun MiniScore(score: LatestScore)
+fun RecentScore(score: LatestScore)
 {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp, start = 16.dp, end = 16.dp)
-            .clip(RoundedCornerShape(8.dp)).height(100.dp).border(
+            .clip(RoundedCornerShape(8.dp))
+            .height(100.dp)
+            .border(
                 width = 1.dp,
                 color = Color(0xffadadad),
                 shape = RoundedCornerShape(9.dp)
@@ -85,7 +79,8 @@ fun MiniScore(score: LatestScore)
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth().padding(top=21.dp, start = 16.dp, end=16.dp)
+                    .fillMaxWidth()
+                    .padding(top = 21.dp, start = 16.dp, end = 16.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -95,7 +90,8 @@ fun MiniScore(score: LatestScore)
                 ) {
                         Column(
                             modifier = Modifier
-                                .weight(2f).padding(end = 8.dp)
+                                .weight(2f)
+                                .padding(end = 8.dp)
                         ) {
                             Text(
                                 text = score.songName,
@@ -117,7 +113,8 @@ fun MiniScore(score: LatestScore)
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp)
-                            .width(20.dp).fillMaxHeight(),
+                            .width(20.dp)
+                            .fillMaxHeight(),
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(

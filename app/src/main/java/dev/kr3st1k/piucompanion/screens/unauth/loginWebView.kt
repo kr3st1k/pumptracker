@@ -79,7 +79,6 @@ fun LoginWebViewScreen(navController: NavController) {
                     } else {
                         scope.launch {
                             if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
-                                println(cookies)
                                 val t = webView?.settings?.userAgentString?.let {
                                     RequestHandler.checkIfLoginSuccess(
                                         cookies,
@@ -95,12 +94,12 @@ fun LoginWebViewScreen(navController: NavController) {
                                             it.userAgentString
                                         )
                                     }
-                                    navController.navigate(Screen.HomeScreen.route)
+                                    navController.navigate(Screen.HomeScreen.route) {
+                                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                                    }
                                 } else {
                                     showDialog = true
                                 }
-
-                                println(t)
                             }
                         }
                     }
@@ -145,7 +144,6 @@ fun LoginWebViewScreen(navController: NavController) {
                                 val cookies = cookieManager.getCookie("https://am-pass.net")
                                 if (cookies != null) {
                                     if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
-                                        println(cookies)
                                         val t = webView?.settings?.userAgentString?.let {
 
                                             RequestHandler.checkIfLoginSuccess(
@@ -162,7 +160,11 @@ fun LoginWebViewScreen(navController: NavController) {
                                                     it.userAgentString
                                                 )
                                             }
-                                            navController.navigate(Screen.HomeScreen.route)
+                                            navController.navigate(Screen.HomeScreen.route) {
+                                                popUpTo(Screen.HomeScreen.route) {
+                                                    inclusive = false
+                                                }
+                                            }
                                         }
                                     }
                                 }

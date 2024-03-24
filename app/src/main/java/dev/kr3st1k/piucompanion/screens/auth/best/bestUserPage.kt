@@ -4,72 +4,83 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.helpers.PreferencesManager
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.BestUserScore
-import dev.kr3st1k.piucompanion.objects.checkAndSaveNewUpdatedFiles
-import dev.kr3st1k.piucompanion.objects.readBgJson
+import dev.kr3st1k.piucompanion.screens.Screen
+import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.screens.components.home.scores.LazyBestScoreMini
-import kotlinx.coroutines.launch
+import dev.kr3st1k.piucompanion.screens.components.home.scores.best.LazyBestScore
 
 @SuppressLint("MutableCollectionMutableState", "CoroutineCreationDuringComposition")
 @Composable
-fun BestUserPage(navControllerGlobal: NavController)
+fun BestUserPage(
+    navControllerGlobal: NavController,
+    lifecycleOwner: LifecycleOwner,
+)
 {
-    val scope = rememberCoroutineScope()
-    val pref = PreferencesManager(LocalContext.current)
-    val context = LocalContext.current
-    val checkingLogin = remember {
+    val viewModel = viewModel<BestUserViewModel>(
+        factory = BestUserViewModelFactory(
+            LocalContext.current
+        )
+    )
+    var checkLogin by remember {
+        mutableStateOf(false)
+    }
+    val checkLoginObserver = Observer<Boolean> {
+        checkLogin = it
+    }
+
+    var checkingLogin by remember {
         mutableStateOf(true)
     }
-    val checkLogin = remember { mutableStateOf(false) };
-    val scores = remember { mutableStateOf(
-        Pair<MutableList<BestUserScore>, Boolean>(mutableListOf(), false)
-    ) }
-    scope.launch {
-        checkAndSaveNewUpdatedFiles(context)
-        checkLogin.value = RequestHandler.checkIfLoginSuccess(pref.getData("cookies", ""), pref.getData("ua", ""))
-        checkingLogin.value = false
+    val checkingLoginObserver = Observer<Boolean> {
+        checkingLogin = it
     }
+
+    var scores by remember { mutableStateOf<Pair<MutableList<BestUserScore>, Boolean>?>(null) }
+
+    val scoresObserver = Observer<Pair<MutableList<BestUserScore>, Boolean>> { newScores ->
+        scores = newScores
+    }
+
+    viewModel.checkingLogin.observe(lifecycleOwner, checkingLoginObserver)
+    viewModel.checkLogin.observe(lifecycleOwner, checkLoginObserver)
+    viewModel.scores.observe(lifecycleOwner, scoresObserver)
+
     Column (
         modifier = Modifier.fillMaxSize()
     ) {
-        if (checkingLogin.value) {
+        if (checkingLogin) {
             YouSpinMeRightRoundBabyRightRound("Check if you logged in...")
         } else {
-            if (checkLogin.value) {
-                scope.launch {
-                    val bgs = readBgJson(context)
-                    scores.value = RequestHandler.getBestUserScores(
-                        pref.getData("cookies", ""),
-                        pref.getData("ua", ""),
-                        bgs = bgs
-                    )
-                }
-                if (scores.value.first.isNotEmpty()) {
-                    LazyBestScoreMini(scores.value, onRefresh = {
-                        scope.launch {
-                            val bgs = readBgJson(context)
-                            scores.value.first.clear()
-                            scores.value = RequestHandler.getBestUserScores(
-                                pref.getData("cookies", ""),
-                                pref.getData("ua", ""),
-                                bgs = bgs
-                            )
-                        }
-                    })
+            if (checkLogin) {
+                if (scores?.first?.isNotEmpty() == true) {
+                    LazyBestScore(scores!!)
                 }
                 else
                 {
                     YouSpinMeRightRoundBabyRightRound("Getting best scores...")
                 }
+            } else {
+                MyAlertDialog(
+                    showDialog = true,
+                    title = "Login failed!",
+                    content = "You need to authorize",
+                    onDismiss = {
+                        navControllerGlobal.navigate(Screen.LoginWebViewScreen.route) {
+                            popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        }
+                    }
+                )
             }
         }
     }

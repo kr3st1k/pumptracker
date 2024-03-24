@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.screens.components.home.scores
+package dev.kr3st1k.piucompanion.screens.components.home.scores.best
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
@@ -30,7 +30,6 @@ import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 import dev.kr3st1k.piucompanion.objects.BgInfo
-import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.readBgJson
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
@@ -38,33 +37,11 @@ import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LazyLatestScoreMini(scores: MutableList<LatestScore>, onRefresh: () -> Unit) {
-    val isRefreshing by remember {
-        mutableStateOf(false)
-    }
-
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
-    Box (
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        LazyColumn(modifier = Modifier.pullRefresh(state)) {
-            items(scores.toList()) { data ->
-                MiniScore(data)
-            }
-        }
-        PullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = state
-        )
-    }
-}
-
+// This whole file is pretty much Bicycle...
 @SuppressLint("MutableCollectionMutableState", "CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefresh: () -> Unit) {
+fun LazyBestScore(scores: Pair<MutableList<BestUserScore>, Boolean>) {
     val isRefreshing by remember {
         mutableStateOf(false)
     }
@@ -185,7 +162,7 @@ fun LazyBestScoreMini(scores: Pair<MutableList<BestUserScore>, Boolean>, onRefre
             }
         }
     }
-    Box (
+    Box(
         contentAlignment = Alignment.TopCenter,
     ) {
         LaunchedEffect(listState) {

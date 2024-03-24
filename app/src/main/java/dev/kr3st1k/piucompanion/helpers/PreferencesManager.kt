@@ -3,7 +3,7 @@ package dev.kr3st1k.piucompanion.helpers
 import android.content.Context
 import android.content.SharedPreferences
 
-class PreferencesManager(context: Context) {
+class PreferencesManager(var context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("Stuff_pref", Context.MODE_PRIVATE)
 

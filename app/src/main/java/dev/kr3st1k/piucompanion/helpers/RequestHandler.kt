@@ -42,8 +42,17 @@ object RequestHandler {
                     Cookie(cookieList[2], cookieList[3], domain = ".am-pass.net"),
                     Cookie(cookieList[2], cookieList[3], domain = ".piugame.com"),
                     Cookie(cookieList[4], cookieList[5], domain = ".am-pass.net"),
+                    Cookie(cookieList[4], cookieList[5], domain = ".piugame.com"),
                     Cookie(cookieList[6], cookieList[7], domain = ".piugame.com"),
-                    Cookie(cookieList[6], cookieList[7], domain = ".am-pass.net")
+                    Cookie(cookieList[6], cookieList[7], domain = ".am-pass.net"),
+                    Cookie(cookieList[8], cookieList[9], domain = ".piugame.com"),
+                    Cookie(cookieList[8], cookieList[9], domain = ".am-pass.net"),
+                    Cookie(cookieList[10], cookieList[11], domain = ".piugame.com"),
+                    Cookie(cookieList[10], cookieList[11], domain = ".am-pass.net"),
+                    Cookie(cookieList[12], cookieList[13], domain = ".piugame.com"),
+                    Cookie(cookieList[12], cookieList[13], domain = ".am-pass.net"),
+                    Cookie(cookieList[14], cookieList[15], domain = ".piugame.com"),
+                    Cookie(cookieList[14], cookieList[15], domain = ".am-pass.net")
                 )
 
 
@@ -110,16 +119,12 @@ object RequestHandler {
 
     suspend fun checkIfLoginSuccess(cookie: String, ua: String): Boolean {
 
-        println(cookie.split(";").size)
-
         if (cookie == "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c"
             || cookie == ""
         )
             return false
 
         val client = getClientWithCookies(cookie, ua)
-
-        println(ua);
 
         val t = client.get("https://am-pass.net")
         val stringBody: String = t.body()
@@ -233,8 +238,6 @@ object RequestHandler {
         for (element in scores) {
 
             val songName = element.select("div.song_name").select("p").first()!!.text()
-
-            print(songName)
             var bg = bgs.find { tt -> tt.song_name == songName }?.jacket
             if (bg == null)
                 bg = "https://www.piugame.com/l_img/bg1.png"

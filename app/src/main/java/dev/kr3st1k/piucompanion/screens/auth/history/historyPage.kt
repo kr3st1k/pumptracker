@@ -19,7 +19,7 @@ import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.screens.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.screens.components.home.scores.LazyLatestScoreMini
+import dev.kr3st1k.piucompanion.screens.components.home.scores.latest.LazyLatestScore
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -62,7 +62,7 @@ fun HistoryPage(
         } else {
             if (checkLogin) {
                 if (scores?.isNotEmpty() == true) {
-                    LazyLatestScoreMini(scores!!, onRefresh = { viewModel.refreshScores() })
+                    LazyLatestScore(scores!!, onRefresh = { viewModel.refreshScores() })
                 } else {
                     YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
                 }
@@ -72,7 +72,9 @@ fun HistoryPage(
                     title = "Login failed!",
                     content = "You need to authorize",
                     onDismiss = {
-                        navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
+                        navControllerGlobal.navigate(Screen.LoginWebViewScreen.route) {
+                            popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        }
                     }
                 )
             }

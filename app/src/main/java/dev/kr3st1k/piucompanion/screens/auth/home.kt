@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.screens.auth.home
+package dev.kr3st1k.piucompanion.screens.auth
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +21,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.objects.TopLevelDestination
+import dev.kr3st1k.piucompanion.screens.HomeNavHost
 import dev.kr3st1k.piucompanion.screens.Screen
 import dev.kr3st1k.piucompanion.screens.components.home.HomeBottomBar
 
@@ -76,7 +77,6 @@ fun HomeScreen(
                 HomeBottomBar(destinations = topLevelDestinations,
                     currentDestination = navControllerLocal.currentBackStackEntryAsState().value?.destination,
                     onNavigateToDestination = {
-                        println(it)
 
                         val tt = topLevelDestinations.find { t -> t.route == it };
 
