@@ -1,12 +1,12 @@
 package dev.kr3st1k.piucompanion.helpers
 
+import dev.kr3st1k.piucompanion.components.Utils
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 import dev.kr3st1k.piucompanion.objects.BgInfo
 import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
 import dev.kr3st1k.piucompanion.objects.User
-import dev.kr3st1k.piucompanion.screens.components.Utils
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.cookies.ConstantCookiesStorage

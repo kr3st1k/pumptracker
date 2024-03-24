@@ -10,12 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.kr3st1k.piucompanion.screens.auth.HomeScreen
-import dev.kr3st1k.piucompanion.screens.auth.best.BestUserPage
-import dev.kr3st1k.piucompanion.screens.auth.history.HistoryPage
-import dev.kr3st1k.piucompanion.screens.auth.user.UserScreen
-import dev.kr3st1k.piucompanion.screens.unauth.LoginWebViewScreen
-import dev.kr3st1k.piucompanion.screens.unauth.news.NewsScreen
+import dev.kr3st1k.piucompanion.screens.home.HomeScreen
+import dev.kr3st1k.piucompanion.screens.home.best.BestUserPage
+import dev.kr3st1k.piucompanion.screens.home.history.HistoryPage
+import dev.kr3st1k.piucompanion.screens.home.news.NewsScreen
+import dev.kr3st1k.piucompanion.screens.home.user.UserScreen
+import dev.kr3st1k.piucompanion.screens.login.LoginWebViewScreen
 
 @Composable
 fun Navigation() {
