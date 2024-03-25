@@ -20,9 +20,8 @@ import dev.kr3st1k.piucompanion.components.home.news.NewsSlider
 @Composable
 fun NewsScreen(navController: NavController, lifecycleOwner: LifecycleOwner) {
     val viewModel = viewModel<NewsViewModel>()
-
-    var newsBanners = Utils.rememberLiveData(viewModel.newsBanners, lifecycleOwner, null)
-    var news = Utils.rememberLiveData(viewModel.news, lifecycleOwner, null)
+    val newsBanners = Utils.rememberLiveData(viewModel.newsBanners, lifecycleOwner, null)
+    val news = Utils.rememberLiveData(viewModel.news, lifecycleOwner, null)
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (newsBanners.value.isNullOrEmpty()) {
