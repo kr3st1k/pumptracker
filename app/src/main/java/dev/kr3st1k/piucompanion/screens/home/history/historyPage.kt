@@ -62,7 +62,7 @@ fun HistoryPage(
         } else {
             if (checkLogin) {
                 if (scores?.isNotEmpty() == true) {
-                    LazyLatestScore(scores!!, onRefresh = { viewModel.refreshScores() })
+                    LazyLatestScore(scores!!, onRefresh = { viewModel.loadScores() })
                 } else {
                     YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
                 }

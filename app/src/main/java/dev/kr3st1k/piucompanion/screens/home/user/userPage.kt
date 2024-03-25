@@ -2,9 +2,6 @@ package dev.kr3st1k.piucompanion.screens.home.user
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +13,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.components.Button
 import dev.kr3st1k.piucompanion.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.components.home.users.UserCard
@@ -65,45 +61,45 @@ fun UserScreen(
             if (user.trueUser) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     UserCard(user)
-                    Button(
-                        icon = Icons.Default.Info,
-                        title = "Здесь фиг знает че сунуть",
-                        summary = "Лучшие скоры будут снизу, мб всякие топы с сайта",
-                        onClick = {}
-                    )
-                    Button(
-                        icon = Icons.Default.Info,
-                        title = "Titles",
-                        summary = "wow. button",
-                        onClick = {}
-                    )
-                    Button(
-                        icon = Icons.Default.Info,
-                        title = "Avatar Shop",
-                        summary = "wow. button",
-                        onClick = {}
-                    )
-                    Button(
-                        icon = Icons.Default.Settings,
-                        title = "Settings",
-                        summary = "wow. button",
-                        onClick = {}
-                    )
-                    Button(
-                        icon = Icons.Default.Info,
-                        title = "Logout from account",
-                        summary = "wow. button",
-                        onClick = {
-                            viewModel.logout(pref)
-                            navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
-                        }
-                    )
-                    Button(
-                        icon = Icons.Default.Info,
-                        title = "About",
-                        summary = "wow. button",
-                        onClick = {}
-                    )
+//                    Button(
+//                        icon = Icons.Default.Info,
+//                        title = "Placeholder",
+//                        summary = "Placeholder",
+//                        onClick = {}
+//                    )
+//                    Button(
+//                        icon = Icons.Default.Info,
+//                        title = "Titles",
+//                        summary = "wow. button",
+//                        onClick = {}
+//                    )
+//                    Button(
+//                        icon = Icons.Default.Info,
+//                        title = "Avatar Shop",
+//                        summary = "wow. button",
+//                        onClick = {}
+//                    )
+//                    Button(
+//                        icon = Icons.Default.Settings,
+//                        title = "Settings",
+//                        summary = "wow. button",
+//                        onClick = {}
+//                    )
+//                    Button(
+//                        icon = Icons.Default.Info,
+//                        title = "Logout from account",
+//                        summary = "wow. button",
+//                        onClick = {
+//                            viewModel.logout(pref)
+//                            navControllerGlobal.navigate(Screen.NewsPage.route)
+//                        }
+//                    )
+//                    Button(
+//                        icon = Icons.Default.Info,
+//                        title = "About",
+//                        summary = "wow. button",
+//                        onClick = {}
+//                    )
                 }
             } else {
                 YouSpinMeRightRoundBabyRightRound("Getting User Info...")

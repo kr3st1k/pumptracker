@@ -23,8 +23,10 @@ class HistoryViewModel(private val pref: PreferencesManager) : ViewModel() {
         loadScores()
     }
 
-    private fun loadScores() {
+    fun loadScores() {
         viewModelScope.launch {
+            _checkingLogin.value = true
+            scores.value = mutableListOf()
             _checkLogin.value = RequestHandler.checkIfLoginSuccess(
                 pref.getData("cookies", ""),
                 pref.getData("ua", "")
@@ -37,17 +39,6 @@ class HistoryViewModel(private val pref: PreferencesManager) : ViewModel() {
                     50
                 )
             }
-        }
-    }
-
-    fun refreshScores() {
-        viewModelScope.launch {
-            scores.value = mutableListOf()
-            scores.value = RequestHandler.getLatestScores(
-                pref.getData("cookies", ""),
-                pref.getData("ua", ""),
-                50
-            )
         }
     }
 }

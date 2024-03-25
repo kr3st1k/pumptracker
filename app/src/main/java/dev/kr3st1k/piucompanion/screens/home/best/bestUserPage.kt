@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.components.YouSpinMeRightRoundBabyRightRound
+import dev.kr3st1k.piucompanion.components.home.scores.best.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.components.home.scores.best.LazyBestScore
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 import dev.kr3st1k.piucompanion.screens.Screen
@@ -46,25 +47,50 @@ fun BestUserPage(
         checkingLogin = it
     }
 
-    var scores by remember { mutableStateOf<Pair<MutableList<BestUserScore>, Boolean>?>(null) }
+    var isRecent by remember {
+        mutableStateOf(false)
+    }
+    val isRecentObserver = Observer<Boolean> {
+        isRecent = it
+    }
 
-    val scoresObserver = Observer<Pair<MutableList<BestUserScore>, Boolean>> { newScores ->
+    var selectedOption by remember {
+        mutableStateOf(Pair("All", ""))
+    }
+    val selectedOptionObserver = Observer<Pair<String, String>> {
+        selectedOption = it
+    }
+
+    var scores by remember { mutableStateOf<List<BestUserScore>?>(null) }
+
+    val scoresObserver = Observer<List<BestUserScore>> { newScores ->
         scores = newScores
     }
 
     viewModel.checkingLogin.observe(lifecycleOwner, checkingLoginObserver)
     viewModel.checkLogin.observe(lifecycleOwner, checkLoginObserver)
     viewModel.scores.observe(lifecycleOwner, scoresObserver)
+    viewModel.isRecent.observe(lifecycleOwner, isRecentObserver)
+    viewModel.selectedOption.observe(lifecycleOwner, selectedOptionObserver)
 
     Column (
         modifier = Modifier.fillMaxSize()
     ) {
+        DropdownMenuBestScores(
+            viewModel.options,
+            selectedOption,
+            onUpdate = { viewModel.refreshScores(it) })
         if (checkingLogin) {
             YouSpinMeRightRoundBabyRightRound("Check if you logged in...")
         } else {
             if (checkLogin) {
-                if (scores?.first?.isNotEmpty() == true) {
-                    LazyBestScore(scores!!)
+                if (scores?.isNotEmpty() == true) {
+                    LazyBestScore(
+                        scores!!,
+                        onRefresh = { viewModel.loadScores() },
+                        onLoadNext = { viewModel.addScores() },
+                        isRecent = isRecent
+                    )
                 }
                 else
                 {

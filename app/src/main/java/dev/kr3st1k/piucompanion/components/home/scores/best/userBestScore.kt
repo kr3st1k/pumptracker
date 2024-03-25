@@ -34,7 +34,7 @@ import coil.request.ImageRequest
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 
 @Composable
-fun MiniBestScore(score: BestUserScore)
+fun BestScore(score: BestUserScore)
 {
     Card(
         modifier = Modifier
