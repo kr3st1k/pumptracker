@@ -29,8 +29,7 @@ fun UserScreen(
 
     val context = LocalContext.current
     val pref = PreferencesManager(context)
-    val viewModelFactory = UserViewModelFactory(pref)
-    val viewModel = viewModel<UserViewModel>(factory = viewModelFactory)
+    val viewModel = viewModel<UserViewModel>(factory = UserViewModelFactory(pref))
 
     var checkingLogin by remember {
         mutableStateOf(true)

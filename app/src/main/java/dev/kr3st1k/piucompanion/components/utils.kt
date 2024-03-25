@@ -1,5 +1,13 @@
 package dev.kr3st1k.piucompanion.components
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -18,6 +26,27 @@ object Utils
     fun parseDifficultyFromUri(uri: String): String? = getFirstRegex(DIFFICULTY, uri)
 
     fun parseRankFromUri(uri: String): String? = getFirstRegex(RANK, uri)
+
+    @Composable
+    fun <T> rememberLiveData(
+        liveData: LiveData<T>,
+        lifecycleOwner: LifecycleOwner,
+        initialValue: T,
+    ): State<T> {
+        val state = remember { mutableStateOf(initialValue) }
+        DisposableEffect(lifecycleOwner, liveData) {
+            val observer = Observer<T> { value ->
+                state.value = value
+            }
+            liveData.observe(lifecycleOwner, observer)
+
+            onDispose {
+                liveData.removeObserver(observer)
+            }
+        }
+        return state
+    }
+
 
     fun parseTypeDifficultyFromUri(uri: String): String? = getFirstRegex(DIFFICULTYTYPE, uri)
 

@@ -1,6 +1,5 @@
 package dev.kr3st1k.piucompanion.screens.home.scores.best
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,16 +8,17 @@ import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.BestUserScore
-import dev.kr3st1k.piucompanion.objects.readBgJson
+import dev.kr3st1k.piucompanion.objects.BgInfo
 import kotlinx.coroutines.launch
 
-class BestUserViewModel(private val context: Context) : ViewModel() {
-
-    val pref = PreferencesManager(context)
-
-    var bgs = readBgJson(context)
+class BestUserViewModel(
+    private val pref: PreferencesManager,
+    private val bgsFunc: () -> MutableList<BgInfo>,
+) : ViewModel() {
 
     private val _isFirstTime = MutableLiveData(true)
+
+    private var bgs = bgsFunc()
 
     private val _checkLogin = MutableLiveData(false)
     val checkLogin: LiveData<Boolean> = _checkLogin
@@ -81,7 +81,7 @@ class BestUserViewModel(private val context: Context) : ViewModel() {
                 _isFirstTime.value = false
             }
             if (checkLogin.value == true) {
-                bgs = readBgJson(context)
+                bgs = bgsFunc()
                 val newScores = RequestHandler.getBestUserScores(
                     pref.getData("cookies", ""),
                     pref.getData("ua", ""),
@@ -124,11 +124,14 @@ class BestUserViewModel(private val context: Context) : ViewModel() {
 
 }
 
-class BestUserViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+class BestUserViewModelFactory(
+    private val pref: PreferencesManager,
+    private val bgsFunc: () -> MutableList<BgInfo>,
+) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(BestUserViewModel::class.java)) {
-            return BestUserViewModel(context) as T
+            return BestUserViewModel(pref, bgsFunc) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
