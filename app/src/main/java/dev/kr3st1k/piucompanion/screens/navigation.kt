@@ -11,9 +11,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.kr3st1k.piucompanion.screens.home.HomeScreen
-import dev.kr3st1k.piucompanion.screens.home.best.BestUserPage
-import dev.kr3st1k.piucompanion.screens.home.history.HistoryPage
 import dev.kr3st1k.piucompanion.screens.home.news.NewsScreen
+import dev.kr3st1k.piucompanion.screens.home.scores.best.BestUserPage
+import dev.kr3st1k.piucompanion.screens.home.scores.history.HistoryPage
 import dev.kr3st1k.piucompanion.screens.home.user.UserScreen
 import dev.kr3st1k.piucompanion.screens.login.LoginWebViewScreen
 

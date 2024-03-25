@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.screens.home.history
+package dev.kr3st1k.piucompanion.screens.home.scores.history
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.screens.home.best
+package dev.kr3st1k.piucompanion.screens.home.scores.best
 
 import android.content.Context
 import androidx.lifecycle.LiveData
