@@ -27,10 +27,8 @@ class BestUserViewModel(private val context: Context) : ViewModel() {
     val checkingLogin: LiveData<Boolean> = _checkingLogin
 
     private val _addingScores = MutableLiveData(false)
-    val addingScores: LiveData<Boolean> = _addingScores
 
     var _pages = MutableLiveData(3)
-    var pages: LiveData<Int> = _pages
 
     var _selectedOption = MutableLiveData(Pair("All", ""))
     val selectedOption: LiveData<Pair<String, String>> = _selectedOption
