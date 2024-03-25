@@ -3,17 +3,13 @@ package dev.kr3st1k.piucompanion.screens.home.user
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.components.MyAlertDialog
+import dev.kr3st1k.piucompanion.components.Utils
 import dev.kr3st1k.piucompanion.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
@@ -31,35 +27,20 @@ fun UserScreen(
     val pref = PreferencesManager(context)
     val viewModel = viewModel<UserViewModel>(factory = UserViewModelFactory(pref))
 
-    var checkingLogin by remember {
-        mutableStateOf(true)
-    }
-    val checkingLoginObserver = Observer<Boolean> {
-        checkingLogin = it
-    }
-    var checkLogin by remember {
-        mutableStateOf(false)
-    }
-    val checkLoginObserver = Observer<Boolean> {
-        checkLogin = it
-    }
-    var user by remember {
-        mutableStateOf(User())
-    }
-    val userObserver = Observer<User> {
-        user = it
-    }
-    viewModel.checkingLogin.observe(lifecycleOwner, checkingLoginObserver)
-    viewModel.checkLogin.observe(lifecycleOwner, checkLoginObserver)
-    viewModel.user.observe(lifecycleOwner, userObserver)
+    val checkLogin =
+        Utils.rememberLiveData(viewModel.checkLogin, lifecycleOwner, initialValue = false)
+    val checkingLogin =
+        Utils.rememberLiveData(viewModel.checkingLogin, lifecycleOwner, initialValue = true)
+    val user =
+        Utils.rememberLiveData(viewModel.user, lifecycleOwner, initialValue = User())
 
-    if (checkingLogin) {
+    if (checkingLogin.value) {
         YouSpinMeRightRoundBabyRightRound("Checking if you're logged in...")
     } else {
-        if (checkLogin) {
-            if (user.trueUser) {
+        if (checkLogin.value) {
+            if (user.value.trueUser) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    UserCard(user)
+                    UserCard(user.value)
 //                    Button(
 //                        icon = Icons.Default.Info,
 //                        title = "Placeholder",
