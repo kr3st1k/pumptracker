@@ -44,11 +44,10 @@ class PIUCompanion : Application(), ImageLoaderFactory {
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory(cacheDir.resolve("image_cache"))
+                    .directory(filesDir.resolve("image_cache"))
                     .maxSizeBytes(1500 * 1024 * 1024)
                     .build()
             }
-            .respectCacheHeaders(false)
             .build()
     }
 }

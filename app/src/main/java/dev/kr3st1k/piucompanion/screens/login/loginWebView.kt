@@ -2,6 +2,7 @@ package dev.kr3st1k.piucompanion.screens.login
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.util.Base64
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -40,8 +41,13 @@ import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
+import dev.kr3st1k.piucompanion.objects.CookieData
 import dev.kr3st1k.piucompanion.screens.Screen
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,21 +79,40 @@ fun LoginWebViewScreen(navController: NavController) {
 
                     val cookieManager = CookieManager.getInstance()
 
-                    val cookies = cookieManager.getCookie("https://am-pass.net")
+                    var cookies = cookieManager.getCookie("https://am-pass.net")
+
                     if (cookies == null) {
                         showDialog = true
                     } else {
                         scope.launch {
                             if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
+                                val uri = HttpUrl.Builder()
+                                    .scheme("https")
+                                    .host("am-pass.net")
+                                    .build();
+                                val uri2 = HttpUrl.Builder()
+                                    .scheme("https")
+                                    .host("www.piugame.com")
+                                    .build();
+                                val uri3 = HttpUrl.Builder()
+                                    .scheme("https")
+                                    .host("api.am-pass.net")
+                                    .build();
+                                val parsedCookies =
+                                    cookies.split(";").map { Cookie.parse(uri, it) }.toMutableList()
+                                parsedCookies += cookies.split(";").map { Cookie.parse(uri2, it) }
+                                cookies = cookieManager.getCookie("https://api.am-pass.net")
+                                parsedCookies += cookies.split(";").map { Cookie.parse(uri3, it) }
+                                val base64Json = parsedCookies.toJson().toBase64()
                                 val t = webView?.settings?.userAgentString?.let {
                                     RequestHandler.checkIfLoginSuccess(
-                                        cookies,
+                                        base64Json,
                                         it
                                     )
                                 }
 
                                 if (t!!) {
-                                    pref.saveData("cookies", cookies)
+                                    pref.saveData("cookies", base64Json)
                                     webView?.settings?.let {
                                         pref.saveData(
                                             "ua",
@@ -136,24 +161,53 @@ fun LoginWebViewScreen(navController: NavController) {
                             super.onPageFinished(view, url)
                             isLoading.value = false
                             view.setWebChromeClient(WebChromeClient());
-//                            view.evaluateJavascript("document.querySelector(\"#login_auto_login\").checked = \"true\"", null)
-//                            view.evaluateJavascript("if (!window.eruda) {let parent = document.head || document.documentElement; let script = parent.appendChild(document.createElement('script')); script.src = 'https://cdn.jsdelivr.net/npm/eruda'; script.onload = () => eruda.init();}", null);
+                            view.evaluateJavascript(
+                                "document.querySelector(\"#login_auto_login\").checked = \"true\"",
+                                null
+                            )
+                            view.evaluateJavascript(
+                                "if (!window.eruda) {let parent = document.head || document.documentElement; let script = parent.appendChild(document.createElement('script')); script.src = 'https://cdn.jsdelivr.net/npm/eruda'; script.onload = () => eruda.init();}",
+                                null
+                            );
                             scope.launch {
                                 val cookieManager = CookieManager.getInstance()
 
-                                val cookies = cookieManager.getCookie("https://am-pass.net")
+                                var cookies = cookieManager.getCookie("https://am-pass.net")
                                 if (cookies != null) {
                                     if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
+                                        val uri = HttpUrl.Builder()
+                                            .scheme("https")
+                                            .host("am-pass.net")
+                                            .build();
+
+                                        val uri2 = HttpUrl.Builder()
+                                            .scheme("https")
+                                            .host("www.piugame.com")
+                                            .build();
+                                        val uri3 = HttpUrl.Builder()
+                                            .scheme("https")
+                                            .host("api.am-pass.net")
+                                            .build();
+                                        val parsedCookies =
+                                            cookies.split(";").map { Cookie.parse(uri, it) }
+                                                .toMutableList()
+                                        parsedCookies += cookies.split(";")
+                                            .map { Cookie.parse(uri2, it) }
+                                        cookies = cookieManager.getCookie("https://api.am-pass.net")
+                                        parsedCookies += cookies.split(";")
+                                            .map { Cookie.parse(uri3, it) }
+                                        val base64Json = parsedCookies.toJson().toBase64()
                                         val t = webView?.settings?.userAgentString?.let {
 
                                             RequestHandler.checkIfLoginSuccess(
-                                                cookies,
+                                                base64Json,
                                                 it
                                             )
                                         }
 
                                         if (t!!) {
-                                            pref.saveData("cookies", cookies)
+
+                                            pref.saveData("cookies", base64Json)
                                             webView?.settings?.let {
                                                 pref.saveData(
                                                     "ua",
@@ -188,3 +242,21 @@ fun LoginWebViewScreen(navController: NavController) {
         }
     }
 }
+
+val json = Json { ignoreUnknownKeys = true }
+
+fun List<Cookie?>.toJson(): String = json.encodeToString(map {
+    it?.let { it1 ->
+        CookieData(
+            name = it1.name,
+            value = it.value,
+            domain = it.domain,
+            path = it.path,
+            secure = it.secure,
+            httpOnly = it.httpOnly,
+            expires = it.expiresAt
+        )
+    }
+})
+
+fun String.toBase64(): String = Base64.encodeToString(toByteArray(), Base64.DEFAULT)

@@ -27,6 +27,13 @@ class UserViewModel(
         checkLoginAndUser()
     }
 
+    //UNUSED
+    fun login() {
+        viewModelScope.launch {
+            RequestHandler.loginToAmPass("no@no.no", "nono", true)
+        }
+    }
+
     private fun checkLoginAndUser() {
         viewModelScope.launch {
             _checkLogin.value = RequestHandler.checkIfLoginSuccess(

@@ -1,20 +1,30 @@
 package dev.kr3st1k.piucompanion.helpers
 
+import android.util.Base64
 import dev.kr3st1k.piucompanion.components.Utils
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 import dev.kr3st1k.piucompanion.objects.BgInfo
+import dev.kr3st1k.piucompanion.objects.CookieData
 import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
 import dev.kr3st1k.piucompanion.objects.User
+import dev.kr3st1k.piucompanion.objects.WebViewCookieStorage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.cookies.ConstantCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
+import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Cookie
 import io.ktor.http.HttpHeaders
 import io.ktor.http.headers
+import io.ktor.http.parameters
+import io.ktor.util.date.GMTDate
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -22,44 +32,57 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.util.Locale
 
+val json = Json { ignoreUnknownKeys = true }
+
+fun String.fromJson(): List<Cookie> =
+    json.decodeFromString(ListSerializer(CookieData.serializer()), this).map {
+        Cookie(
+            name = it.name,
+            value = it.value,
+            domain = it.domain,
+            path = it.path,
+            secure = it.secure,
+            httpOnly = it.httpOnly,
+            expires = GMTDate(it.expires)
+        )
+    }
+
+fun String.fromBase64(): String = String(Base64.decode(this, Base64.DEFAULT))
+
+fun List<Cookie>.toJson(): String = dev.kr3st1k.piucompanion.screens.login.json.encodeToString(map {
+    CookieData(
+        name = it.name,
+        value = it.value,
+        domain = it.domain,
+        path = it.path!!,
+        secure = it.secure,
+        httpOnly = it.httpOnly,
+        expires = it.expires!!.timestamp
+    )
+})
+
+fun String.toBase64(): String = Base64.encodeToString(toByteArray(), Base64.DEFAULT)
+
+//import android.webkit.CookieManager
+//
+//suspend fun getCookiesFromWebView(url: String): List<Cookie> {
+//    val cookieManager = CookieManager.getInstance()
+//    val cookies = cookieManager.getCookie(url)
+//
+//}
+
 object RequestHandler {
     private fun getClientWithCookies(cookie: String, ua: String): HttpClient {
-        val pairs = cookie.split(";").filter { it.isNotEmpty() }
-        val cookieList = ArrayList<String>();
-        for (pair in pairs) {
-            val parts = pair.split("=")
-            if (parts.size == 2) {
-                cookieList.add(parts[0].trim())
-                cookieList.add(parts[1].trim())
-            }
-        }
 
-        val client = HttpClient {
+        val cookies = cookie.fromBase64().fromJson()
+
+        val client = HttpClient(OkHttp) {
             install(HttpCookies) {
-                storage = ConstantCookiesStorage(
-                    Cookie(cookieList[0], cookieList[1], domain = ".am-pass.net"),
-                    Cookie(cookieList[0], cookieList[1], domain = ".piugame.com"),
-                    Cookie(cookieList[2], cookieList[3], domain = ".am-pass.net"),
-                    Cookie(cookieList[2], cookieList[3], domain = ".piugame.com"),
-                    Cookie(cookieList[4], cookieList[5], domain = ".am-pass.net"),
-                    Cookie(cookieList[4], cookieList[5], domain = ".piugame.com"),
-                    Cookie(cookieList[6], cookieList[7], domain = ".piugame.com"),
-                    Cookie(cookieList[6], cookieList[7], domain = ".am-pass.net"),
-                    Cookie(cookieList[8], cookieList[9], domain = ".piugame.com"),
-                    Cookie(cookieList[8], cookieList[9], domain = ".am-pass.net"),
-                    Cookie(cookieList[10], cookieList[11], domain = ".piugame.com"),
-                    Cookie(cookieList[10], cookieList[11], domain = ".am-pass.net"),
-                    Cookie(cookieList[12], cookieList[13], domain = ".piugame.com"),
-                    Cookie(cookieList[12], cookieList[13], domain = ".am-pass.net"),
-                    Cookie(cookieList[14], cookieList[15], domain = ".piugame.com"),
-                    Cookie(cookieList[14], cookieList[15], domain = ".am-pass.net")
-                )
-
+                storage = WebViewCookieStorage(cookies)
 
                 headers {
                     append(HttpHeaders.UserAgent, ua)
                 }
-
 
             }
         }
@@ -87,7 +110,11 @@ object RequestHandler {
                     Cookie(cookieList[0], cookieList[1], domain = ".piugame.com"),
                     Cookie(cookieList[2], cookieList[3], domain = ".piugame.com"),
                     Cookie(cookieList[4], cookieList[5], domain = ".piugame.com"),
-                    Cookie(cookieList[6], cookieList[7], domain = ".piugame.com")
+                    Cookie(cookieList[6], cookieList[7], domain = ".piugame.com"),
+                    Cookie(cookieList[0], cookieList[1], domain = ".am-pass.net"),
+                    Cookie(cookieList[2], cookieList[3], domain = ".am-pass.net"),
+                    Cookie(cookieList[4], cookieList[5], domain = ".am-pass.net"),
+                    Cookie(cookieList[6], cookieList[7], domain = ".am-pass.net")
                 )
 
 
@@ -130,6 +157,26 @@ object RequestHandler {
         val stringBody: String = t.body()
         return stringBody.indexOf("bbs/logout.php") > 0;
     }
+
+    //UNUSED
+    suspend fun loginToAmPass(login: String, password: String, rememberMe: Boolean) {
+        val client = getClientWithSampleInfo()
+
+        val firstReq = this.getDocument(client, "https://am-pass.net")
+
+        val response: HttpResponse = client.submitForm(
+            url = "https://am-pass.net/bbs/login_check.php",
+            formParameters = parameters {
+                append("url", "/")
+                append("mb_id", login)
+                append("mb_password", password)
+                if (rememberMe)
+                    append("auto_login", "on")
+            }
+        )
+
+    }
+
 
     private fun getBackgroundImg(element: Element, addDomain: Boolean = true): String {
         val style = element.attr("style")
@@ -372,3 +419,4 @@ object RequestHandler {
         return res
     }
 }
+
