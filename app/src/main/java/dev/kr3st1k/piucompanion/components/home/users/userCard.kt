@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +23,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
@@ -82,24 +82,24 @@ fun UserCard(user: User)
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     text = user.titleName,
-                    fontSize = 16.sp,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
                 Text(
                     text = user.username,
-                    fontSize = 24.sp,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     textAlign = TextAlign.Center,
                     color = Color.White,
                 )
                 Text(
                     text = user.recentGameAccess,
-                    fontSize = 18.sp,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
                     color = Color.Gray
                 )
                 Text(
                     text = "$${user.coinValue}",
-                    fontSize = 18.sp,
+                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
                     color = Color.Green
                 )
             }

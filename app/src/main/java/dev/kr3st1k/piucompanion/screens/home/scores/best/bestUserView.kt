@@ -13,12 +13,12 @@ import kotlinx.coroutines.launch
 
 class BestUserViewModel(
     private val pref: PreferencesManager,
-    private val bgsFunc: () -> MutableList<BgInfo>,
+    private val bgs: () -> MutableList<BgInfo>,
 ) : ViewModel() {
 
     private val _isFirstTime = MutableLiveData(true)
 
-    private var bgs = bgsFunc()
+    private var _bgs = MutableLiveData(bgs())
 
     private val _checkLogin = MutableLiveData(false)
     val checkLogin: LiveData<Boolean> = _checkLogin
@@ -81,11 +81,11 @@ class BestUserViewModel(
                 _isFirstTime.value = false
             }
             if (checkLogin.value == true) {
-                bgs = bgsFunc()
+                _bgs = MutableLiveData(bgs())
                 val newScores = RequestHandler.getBestUserScores(
                     pref.getData("cookies", ""),
                     pref.getData("ua", ""),
-                    bgs = bgs,
+                    bgs = _bgs.value!!,
                     lvl = selectedOption.value!!.second
                 )
                 scores.value = newScores.first.toList()
@@ -106,11 +106,12 @@ class BestUserViewModel(
     fun addScores() {
         if (_addingScores.value == false) {
             viewModelScope.launch {
+                _bgs = MutableLiveData(bgs())
                 _addingScores.value = true
                 val additionalScores = RequestHandler.getBestUserScores(
                     pref.getData("cookies", ""),
                     pref.getData("ua", ""),
-                    bgs = bgs,
+                    bgs = _bgs.value!!,
                     lvl = _selectedOption.value!!.second,
                     page = _pages.value
                 )

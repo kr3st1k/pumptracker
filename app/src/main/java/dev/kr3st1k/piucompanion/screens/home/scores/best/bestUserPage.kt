@@ -15,6 +15,7 @@ import dev.kr3st1k.piucompanion.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.components.home.scores.best.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.components.home.scores.best.LazyBestScore
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
+import dev.kr3st1k.piucompanion.objects.checkAndSaveNewUpdatedFiles
 import dev.kr3st1k.piucompanion.objects.readBgJson
 import dev.kr3st1k.piucompanion.screens.Screen
 
@@ -26,6 +27,8 @@ fun BestUserPage(
 )
 {
     val context = LocalContext.current
+
+    checkAndSaveNewUpdatedFiles(context)
 
     val viewModel = viewModel<BestUserViewModel>(
         factory = BestUserViewModelFactory(

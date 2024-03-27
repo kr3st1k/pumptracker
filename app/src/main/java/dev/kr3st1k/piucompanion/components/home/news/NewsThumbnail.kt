@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
 
 @Composable
@@ -27,7 +26,6 @@ fun NewsThumbnail(news: NewsThumbnailObject)
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(start = 30.dp, end = 30.dp, top = 14.dp)
-        .height(78.dp)
         .clickable {
             val customTabsIntent = CustomTabsIntent
                 .Builder()
@@ -46,7 +44,7 @@ fun NewsThumbnail(news: NewsThumbnailObject)
             ) {
                 Text(
                     text = news.name,
-                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center
                 )
             }

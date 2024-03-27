@@ -15,6 +15,7 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.cookies.ConstantCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
+import io.ktor.client.plugins.cookies.cookies
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
@@ -155,6 +156,11 @@ object RequestHandler {
 
         val t = client.get("https://am-pass.net")
         val stringBody: String = t.body()
+
+        val tt = client.cookies("https://am-pass.net")
+
+        val ttt = t.headers
+
         return stringBody.indexOf("bbs/logout.php") > 0;
     }
 

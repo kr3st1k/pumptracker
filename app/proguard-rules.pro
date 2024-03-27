@@ -20,13 +20,13 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--repackageclasses
--allowaccessmodification
--optimizations
--optimizationpasses 5
--keepattributes SourceFile, LineNumberTable
--keep,allowoptimization class dev.kr3st1k.piucompanion.helpers.**, dev.kr3st1k.piucompanion.objects.** {
-  public <fields>;
-  public <methods>;
-  public <init>(...);
-}
+#-repackageclasses
+#-allowaccessmodification
+#-optimizations
+#-optimizationpasses 5
+#-keepattributes SourceFile, LineNumberTable
+#-keep,allowoptimization class dev.kr3st1k.piucompanion.helpers.**, dev.kr3st1k.piucompanion.objects.** {
+#  public <fields>;
+#  public <methods>;
+#  public <init>(...);
+#}
