@@ -264,6 +264,7 @@ object RequestHandler {
         val titleName = profileTitleAndName.first()!!.text()
         val username = profileTitleAndName.last()!!.text()
         val recentGame = t.select("div.time_w").select("li").last()!!.text()
+            .replace("Recently Access Games : ", "")
         val coinValue = t.select("i.tt.en").first()!!.text()
 
         return User(username, titleName, backgroundUri, avatarUri, recentGame, coinValue, true)
