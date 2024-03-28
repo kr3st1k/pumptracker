@@ -112,8 +112,6 @@ object RequestHandler {
                 val parsedCookies =
                     cookies.split(";").map { okhttp3.Cookie.parse(uri, it) }
                         .toMutableList()
-                parsedCookies += cookies.split(";")
-                    .map { okhttp3.Cookie.parse(uri2, it) }
                 cookies = cookieManager.getCookie("https://api.am-pass.net")
                 parsedCookies += cookies.split(";")
                     .map { okhttp3.Cookie.parse(uri3, it) }
