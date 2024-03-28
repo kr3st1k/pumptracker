@@ -13,7 +13,7 @@ import dev.kr3st1k.piucompanion.objects.WebViewCookieStorage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.cookies.ConstantCookiesStorage
+import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.cookies.cookies
 import io.ktor.client.request.forms.submitForm
@@ -33,7 +33,7 @@ import org.jsoup.select.Elements
 import java.util.Locale
 
 
-fun MutableList<okhttp3.Cookie?>.toKtorCookie(): List<Cookie> =
+fun MutableList<okhttp3.Cookie?>.toKtorCookie(): MutableList<Cookie> =
     this.map {
         Cookie(
             name = it?.name ?: "",
@@ -44,7 +44,7 @@ fun MutableList<okhttp3.Cookie?>.toKtorCookie(): List<Cookie> =
             httpOnly = it?.httpOnly ?: false,
             expires = GMTDate(it?.expiresAt ?: 1)
         )
-    }
+    }.toMutableList()
 
 //fun String.fromBase64(): String = String(Base64.decode(this, Base64.DEFAULT))
 //
@@ -76,23 +76,22 @@ object RequestHandler {
         val cookies = getCookiesFromWebView()
 
         if (cookies.isEmpty())
-            return getClientWithSampleInfo()
+            return getClientSample()
 
         val client = HttpClient(OkHttp) {
             install(HttpCookies) {
                 storage = WebViewCookieStorage(cookies)
-
                 headers {
                     append(HttpHeaders.UserAgent, MainActivity.userAgent)
                 }
-
             }
+            followRedirects = true
         }
         return client
     }
 
 
-    private fun getCookiesFromWebView(): List<Cookie> {
+    private fun getCookiesFromWebView(): MutableList<Cookie> {
         val cookieManager = CookieManager.getInstance()
         var cookies = cookieManager.getCookie("https://am-pass.net")
         if (cookies != null) {
@@ -124,40 +123,18 @@ object RequestHandler {
         return mutableListOf()
     }
 
-    private fun getClientWithSampleInfo(): HttpClient {
-        val cookie = "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c"
+    private fun getClientSample(): HttpClient {
 
-        val pairs = cookie.split(";").filter { it.isNotEmpty() }
-        val cookieList = ArrayList<String>();
-        for (pair in pairs) {
-            val parts = pair.split("=")
-            if (parts.size == 2) {
-                cookieList.add(parts[0].trim())
-                cookieList.add(parts[1].trim())
-            }
-        }
-
-        val client = HttpClient {
+        val client = HttpClient(OkHttp) {
             install(HttpCookies) {
-                storage = ConstantCookiesStorage(
-                    Cookie(cookieList[0], cookieList[1], domain = ".piugame.com"),
-                    Cookie(cookieList[2], cookieList[3], domain = ".piugame.com"),
-                    Cookie(cookieList[4], cookieList[5], domain = ".piugame.com"),
-                    Cookie(cookieList[6], cookieList[7], domain = ".piugame.com"),
-                    Cookie(cookieList[0], cookieList[1], domain = ".am-pass.net"),
-                    Cookie(cookieList[2], cookieList[3], domain = ".am-pass.net"),
-                    Cookie(cookieList[4], cookieList[5], domain = ".am-pass.net"),
-                    Cookie(cookieList[6], cookieList[7], domain = ".am-pass.net")
-                )
-
-
+                storage = AcceptAllCookiesStorage()
                 headers {
                     append(HttpHeaders.UserAgent, MainActivity.userAgent)
                 }
-
-
             }
+            followRedirects = true
         }
+
         return client
     }
 
@@ -192,7 +169,7 @@ object RequestHandler {
 
     //UNUSED
     suspend fun loginToAmPass(login: String, password: String, rememberMe: Boolean) {
-        val client = getClientWithSampleInfo()
+        val client = getClientSample()
 
         val firstReq = this.getDocument(client, "https://am-pass.net")
 
@@ -223,7 +200,7 @@ object RequestHandler {
     }
 
     suspend fun getNewsBanners(): MutableList<NewsBanner> {
-        val client = getClientWithSampleInfo()
+        val client = getClientSample()
 
         val t = this.getDocument(client, "https://www.piugame.com")
 
@@ -250,7 +227,7 @@ object RequestHandler {
     }
 
     suspend fun getNewsList(): MutableList<NewsThumbnailObject> {
-        val client = getClientWithSampleInfo()
+        val client = getClientSample()
         val res: MutableList<NewsThumbnailObject> = mutableListOf();
 
         val t = this.getDocument(client, "https://www.piugame.com/phoenix_notice")
