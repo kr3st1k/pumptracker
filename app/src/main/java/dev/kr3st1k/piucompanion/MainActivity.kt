@@ -2,6 +2,7 @@ package dev.kr3st1k.piucompanion
 
 import android.app.Application
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,8 +18,14 @@ import dev.kr3st1k.piucompanion.screens.Navigation
 import dev.kr3st1k.piucompanion.ui.theme.PIUCompanionTheme
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        lateinit var userAgent: String
+            private set
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val webView = WebView(this)
+        userAgent = webView.settings.userAgentString
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             PIUCompanionTheme {

@@ -1,10 +1,10 @@
 package dev.kr3st1k.piucompanion.helpers
 
-import android.util.Base64
+import android.webkit.CookieManager
+import dev.kr3st1k.piucompanion.MainActivity
 import dev.kr3st1k.piucompanion.components.Utils
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 import dev.kr3st1k.piucompanion.objects.BgInfo
-import dev.kr3st1k.piucompanion.objects.CookieData
 import dev.kr3st1k.piucompanion.objects.LatestScore
 import dev.kr3st1k.piucompanion.objects.NewsBanner
 import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
@@ -24,45 +24,43 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.headers
 import io.ktor.http.parameters
 import io.ktor.util.date.GMTDate
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import okhttp3.HttpUrl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.util.Locale
 
-val json = Json { ignoreUnknownKeys = true }
 
-fun String.fromJson(): List<Cookie> =
-    json.decodeFromString(ListSerializer(CookieData.serializer()), this).map {
+fun MutableList<okhttp3.Cookie?>.toKtorCookie(): List<Cookie> =
+    this.map {
         Cookie(
-            name = it.name,
-            value = it.value,
-            domain = it.domain,
-            path = it.path,
-            secure = it.secure,
-            httpOnly = it.httpOnly,
-            expires = GMTDate(it.expires)
+            name = it?.name ?: "",
+            value = it?.value ?: "",
+            domain = it?.domain ?: "",
+            path = it?.path ?: "",
+            secure = it?.secure ?: true,
+            httpOnly = it?.httpOnly ?: false,
+            expires = GMTDate(it?.expiresAt ?: 1)
         )
     }
 
-fun String.fromBase64(): String = String(Base64.decode(this, Base64.DEFAULT))
-
-fun List<Cookie>.toJson(): String = dev.kr3st1k.piucompanion.screens.login.json.encodeToString(map {
-    CookieData(
-        name = it.name,
-        value = it.value,
-        domain = it.domain,
-        path = it.path!!,
-        secure = it.secure,
-        httpOnly = it.httpOnly,
-        expires = it.expires!!.timestamp
-    )
-})
-
-fun String.toBase64(): String = Base64.encodeToString(toByteArray(), Base64.DEFAULT)
+//fun String.fromBase64(): String = String(Base64.decode(this, Base64.DEFAULT))
+//
+//fun List<Cookie>.toJson(): String = dev.kr3st1k.piucompanion.screens.login.json.encodeToString(map {
+//    CookieData(
+//        name = it.name,
+//        value = it.value,
+//        domain = it.domain,
+//        path = it.path!!,
+//        secure = it.secure,
+//        httpOnly = it.httpOnly,
+//        expires = it.expires!!.timestamp
+//    )
+//})
+//
+//fun String.toBase64(): String = Base64.encodeToString(toByteArray(), Base64.DEFAULT)
 
 //import android.webkit.CookieManager
 //
@@ -73,16 +71,19 @@ fun String.toBase64(): String = Base64.encodeToString(toByteArray(), Base64.DEFA
 //}
 
 object RequestHandler {
-    private fun getClientWithCookies(cookie: String, ua: String): HttpClient {
+    private fun getClientWithCookies(): HttpClient {
 
-        val cookies = cookie.fromBase64().fromJson()
+        val cookies = getCookiesFromWebView()
+
+        if (cookies.isEmpty())
+            return getClientWithSampleInfo()
 
         val client = HttpClient(OkHttp) {
             install(HttpCookies) {
                 storage = WebViewCookieStorage(cookies)
 
                 headers {
-                    append(HttpHeaders.UserAgent, ua)
+                    append(HttpHeaders.UserAgent, MainActivity.userAgent)
                 }
 
             }
@@ -90,10 +91,41 @@ object RequestHandler {
         return client
     }
 
+
+    private fun getCookiesFromWebView(): List<Cookie> {
+        val cookieManager = CookieManager.getInstance()
+        var cookies = cookieManager.getCookie("https://am-pass.net")
+        if (cookies != null) {
+            if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
+                val uri = HttpUrl.Builder()
+                    .scheme("https")
+                    .host("am-pass.net")
+                    .build();
+
+                val uri2 = HttpUrl.Builder()
+                    .scheme("https")
+                    .host("www.piugame.com")
+                    .build();
+                val uri3 = HttpUrl.Builder()
+                    .scheme("https")
+                    .host("api.am-pass.net")
+                    .build();
+                val parsedCookies =
+                    cookies.split(";").map { okhttp3.Cookie.parse(uri, it) }
+                        .toMutableList()
+                parsedCookies += cookies.split(";")
+                    .map { okhttp3.Cookie.parse(uri2, it) }
+                cookies = cookieManager.getCookie("https://api.am-pass.net")
+                parsedCookies += cookies.split(";")
+                    .map { okhttp3.Cookie.parse(uri3, it) }
+                return parsedCookies.toKtorCookie()
+            }
+        }
+        return mutableListOf()
+    }
+
     private fun getClientWithSampleInfo(): HttpClient {
         val cookie = "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c"
-
-        val ua = "Mozilla/5.0 (Android 14; Mobile; rv:68.0) Gecko/68.0 Firefox/124.0"
 
         val pairs = cookie.split(";").filter { it.isNotEmpty() }
         val cookieList = ArrayList<String>();
@@ -120,7 +152,7 @@ object RequestHandler {
 
 
                 headers {
-                    append(HttpHeaders.UserAgent, ua)
+                    append(HttpHeaders.UserAgent, MainActivity.userAgent)
                 }
 
 
@@ -128,7 +160,6 @@ object RequestHandler {
         }
         return client
     }
-
 
     suspend fun getUpdateInfo(): String {
         val client = HttpClient()
@@ -145,14 +176,9 @@ object RequestHandler {
         return list
     }
 
-    suspend fun checkIfLoginSuccess(cookie: String, ua: String): Boolean {
+    suspend fun checkIfLoginSuccess(): Boolean {
 
-        if (cookie == "G53public_htmlPHPSESSID=1; PHPSESSID=1; sid=1; dn=1; dk=1; ld=1; df=f; cf=c"
-            || cookie == ""
-        )
-            return false
-
-        val client = getClientWithCookies(cookie, ua)
+        val client = getClientWithCookies()
 
         val t = client.get("https://am-pass.net")
         val stringBody: String = t.body()
@@ -249,8 +275,8 @@ object RequestHandler {
         return res;
     }
 
-    suspend fun getUserInfo(cookie: String, ua: String): User {
-        val client = getClientWithCookies(cookie, ua)
+    suspend fun getUserInfo(): User {
+        val client = getClientWithCookies()
         val t = this.getDocument(client, "https://www.piugame.com/my_page/play_data.php")
 
         val profileBox = t.select("div.box0.inner.flex.vc.bgfix")
@@ -337,8 +363,13 @@ object RequestHandler {
         return t.select("button.icon").isEmpty()
     }
 
-    suspend fun getBestUserScores(cookie: String, ua: String, page: Int? = null, lvl: String = "", res: MutableList<BestUserScore> = mutableListOf(), bgs: MutableList<BgInfo>): Pair<MutableList<BestUserScore>, Boolean> {
-        val client = getClientWithCookies(cookie, ua)
+    suspend fun getBestUserScores(
+        page: Int? = null,
+        lvl: String = "",
+        res: MutableList<BestUserScore> = mutableListOf(),
+        bgs: MutableList<BgInfo>,
+    ): Pair<MutableList<BestUserScore>, Boolean> {
+        val client = getClientWithCookies()
         var uri = "https://www.piugame.com/my_page/my_best_score.php"
         var isRecent = false
         uri += "?lv=$lvl"
@@ -366,8 +397,8 @@ object RequestHandler {
 
     }
 
-    suspend fun getLatestScores(cookie: String, ua: String, length: Int): MutableList<LatestScore> {
-        val client = getClientWithCookies(cookie, ua)
+    suspend fun getLatestScores(length: Int): MutableList<LatestScore> {
+        val client = getClientWithCookies()
         val res: MutableList<LatestScore> = mutableListOf();
 
         val t = this.getDocument(client, "https://www.piugame.com/my_page/recently_played.php")

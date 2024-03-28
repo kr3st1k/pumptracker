@@ -36,10 +36,7 @@ class UserViewModel(
 
     private fun checkLoginAndUser() {
         viewModelScope.launch {
-            _checkLogin.value = RequestHandler.checkIfLoginSuccess(
-                pref.getData("cookies", ""),
-                pref.getData("ua", "")
-            )
+            _checkLogin.value = RequestHandler.checkIfLoginSuccess()
             _checkingLogin.value = false
             if (_checkLogin.value == true) {
                 getUserInfo()
@@ -50,7 +47,7 @@ class UserViewModel(
     private fun getUserInfo() {
         viewModelScope.launch {
             _user.value =
-                RequestHandler.getUserInfo(pref.getData("cookies", ""), pref.getData("ua", ""))
+                RequestHandler.getUserInfo()
         }
     }
 

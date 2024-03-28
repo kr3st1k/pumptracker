@@ -23,14 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 
 @Composable
@@ -56,14 +53,7 @@ fun BestScore(score: BestUserScore)
             Box()
             {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(score.songBackgroundUri)
-                        .crossfade(true)
-                        .memoryCacheKey(score.songBackgroundUri)
-                        .diskCacheKey(score.songBackgroundUri)
-                        .diskCachePolicy(CachePolicy.ENABLED)
-                        .memoryCachePolicy(CachePolicy.ENABLED)
-                        .build(),
+                    model = score.songBackgroundUri,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

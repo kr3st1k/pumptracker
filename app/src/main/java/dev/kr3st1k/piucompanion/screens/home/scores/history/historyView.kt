@@ -27,15 +27,10 @@ class HistoryViewModel(private val pref: PreferencesManager) : ViewModel() {
         viewModelScope.launch {
             _checkingLogin.value = true
             scores.value = mutableListOf()
-            _checkLogin.value = RequestHandler.checkIfLoginSuccess(
-                pref.getData("cookies", ""),
-                pref.getData("ua", "")
-            )
+            _checkLogin.value = RequestHandler.checkIfLoginSuccess()
             _checkingLogin.value = false
             if (checkLogin.value == true) {
                 scores.value = RequestHandler.getLatestScores(
-                    pref.getData("cookies", ""),
-                    pref.getData("ua", ""),
                     50
                 )
             }

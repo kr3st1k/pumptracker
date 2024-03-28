@@ -14,6 +14,6 @@ class WebViewCookieStorage(private val cookies: List<Cookie>) : CookiesStorage {
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> {
-        return cookies.filter { it.domain!! == requestUrl.host }
+        return cookies.filter { requestUrl.host.contains(it.domain!!) }
     }
 }

@@ -72,10 +72,7 @@ class BestUserViewModel(
             _isRecent.value = false
             if (_isFirstTime.value == true)
                 _checkingLogin.value = true
-            _checkLogin.value = RequestHandler.checkIfLoginSuccess(
-                pref.getData("cookies", ""),
-                pref.getData("ua", "")
-            )
+            _checkLogin.value = RequestHandler.checkIfLoginSuccess()
             if (_isFirstTime.value == true) {
                 _checkingLogin.value = false
                 _isFirstTime.value = false
@@ -83,10 +80,8 @@ class BestUserViewModel(
             if (checkLogin.value == true) {
                 _bgs = MutableLiveData(bgs())
                 val newScores = RequestHandler.getBestUserScores(
-                    pref.getData("cookies", ""),
-                    pref.getData("ua", ""),
-                    bgs = _bgs.value!!,
-                    lvl = selectedOption.value!!.second
+                    lvl = selectedOption.value!!.second,
+                    bgs = _bgs.value!!
                 )
                 scores.value = newScores.first.toList()
                 _pages.value = 3
@@ -109,11 +104,9 @@ class BestUserViewModel(
                 _bgs = MutableLiveData(bgs())
                 _addingScores.value = true
                 val additionalScores = RequestHandler.getBestUserScores(
-                    pref.getData("cookies", ""),
-                    pref.getData("ua", ""),
-                    bgs = _bgs.value!!,
+                    page = _pages.value,
                     lvl = _selectedOption.value!!.second,
-                    page = _pages.value
+                    bgs = _bgs.value!!
                 )
                 scores.value = scores.value?.plus(additionalScores.first.toList())
                 _isRecent.value = additionalScores.second
