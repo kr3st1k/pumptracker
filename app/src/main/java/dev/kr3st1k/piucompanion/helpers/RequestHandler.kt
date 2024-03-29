@@ -14,7 +14,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.cookies.cookies
 import io.ktor.client.request.forms.submitForm
@@ -29,19 +28,21 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import java.util.Calendar
 import java.util.Locale
 
 
-fun MutableList<okhttp3.Cookie?>.toKtorCookie(): MutableList<Cookie> =
+fun MutableList<okhttp3.Cookie?>.toKtorCookie(time: Long): MutableList<Cookie> =
     this.map {
         Cookie(
             name = it?.name ?: "",
-            value = it?.value ?: "",
+            value = it?.value?.replace("%25", "%") ?: "",
             domain = it?.domain ?: "",
             path = it?.path ?: "",
             secure = it?.secure ?: true,
             httpOnly = it?.httpOnly ?: false,
-            expires = GMTDate(it?.expiresAt ?: 1)
+            expires = GMTDate(time),
+            maxAge = 86400
         )
     }.toMutableList()
 
@@ -70,64 +71,64 @@ fun MutableList<okhttp3.Cookie?>.toKtorCookie(): MutableList<Cookie> =
 //}
 
 object RequestHandler {
-    private fun getClientWithCookies(): HttpClient {
+    private val client: HttpClient = HttpClient(OkHttp) {
+        engine {
+            addNetworkInterceptor() { chain ->
+                val request = chain.request()
 
-        val cookies = getCookiesFromWebView()
+                val ff = request.newBuilder()
+                    .removeHeader("Accept")
+                    .removeHeader("Accept-Charset")
+                    .removeHeader("Accept-Encoding")
+                    .removeHeader("Connection")
+                    .addHeader("Connection", "keep-alive")
+                    .addHeader("sec-ch-ua", MainActivity.secChUa)
+                    .addHeader("sec-ch-ua-mobile", "?1")
+                    .addHeader("sec-ch-ua-platform", "\"Android\"")
+                    .addHeader("Sec-Fetch-Dest", "document")
+                    .addHeader("Sec-Fetch-Mode", "navigate")
+                    .addHeader("Sec-Fetch-Site", "none")
+                    .addHeader("Sec-Fetch-User", "?1")
+                    .addHeader(
+                        "Accept",
+                        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+                    )
+                    .addHeader("Accept-Encoding", "gzip, deflate, br, zstd")
+                    .addHeader(
+                        "Accept-Language",
+                        "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,ru-BY;q=0.6"
+                    )
+                    .addHeader("Upgrade-Insecure-Requests", "1").build()
 
-        if (cookies.isEmpty())
-            return getClientSample()
+                // Log the request headers
+                println("Request headers: ${ff.headers}")
 
-        val client = HttpClient(OkHttp) {
-            engine {
-                addNetworkInterceptor() { chain ->
-                    val request = chain.request()
-
-                    val ff = request.newBuilder()
-                        .removeHeader("Accept")
-                        .removeHeader("Accept-Charset")
-                        .removeHeader("Accept-Encoding")
-                        .removeHeader("Connection")
-                        .addHeader("Connection", "keep-alive")
-                        .addHeader("sec-ch-ua", MainActivity.secChUa)
-                        .addHeader("sec-ch-ua-mobile", "?1")
-                        .addHeader("sec-ch-ua-platform", "\"Android\"")
-                        .addHeader("Sec-Fetch-Dest", "document")
-                        .addHeader("Sec-Fetch-Mode", "navigate")
-                        .addHeader("Sec-Fetch-Site", "none")
-                        .addHeader("Sec-Fetch-User", "?1")
-                        .addHeader(
-                            "Accept",
-                            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
-                        )
-                        .addHeader("Accept-Encoding", "gzip, deflate, br, zstd")
-                        .addHeader(
-                            "Accept-Language",
-                            "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,ru-BY;q=0.6"
-                        )
-                        .addHeader("Upgrade-Insecure-Requests", "1").build()
-
-                    // Log the request headers
-                    println("Request headers: ${ff.headers}")
-
-                    // Proceed with the request
-                    chain.proceed(ff)
-                }
+                // Proceed with the request
+                chain.proceed(ff)
             }
-
-            install(UserAgent) {
-                agent = MainActivity.userAgent
-            }
-            install(HttpCookies) {
-                storage = WebViewCookieStorage(cookies)
-            }
-            followRedirects = true
         }
-        return client
-    }
+
+        install(UserAgent) {
+            agent = MainActivity.userAgent
+        }
+        install(HttpCookies) {
+            storage = WebViewCookieStorage(
+                if (getCookiesFromWebView().isEmpty()) {
+                    mutableListOf()
+                } else {
+                    getCookiesFromWebView()
+                }
+            )
+        }
+        followRedirects = true
+    };
 
 
     private fun getCookiesFromWebView(): MutableList<Cookie> {
         val cookieManager = CookieManager.getInstance()
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, 1)
+        val timestamp = calendar.timeInMillis
         var cookies = cookieManager.getCookie("https://am-pass.net")
         if (cookies != null) {
             if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
@@ -139,41 +140,26 @@ object RequestHandler {
                     .scheme("https")
                     .host("api.am-pass.net")
                     .build();
+
                 val parsedCookies =
                     cookies.split(";").map { okhttp3.Cookie.parse(uri, it) }
                         .toMutableList()
                 cookies = cookieManager.getCookie("https://api.am-pass.net")
                 parsedCookies += cookies.split(";")
                     .map { okhttp3.Cookie.parse(uri3, it) }
-                return parsedCookies.toKtorCookie()
+                parsedCookies += okhttp3.Cookie.parse(uri, "_gat_gtag_UA_210606414_1=1;")
+                return parsedCookies.toKtorCookie(timestamp)
             }
         }
         return mutableListOf()
     }
 
-    private fun getClientSample(): HttpClient {
-
-        val client = HttpClient(OkHttp) {
-            install(UserAgent) {
-                agent = MainActivity.userAgent
-            }
-            install(HttpCookies) {
-                storage = AcceptAllCookiesStorage()
-            }
-            followRedirects = true
-        }
-
-        return client
-    }
-
     suspend fun getUpdateInfo(): String {
-        val client = HttpClient()
         val response = client.get("https://kr3st1k.me/piu/update.txt")
         return response.body<String>()
     }
 
     suspend fun getBgJson(): MutableList<BgInfo> {
-        val client = HttpClient()
         val response = client.get("https://kr3st1k.me/piu/piu_bg_database.json")
         val res = response.body<String>()
         val JSON = Json {isLenient = true}
@@ -182,8 +168,6 @@ object RequestHandler {
     }
 
     suspend fun checkIfLoginSuccess(): Boolean {
-
-        val client = getClientWithCookies()
 
         val t = client.get("https://am-pass.net")
         val stringBody: String = t.body()
@@ -197,7 +181,6 @@ object RequestHandler {
 
     //UNUSED
     suspend fun loginToAmPass(login: String, password: String, rememberMe: Boolean) {
-        val client = getClientSample()
 
         val firstReq = this.getDocument(client, "https://am-pass.net")
 
@@ -228,7 +211,6 @@ object RequestHandler {
     }
 
     suspend fun getNewsBanners(): MutableList<NewsBanner> {
-        val client = getClientSample()
 
         val t = this.getDocument(client, "https://www.piugame.com")
 
@@ -255,7 +237,6 @@ object RequestHandler {
     }
 
     suspend fun getNewsList(): MutableList<NewsThumbnailObject> {
-        val client = getClientSample()
         val res: MutableList<NewsThumbnailObject> = mutableListOf();
 
         val t = this.getDocument(client, "https://www.piugame.com/phoenix_notice")
@@ -281,7 +262,6 @@ object RequestHandler {
     }
 
     suspend fun getUserInfo(): User {
-        val client = getClientWithCookies()
         val t = this.getDocument(client, "https://www.piugame.com/my_page/play_data.php")
 
         val profileBox = t.select("div.box0.inner.flex.vc.bgfix")
@@ -374,7 +354,6 @@ object RequestHandler {
         res: MutableList<BestUserScore> = mutableListOf(),
         bgs: MutableList<BgInfo>,
     ): Pair<MutableList<BestUserScore>, Boolean> {
-        val client = getClientWithCookies()
         var uri = "https://www.piugame.com/my_page/my_best_score.php"
         var isRecent = false
         uri += "?lv=$lvl"
@@ -403,7 +382,6 @@ object RequestHandler {
     }
 
     suspend fun getLatestScores(length: Int): MutableList<LatestScore> {
-        val client = getClientWithCookies()
         val res: MutableList<LatestScore> = mutableListOf();
 
         val t = this.getDocument(client, "https://www.piugame.com/my_page/recently_played.php")
