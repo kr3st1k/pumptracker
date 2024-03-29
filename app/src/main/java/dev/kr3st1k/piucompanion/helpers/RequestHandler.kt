@@ -13,6 +13,7 @@ import dev.kr3st1k.piucompanion.objects.WebViewCookieStorage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.cookies.cookies
@@ -20,8 +21,6 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Cookie
-import io.ktor.http.HttpHeaders
-import io.ktor.http.headers
 import io.ktor.http.parameters
 import io.ktor.util.date.GMTDate
 import kotlinx.serialization.json.Json
@@ -79,11 +78,47 @@ object RequestHandler {
             return getClientSample()
 
         val client = HttpClient(OkHttp) {
+            engine {
+                addNetworkInterceptor() { chain ->
+                    val request = chain.request()
+
+                    val ff = request.newBuilder()
+                        .removeHeader("Accept")
+                        .removeHeader("Accept-Charset")
+                        .removeHeader("Accept-Encoding")
+                        .removeHeader("Connection")
+                        .addHeader("Connection", "keep-alive")
+                        .addHeader("sec-ch-ua", MainActivity.secChUa)
+                        .addHeader("sec-ch-ua-mobile", "?1")
+                        .addHeader("sec-ch-ua-platform", "\"Android\"")
+                        .addHeader("Sec-Fetch-Dest", "document")
+                        .addHeader("Sec-Fetch-Mode", "navigate")
+                        .addHeader("Sec-Fetch-Site", "none")
+                        .addHeader("Sec-Fetch-User", "?1")
+                        .addHeader(
+                            "Accept",
+                            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+                        )
+                        .addHeader("Accept-Encoding", "gzip, deflate, br, zstd")
+                        .addHeader(
+                            "Accept-Language",
+                            "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,ru-BY;q=0.6"
+                        )
+                        .addHeader("Upgrade-Insecure-Requests", "1").build()
+
+                    // Log the request headers
+                    println("Request headers: ${ff.headers}")
+
+                    // Proceed with the request
+                    chain.proceed(ff)
+                }
+            }
+
+            install(UserAgent) {
+                agent = MainActivity.userAgent
+            }
             install(HttpCookies) {
                 storage = WebViewCookieStorage(cookies)
-                headers {
-                    append(HttpHeaders.UserAgent, MainActivity.userAgent)
-                }
             }
             followRedirects = true
         }
@@ -99,11 +134,6 @@ object RequestHandler {
                 val uri = HttpUrl.Builder()
                     .scheme("https")
                     .host("am-pass.net")
-                    .build();
-
-                val uri2 = HttpUrl.Builder()
-                    .scheme("https")
-                    .host("www.piugame.com")
                     .build();
                 val uri3 = HttpUrl.Builder()
                     .scheme("https")
@@ -124,11 +154,11 @@ object RequestHandler {
     private fun getClientSample(): HttpClient {
 
         val client = HttpClient(OkHttp) {
+            install(UserAgent) {
+                agent = MainActivity.userAgent
+            }
             install(HttpCookies) {
                 storage = AcceptAllCookiesStorage()
-                headers {
-                    append(HttpHeaders.UserAgent, MainActivity.userAgent)
-                }
             }
             followRedirects = true
         }

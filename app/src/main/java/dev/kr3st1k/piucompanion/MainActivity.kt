@@ -21,11 +21,28 @@ class MainActivity : ComponentActivity() {
     companion object {
         lateinit var userAgent: String
             private set
+        lateinit var secChUa: String
+            private set
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val webView = WebView(this)
         userAgent = webView.settings.userAgentString
+        val secChUaPattern = Regex("""(Chromium|Chrome)\/(\d+)\.(\d+)\.(\d+)\.(\d+)""")
+        val brandPattern =
+            Regex("""(Android|iPhone|iPad|iPod|Macintosh|Windows|Linux|CrKey|CrOS);.* ([^\s;]+)""")
+
+        secChUa = buildString {
+            val chromeMatch = secChUaPattern.find(userAgent)
+            if (chromeMatch != null) {
+                append("\"Chromium\";v=\"${chromeMatch.groupValues[2]}\"")
+            }
+            if (chromeMatch != null) {
+                append(", \"Android WebView\";v=\"${chromeMatch.groupValues[2]}\"")
+            }
+            append(", \"Not-A.Brand\";v=\"99\"")
+        }
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             PIUCompanionTheme {

@@ -152,7 +152,7 @@ fun LoginWebViewScreen(navController: NavController) {
                             }
                         }
                     }
-                    loadUrl("https://am-pass.net/")
+                    loadUrl("https://am-pass.net")
                     setBackgroundColor(backgroundColor.toArgb())
                     this.setWebChromeClient(WebChromeClient())
                 }
