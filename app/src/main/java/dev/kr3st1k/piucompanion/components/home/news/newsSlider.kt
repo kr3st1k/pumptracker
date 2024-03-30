@@ -48,7 +48,7 @@ fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
         pageSize = PageSize.Fill,
         key = null,
         pageNestedScrollConnection = PagerDefaults.pageNestedScrollConnection(
-            Orientation.Horizontal
+            pagerState, Orientation.Horizontal
         ),
         pageContent = { page ->
             Card(

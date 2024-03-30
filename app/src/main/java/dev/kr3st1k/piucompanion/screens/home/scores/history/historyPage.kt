@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -13,7 +12,6 @@ import dev.kr3st1k.piucompanion.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.components.Utils
 import dev.kr3st1k.piucompanion.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.components.home.scores.latest.LazyLatestScore
-import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.screens.Screen
 
 @SuppressLint("MutableCollectionMutableState")
@@ -22,11 +20,7 @@ fun HistoryPage(
     navControllerGlobal: NavController,
     lifecycleOwner: LifecycleOwner,
 ) {
-    val viewModel = viewModel<HistoryViewModel>(
-        factory = HistoryViewModelFactory(
-            PreferencesManager(LocalContext.current)
-        )
-    )
+    val viewModel = viewModel<HistoryViewModel>()
 
     val checkLogin =
         Utils.rememberLiveData(viewModel.checkLogin, lifecycleOwner, initialValue = false)

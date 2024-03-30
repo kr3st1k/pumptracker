@@ -29,8 +29,6 @@ class MainActivity : ComponentActivity() {
         val webView = WebView(this)
         userAgent = webView.settings.userAgentString
         val secChUaPattern = Regex("""(Chromium|Chrome)\/(\d+)\.(\d+)\.(\d+)\.(\d+)""")
-        val brandPattern =
-            Regex("""(Android|iPhone|iPad|iPod|Macintosh|Windows|Linux|CrKey|CrOS);.* ([^\s;]+)""")
 
         secChUa = buildString {
             val chromeMatch = secChUaPattern.find(userAgent)
@@ -69,7 +67,7 @@ class PIUCompanion : Application(), ImageLoaderFactory {
             .diskCache {
                 DiskCache.Builder()
                     .directory(filesDir.resolve("image_cache"))
-                    .maxSizeBytes(1500 * 1024 * 1024)
+                    .maxSizeBytes(250 * 1024 * 1024)
                     .build()
             }
             .build()

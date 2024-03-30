@@ -12,7 +12,6 @@ import dev.kr3st1k.piucompanion.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.components.Utils
 import dev.kr3st1k.piucompanion.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.components.home.users.UserCard
-import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.objects.User
 import dev.kr3st1k.piucompanion.screens.Screen
 
@@ -24,8 +23,7 @@ fun UserScreen(
 ) {
 
     val context = LocalContext.current
-    val pref = PreferencesManager(context)
-    val viewModel = viewModel<UserViewModel>(factory = UserViewModelFactory(pref))
+    val viewModel = viewModel<UserViewModel>()
 
     val checkLogin =
         Utils.rememberLiveData(viewModel.checkLogin, lifecycleOwner, initialValue = false)

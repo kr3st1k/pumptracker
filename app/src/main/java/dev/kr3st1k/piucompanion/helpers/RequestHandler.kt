@@ -46,42 +46,13 @@ fun MutableList<okhttp3.Cookie?>.toKtorCookie(time: Long): MutableList<Cookie> =
         )
     }.toMutableList()
 
-//fun String.fromBase64(): String = String(Base64.decode(this, Base64.DEFAULT))
-//
-//fun List<Cookie>.toJson(): String = dev.kr3st1k.piucompanion.screens.login.json.encodeToString(map {
-//    CookieData(
-//        name = it.name,
-//        value = it.value,
-//        domain = it.domain,
-//        path = it.path!!,
-//        secure = it.secure,
-//        httpOnly = it.httpOnly,
-//        expires = it.expires!!.timestamp
-//    )
-//})
-//
-//fun String.toBase64(): String = Base64.encodeToString(toByteArray(), Base64.DEFAULT)
-
-//import android.webkit.CookieManager
-//
-//suspend fun getCookiesFromWebView(url: String): List<Cookie> {
-//    val cookieManager = CookieManager.getInstance()
-//    val cookies = cookieManager.getCookie(url)
-//
-//}
-
 object RequestHandler {
     private val client: HttpClient = HttpClient(OkHttp) {
         engine {
-            addNetworkInterceptor() { chain ->
+            addNetworkInterceptor { chain ->
                 val request = chain.request()
 
                 val ff = request.newBuilder()
-                    .removeHeader("Accept")
-                    .removeHeader("Accept-Charset")
-                    .removeHeader("Accept-Encoding")
-                    .removeHeader("Connection")
-                    .addHeader("Connection", "keep-alive")
                     .addHeader("sec-ch-ua", MainActivity.secChUa)
                     .addHeader("sec-ch-ua-mobile", "?1")
                     .addHeader("sec-ch-ua-platform", "\"Android\"")
@@ -89,21 +60,8 @@ object RequestHandler {
                     .addHeader("Sec-Fetch-Mode", "navigate")
                     .addHeader("Sec-Fetch-Site", "none")
                     .addHeader("Sec-Fetch-User", "?1")
-                    .addHeader(
-                        "Accept",
-                        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
-                    )
-                    .addHeader("Accept-Encoding", "gzip, deflate, br, zstd")
-                    .addHeader(
-                        "Accept-Language",
-                        "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,ru-BY;q=0.6"
-                    )
                     .addHeader("Upgrade-Insecure-Requests", "1").build()
 
-                // Log the request headers
-                println("Request headers: ${ff.headers}")
-
-                // Proceed with the request
                 chain.proceed(ff)
             }
         }
@@ -112,13 +70,7 @@ object RequestHandler {
             agent = MainActivity.userAgent
         }
         install(HttpCookies) {
-            storage = WebViewCookieStorage(
-                if (getCookiesFromWebView().isEmpty()) {
-                    mutableListOf()
-                } else {
-                    getCookiesFromWebView()
-                }
-            )
+            storage = WebViewCookieStorage(getCookiesFromWebView())
         }
         followRedirects = true
     };

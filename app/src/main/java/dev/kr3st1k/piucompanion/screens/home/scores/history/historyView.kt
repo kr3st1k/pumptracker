@@ -3,14 +3,12 @@ package dev.kr3st1k.piucompanion.screens.home.scores.history
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.LatestScore
 import kotlinx.coroutines.launch
 
-class HistoryViewModel(private val pref: PreferencesManager) : ViewModel() {
+class HistoryViewModel : ViewModel() {
     private val _checkLogin = MutableLiveData(false)
     val checkLogin: LiveData<Boolean> = _checkLogin
 
@@ -35,15 +33,5 @@ class HistoryViewModel(private val pref: PreferencesManager) : ViewModel() {
                 )
             }
         }
-    }
-}
-
-class HistoryViewModelFactory(private val pref: PreferencesManager) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
-            return HistoryViewModel(pref) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

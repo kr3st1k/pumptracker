@@ -3,16 +3,13 @@ package dev.kr3st1k.piucompanion.screens.home.user
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.objects.User
 import kotlinx.coroutines.launch
 
-class UserViewModel(
-    private val pref: PreferencesManager,
-) : ViewModel() {
+class UserViewModel : ViewModel() {
 
     private val _checkingLogin = MutableLiveData(true)
     val checkingLogin: LiveData<Boolean> = _checkingLogin
@@ -53,17 +50,6 @@ class UserViewModel(
 
     fun logout(pref: PreferencesManager) {
         pref.removeLoginData()
-    }
-}
-
-class UserViewModelFactory(private val pref: PreferencesManager) :
-    ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
-            return UserViewModel(pref) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
