@@ -2,7 +2,6 @@ package dev.kr3st1k.piucompanion.helpers
 
 import android.webkit.CookieManager
 import dev.kr3st1k.piucompanion.MainActivity
-import dev.kr3st1k.piucompanion.components.Utils
 import dev.kr3st1k.piucompanion.objects.BestUserScore
 import dev.kr3st1k.piucompanion.objects.BgInfo
 import dev.kr3st1k.piucompanion.objects.LatestScore
@@ -14,12 +13,18 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.cookies.cookies
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Cookie
+import io.ktor.http.headers
 import io.ktor.http.parameters
 import io.ktor.util.date.GMTDate
 import kotlinx.serialization.json.Json
@@ -48,23 +53,34 @@ fun MutableList<okhttp3.Cookie?>.toKtorCookie(time: Long): MutableList<Cookie> =
 
 object RequestHandler {
     private val client: HttpClient = HttpClient(OkHttp) {
+        install(Logging)
+        {
+            logger = Logger.DEFAULT
+            level = LogLevel.ALL
+        }
         engine {
-            addNetworkInterceptor { chain ->
-                val request = chain.request()
-
-                val ff = request.newBuilder()
-                    .addHeader("sec-ch-ua", MainActivity.secChUa)
-                    .addHeader("sec-ch-ua-mobile", "?1")
-                    .addHeader("sec-ch-ua-platform", "\"Android\"")
-                    .addHeader("Sec-Fetch-Dest", "document")
-                    .addHeader("Sec-Fetch-Mode", "navigate")
-                    .addHeader("Sec-Fetch-Site", "none")
-                    .addHeader("Sec-Fetch-User", "?1")
-                    .addHeader("Upgrade-Insecure-Requests", "1").build()
-
-                chain.proceed(ff)
+//            addNetworkInterceptor { chain ->
+//                val request = chain.request()
+//
+//                val ff = request.newBuilder()
+//                    .addHeader("sec-ch-ua", MainActivity.secChUa)
+//                    .addHeader("Content-Encoding", "gzip")
+//                    .addHeader("Accept-Encoding", "gzip").build()
+//
+//                chain.proceed(ff)
+//            }
+            headers {
+                append("sec-ch-ua", MainActivity.secChUa)
+                append("Content-Encoding", "gzip")
+                append("Accept-Encoding", "gzip")
             }
         }
+
+        install(ContentEncoding)
+        {
+            gzip(0.9F)
+        }
+
 
         install(UserAgent) {
             agent = MainActivity.userAgent

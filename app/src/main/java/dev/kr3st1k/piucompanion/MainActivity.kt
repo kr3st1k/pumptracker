@@ -14,7 +14,7 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
-import dev.kr3st1k.piucompanion.screens.Navigation
+import dev.kr3st1k.piucompanion.ui.screens.Navigation
 import dev.kr3st1k.piucompanion.ui.theme.PIUCompanionTheme
 
 class MainActivity : ComponentActivity() {
