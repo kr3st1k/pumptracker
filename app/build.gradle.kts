@@ -81,6 +81,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("io.ktor:ktor-client-core:2.3.9")
+    implementation("io.ktor:ktor-client-core:2.3.9")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("io.ktor:ktor-client-okhttp:2.3.9")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")

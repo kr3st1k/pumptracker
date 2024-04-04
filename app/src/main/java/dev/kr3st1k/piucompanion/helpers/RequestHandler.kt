@@ -15,20 +15,15 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.cookies.HttpCookies
-import io.ktor.client.plugins.cookies.cookies
-import io.ktor.client.plugins.logging.DEFAULT
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Cookie
-import io.ktor.http.headers
 import io.ktor.http.parameters
 import io.ktor.util.date.GMTDate
 import kotlinx.serialization.json.Json
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.logging.HttpLoggingInterceptor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -37,84 +32,65 @@ import java.util.Calendar
 import java.util.Locale
 
 
-fun MutableList<okhttp3.Cookie?>.toKtorCookie(time: Long): MutableList<Cookie> =
-    this.map {
-        Cookie(
-            name = it?.name ?: "",
-            value = it?.value?.replace("%25", "%") ?: "",
-            domain = it?.domain ?: "",
-            path = it?.path ?: "",
-            secure = it?.secure ?: true,
-            httpOnly = it?.httpOnly ?: false,
-            expires = GMTDate(time),
-            maxAge = 86400
-        )
-    }.toMutableList()
+data class Cookie(
+    val name: String,
+    val value: String,
+    val domain: String,
+    val path: String,
+    val secure: Boolean,
+    val httpOnly: Boolean,
+    val expires: GMTDate,
+    val maxAge: Int
+)
 
 object RequestHandler {
+    private const val BASE_URL = "https://am-pass.net"
+    private const val API_BASE_URL = "https://api.am-pass.net"
+    private const val UPDATE_INFO_URL = "https://kr3st1k.me/piu/update.txt"
+    private const val BG_JSON_URL = "https://kr3st1k.me/piu/piu_bg_database.json"
+    private const val LOGOUT_STRING = "bbs/logout.php"
+    private const val LOGIN_CHECK_URL = "$BASE_URL/bbs/login_check.php"
+    private const val AUTO_LOGIN_PARAM = "auto_login"
+
     private val client: HttpClient = HttpClient(OkHttp) {
-        install(Logging)
-        {
-            logger = Logger.DEFAULT
-            level = LogLevel.ALL
-        }
         engine {
-//            addNetworkInterceptor { chain ->
-//                val request = chain.request()
-//
-//                val ff = request.newBuilder()
-//                    .addHeader("sec-ch-ua", MainActivity.secChUa)
-//                    .addHeader("Content-Encoding", "gzip")
-//                    .addHeader("Accept-Encoding", "gzip").build()
-//
-//                chain.proceed(ff)
-//            }
-            headers {
-                append("sec-ch-ua", MainActivity.secChUa)
-                append("Content-Encoding", "gzip")
-                append("Accept-Encoding", "gzip")
-            }
+            addInterceptor(createLoggingInterceptor())
         }
 
-        install(ContentEncoding)
-        {
+        install(ContentEncoding) {
             gzip(0.9F)
         }
-
 
         install(UserAgent) {
             agent = MainActivity.userAgent
         }
+
         install(HttpCookies) {
             storage = WebViewCookieStorage(getCookiesFromWebView())
         }
-        followRedirects = true
-    };
 
+        followRedirects = true
+    }
+
+    private fun createLoggingInterceptor(): HttpLoggingInterceptor {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.HEADERS
+        return loggingInterceptor
+    }
 
     private fun getCookiesFromWebView(): MutableList<Cookie> {
         val cookieManager = CookieManager.getInstance()
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_MONTH, 1)
         val timestamp = calendar.timeInMillis
-        var cookies = cookieManager.getCookie("https://am-pass.net")
+        var cookies = cookieManager.getCookie(BASE_URL)
         if (cookies != null) {
             if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
-                val uri = HttpUrl.Builder()
-                    .scheme("https")
-                    .host("am-pass.net")
-                    .build();
-                val uri3 = HttpUrl.Builder()
-                    .scheme("https")
-                    .host("api.am-pass.net")
-                    .build();
-
-                val parsedCookies =
-                    cookies.split(";").map { okhttp3.Cookie.parse(uri, it) }
-                        .toMutableList()
-                cookies = cookieManager.getCookie("https://api.am-pass.net")
-                parsedCookies += cookies.split(";")
-                    .map { okhttp3.Cookie.parse(uri3, it) }
+                val uri = BASE_URL.toHttpUrl()
+                val uri3 = API_BASE_URL.toHttpUrl()
+                val parsedCookies = cookies.split(";").map { okhttp3.Cookie.parse(uri, it) }.toMutableList()
+                cookies = cookieManager.getCookie(API_BASE_URL)
+                parsedCookies += cookies.split(";").map { okhttp3.Cookie.parse(uri3, it) }
                 parsedCookies += okhttp3.Cookie.parse(uri, "_gat_gtag_UA_210606414_1=1;")
                 return parsedCookies.toKtorCookie(timestamp)
             }
@@ -122,69 +98,74 @@ object RequestHandler {
         return mutableListOf()
     }
 
+    fun MutableList<okhttp3.Cookie?>.toKtorCookie(time: Long): MutableList<Cookie> =
+        this.map {
+            Cookie(
+                name = it?.name ?: "",
+                value = it?.value?.replace("%25", "%") ?: "",
+                domain = it?.domain ?: "",
+                path = it?.path ?: "",
+                secure = it?.secure ?: true,
+                httpOnly = it?.httpOnly ?: false,
+                expires = GMTDate(time),
+                maxAge = 86400
+            )
+        }.toMutableList()
+
     suspend fun getUpdateInfo(): String {
-        val response = client.get("https://kr3st1k.me/piu/update.txt")
+        val response = client.get(UPDATE_INFO_URL)
         return response.body<String>()
     }
 
     suspend fun getBgJson(): MutableList<BgInfo> {
-        val response = client.get("https://kr3st1k.me/piu/piu_bg_database.json")
+        val response = client.get(BG_JSON_URL)
         val res = response.body<String>()
-        val JSON = Json {isLenient = true}
+        val JSON = Json { isLenient = true }
         val list = JSON.decodeFromString(res) as MutableList<BgInfo>
         return list
     }
 
     suspend fun checkIfLoginSuccess(): Boolean {
-
-        val t = client.get("https://am-pass.net")
+        val t = client.get(BASE_URL)
         val stringBody: String = t.body()
-
-        val tt = client.cookies("https://am-pass.net")
-
-        val ttt = t.headers
-
-        return stringBody.indexOf("bbs/logout.php") > 0;
+        return stringBody.indexOf(LOGOUT_STRING) > 0
     }
 
     //UNUSED
     suspend fun loginToAmPass(login: String, password: String, rememberMe: Boolean) {
-
-        val firstReq = this.getDocument(client, "https://am-pass.net")
+        val firstReq = this.getDocument(client, BASE_URL)
 
         val response: HttpResponse = client.submitForm(
-            url = "https://am-pass.net/bbs/login_check.php",
+            url = LOGIN_CHECK_URL,
             formParameters = parameters {
                 append("url", "/")
                 append("mb_id", login)
                 append("mb_password", password)
                 if (rememberMe)
-                    append("auto_login", "on")
+                    append(AUTO_LOGIN_PARAM, "on")
             }
         )
-
     }
-
 
     private fun getBackgroundImg(element: Element, addDomain: Boolean = true): String {
         val style = element.attr("style")
         return (if (addDomain) "https://www.piugame.com" else "") + style.substringAfter("background-image:url('")
-            .substringBefore("')");
+            .substringBefore("')")
     }
 
-    suspend fun getDocument(client: HttpClient, uri: String): Document {
+    private suspend fun getDocument(client: HttpClient, uri: String): Document {
         val req = client.get(uri)
         val reqBody: String = req.body()
-        return Jsoup.parse(reqBody);
+        return Jsoup.parse(reqBody)
     }
 
     suspend fun getNewsBanners(): MutableList<NewsBanner> {
 
         val t = this.getDocument(client, "https://www.piugame.com")
 
-        val r = t.select("a.img.resize.bgfix");
+        val r = t.select("a.img.resize.bgfix")
         val uniqueElements: MutableList<Element> = mutableListOf()
-        val res: MutableList<NewsBanner> = mutableListOf();
+        val res: MutableList<NewsBanner> = mutableListOf()
 
         for (element in r) {
             if (!uniqueElements.any { it.attr("href") == element.attr("href") }) {
@@ -201,11 +182,11 @@ object RequestHandler {
                 )
             )
         }
-        return res;
+        return res
     }
 
     suspend fun getNewsList(): MutableList<NewsThumbnailObject> {
-        val res: MutableList<NewsThumbnailObject> = mutableListOf();
+        val res: MutableList<NewsThumbnailObject> = mutableListOf()
 
         val t = this.getDocument(client, "https://www.piugame.com/phoenix_notice")
         val table = t.select("tbody")
@@ -215,7 +196,7 @@ object RequestHandler {
         for (elem in trElements) {
             if (res.count() == 7)
                 break
-            val titleAndLinkElem = elem.select("td.w_tit").select("a");
+            val titleAndLinkElem = elem.select("td.w_tit").select("a")
             val title = titleAndLinkElem.text()
             val typeElem = elem.select("td.w_type").select("i")
             val type = typeElem.text()
@@ -226,7 +207,7 @@ object RequestHandler {
                 res.add(NewsThumbnailObject(title, id, type, link))
         }
 
-        return res;
+        return res
     }
 
     suspend fun getUserInfo(): User {
@@ -249,7 +230,11 @@ object RequestHandler {
         return User(username, titleName, backgroundUri, avatarUri, recentGame, coinValue, true)
     }
 
-    private fun parseBestUserScores(t: Document, res: MutableList<BestUserScore>, bgs: MutableList<BgInfo>): Boolean {
+    private fun parseBestUserScores(
+        t: Document,
+        res: MutableList<BestUserScore>,
+        bgs: MutableList<BgInfo>
+    ): Boolean {
 
         if (t.select("div.no_con").isNotEmpty()) {
             res.add(
@@ -337,20 +322,18 @@ object RequestHandler {
                     isRecent = parseBestUserScores(t, res, bgs = bgs)
                 }
             }
-        }
-        else
-        {
+        } else {
             uri += "&page=$page"
             val t =
                 this.getDocument(client, uri)
-            isRecent = parseBestUserScores(t, res, bgs=bgs)
+            isRecent = parseBestUserScores(t, res, bgs = bgs)
         }
         return Pair(res, isRecent)
 
     }
 
     suspend fun getLatestScores(length: Int): MutableList<LatestScore> {
-        val res: MutableList<LatestScore> = mutableListOf();
+        val res: MutableList<LatestScore> = mutableListOf()
 
         val t = this.getDocument(client, "https://www.piugame.com/my_page/recently_played.php")
 
