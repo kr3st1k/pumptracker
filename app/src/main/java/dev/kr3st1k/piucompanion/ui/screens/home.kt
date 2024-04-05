@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.home
+package dev.kr3st1k.piucompanion.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,8 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.core.objects.TopLevelDestination
 import dev.kr3st1k.piucompanion.ui.components.home.HomeBottomBar
-import dev.kr3st1k.piucompanion.ui.screens.HomeNavHost
-import dev.kr3st1k.piucompanion.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.home.news
+package dev.kr3st1k.piucompanion.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
@@ -9,16 +9,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.core.helpers.Utils
+import dev.kr3st1k.piucompanion.core.objects.NewsBanner
+import dev.kr3st1k.piucompanion.core.objects.NewsThumbnailObject
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.news.LazyNews
 import dev.kr3st1k.piucompanion.ui.components.home.news.NewsSlider
+import kotlinx.coroutines.launch
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun NewsScreen(navController: NavController, lifecycleOwner: LifecycleOwner) {
+fun NewsScreen(lifecycleOwner: LifecycleOwner) {
     val viewModel = viewModel<NewsViewModel>()
     val newsBanners = Utils.rememberLiveData(viewModel.newsBanners, lifecycleOwner, null)
     val news = Utils.rememberLiveData(viewModel.news, lifecycleOwner, null)
@@ -40,6 +46,29 @@ fun NewsScreen(navController: NavController, lifecycleOwner: LifecycleOwner) {
         )
         if (news.value.isNullOrEmpty()) {
             YouSpinMeRightRoundBabyRightRound("Getting news...")
+        }
+    }
+}
+
+class NewsViewModel : ViewModel() {
+    val newsBanners = MutableLiveData<MutableList<NewsBanner>>(mutableListOf())
+    val news = MutableLiveData<MutableList<NewsThumbnailObject>>(mutableListOf())
+
+    init {
+        loadNews()
+    }
+
+    private fun loadNews() {
+        viewModelScope.launch {
+            newsBanners.value = RequestHandler.getNewsBanners()
+            news.value = RequestHandler.getNewsList()
+        }
+    }
+
+    fun refreshNews() {
+        viewModelScope.launch {
+            news.value = mutableListOf()
+            news.value = RequestHandler.getNewsList()
         }
     }
 }

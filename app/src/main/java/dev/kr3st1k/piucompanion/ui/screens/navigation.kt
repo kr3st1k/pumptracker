@@ -10,12 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.kr3st1k.piucompanion.core.prefs.LoginManager
-import dev.kr3st1k.piucompanion.ui.screens.home.news.NewsScreen
-import dev.kr3st1k.piucompanion.ui.screens.home.scores.best.BestUserPage
-import dev.kr3st1k.piucompanion.ui.screens.home.scores.history.HistoryPage
-import dev.kr3st1k.piucompanion.ui.screens.home.user.UserScreen
-import dev.kr3st1k.piucompanion.ui.screens.login.AuthLoadingPage
-import dev.kr3st1k.piucompanion.ui.screens.login.LoginPage
+import dev.kr3st1k.piucompanion.ui.screens.home.AuthLoadingPage
+import dev.kr3st1k.piucompanion.ui.screens.home.LoginPage
+import dev.kr3st1k.piucompanion.ui.screens.home.NewsScreen
+import dev.kr3st1k.piucompanion.ui.screens.home.UserScreen
+import dev.kr3st1k.piucompanion.ui.screens.home.scores.BestUserPage
+import dev.kr3st1k.piucompanion.ui.screens.home.scores.HistoryPage
 
 @Composable
 fun HomeNavHost(
@@ -50,15 +50,14 @@ fun HomeNavHost(
             {
                 onNavigateNotShowBottomBar()
                 AuthLoadingPage(
+                    navController = navController,
                     viewModel = viewModel(),
-                    navController = navController
                 )
             }
 
             composable(route = Screen.NewsPage.route) {
                 onNavigateShowBottomBar()
                 NewsScreen(
-                    navController = navController,
                     lifecycleOwner = lifecycleOwner
                 )
             }

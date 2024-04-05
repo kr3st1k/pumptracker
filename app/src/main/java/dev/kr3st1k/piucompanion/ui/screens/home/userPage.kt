@@ -1,17 +1,24 @@
-package dev.kr3st1k.piucompanion.ui.screens.home.user
+package dev.kr3st1k.piucompanion.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.core.helpers.PreferencesManager
+import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.objects.User
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.screens.Screen
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserScreen(
@@ -74,3 +81,23 @@ fun UserScreen(
 
         }
 
+class UserViewModel : ViewModel() {
+
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> = _user
+
+    init {
+        getUserInfo()
+    }
+
+    private fun getUserInfo() {
+        viewModelScope.launch {
+            _user.value =
+                RequestHandler.getUserInfo()
+        }
+    }
+
+    fun logout(pref: PreferencesManager) {
+        pref.removeLoginData()
+    }
+}

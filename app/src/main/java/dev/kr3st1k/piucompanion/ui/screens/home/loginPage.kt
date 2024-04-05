@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.login
+package dev.kr3st1k.piucompanion.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -26,14 +24,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.core.helpers.Crypto
 import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.core.prefs.LoginManager
@@ -90,10 +92,13 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
                 imeAction = ImeAction.Done,
                 autoCorrect = false
             ),
+            keyboardActions = KeyboardActions(
+                onDone = { this.defaultKeyboardAction(ImeAction.Done); viewModel.onLoginClicked() }
+            ),
             trailingIcon = {
                 val image = if (passwordVisible)
-                    Icons.Filled.Favorite //ToDo changeIconToVisibility
-                else Icons.Filled.FavoriteBorder
+                    ImageVector.vectorResource(R.drawable.outline_visibility_24)
+                else ImageVector.vectorResource(R.drawable.outline_visibility_off_24)
 
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
@@ -101,6 +106,7 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
                     Icon(imageVector = image, description)
                 }
             }
+
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { viewModel.onLoginClicked() }) {
@@ -119,24 +125,24 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
 }
 
 class LoginViewModel : ViewModel() {
-    val username = mutableStateOf("")
-    val password = mutableStateOf("")
+    val username = mutableStateOf(TextFieldValue())
+    val password = mutableStateOf(TextFieldValue())
     val showFailedDialog = mutableStateOf(false)
     val enterHomeScreen = mutableStateOf(false)
     val isLoading = mutableStateOf(false)
 
     fun onLoginClicked() {
-        if (username.value == "" || password.value == "") {
+        if (username.value.text == "" || password.value.text == "") {
             showFailedDialog.value = true
             return
         }
         viewModelScope.launch {
             isLoading.value = true
-            val r = RequestHandler.loginToAmPass(username.value, password.value)
+            val r = RequestHandler.loginToAmPass(username.value.text, password.value.text)
             if (r) {
-                Crypto.encryptData(username.value)
+                Crypto.encryptData(username.value.text)
                     ?.let {
-                        Crypto.encryptData(password.value)
+                        Crypto.encryptData(password.value.text)
                             ?.let { it1 -> LoginManager().saveLoginData(it, it1) }
                     }
                 enterHomeScreen.value = true

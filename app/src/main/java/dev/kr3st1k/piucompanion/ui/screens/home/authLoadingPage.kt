@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.login
+package dev.kr3st1k.piucompanion.ui.screens.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
