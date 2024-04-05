@@ -1,23 +1,22 @@
-package dev.kr3st1k.piucompanion.helpers
+package dev.kr3st1k.piucompanion.core.helpers
 
 import android.webkit.CookieManager
 import dev.kr3st1k.piucompanion.MainActivity
-import dev.kr3st1k.piucompanion.objects.BestUserScore
-import dev.kr3st1k.piucompanion.objects.BgInfo
-import dev.kr3st1k.piucompanion.objects.LatestScore
-import dev.kr3st1k.piucompanion.objects.NewsBanner
-import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
-import dev.kr3st1k.piucompanion.objects.User
-import dev.kr3st1k.piucompanion.objects.WebViewCookieStorage
+import dev.kr3st1k.piucompanion.core.objects.BestUserScore
+import dev.kr3st1k.piucompanion.core.objects.BgInfo
+import dev.kr3st1k.piucompanion.core.objects.LatestScore
+import dev.kr3st1k.piucompanion.core.objects.NewsBanner
+import dev.kr3st1k.piucompanion.core.objects.NewsThumbnailObject
+import dev.kr3st1k.piucompanion.core.objects.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Cookie
 import io.ktor.http.parameters
 import io.ktor.util.date.GMTDate
@@ -45,6 +44,7 @@ data class Cookie(
 
 object RequestHandler {
     private const val BASE_URL = "https://am-pass.net"
+    private const val BASE_PIU_URL = "https://www.piugame.com"
     private const val API_BASE_URL = "https://api.am-pass.net"
     private const val UPDATE_INFO_URL = "https://kr3st1k.me/piu/update.txt"
     private const val BG_JSON_URL = "https://kr3st1k.me/piu/piu_bg_database.json"
@@ -58,7 +58,7 @@ object RequestHandler {
         }
 
         install(ContentEncoding) {
-            gzip(0.9F)
+            gzip()
         }
 
         install(UserAgent) {
@@ -66,7 +66,7 @@ object RequestHandler {
         }
 
         install(HttpCookies) {
-            storage = WebViewCookieStorage(getCookiesFromWebView())
+            storage = AcceptAllCookiesStorage()
         }
 
         followRedirects = true
@@ -125,17 +125,21 @@ object RequestHandler {
         return list
     }
 
-    suspend fun checkIfLoginSuccess(): Boolean {
+    suspend fun checkIfLoginSuccessRequest(): Boolean {
         val t = client.get(BASE_URL)
-        val stringBody: String = t.body()
-        return stringBody.indexOf(LOGOUT_STRING) > 0
+        return checkIfLoginSuccess(t.body())
     }
 
+    private fun checkIfLoginSuccess(data: String): Boolean = data.indexOf(LOGOUT_STRING) > 0
     //UNUSED
-    suspend fun loginToAmPass(login: String, password: String, rememberMe: Boolean) {
-        val firstReq = this.getDocument(client, BASE_URL)
+    suspend fun loginToAmPass(
+        login: String,
+        password: String,
+        rememberMe: Boolean = true,
+    ): Boolean {
+        getDocument(client, BASE_URL)
 
-        val response: HttpResponse = client.submitForm(
+        client.submitForm(
             url = LOGIN_CHECK_URL,
             formParameters = parameters {
                 append("url", "/")
@@ -145,6 +149,7 @@ object RequestHandler {
                     append(AUTO_LOGIN_PARAM, "on")
             }
         )
+        return checkIfLoginSuccessRequest()
     }
 
     private fun getBackgroundImg(element: Element, addDomain: Boolean = true): String {
@@ -153,15 +158,26 @@ object RequestHandler {
             .substringBefore("')")
     }
 
-    private suspend fun getDocument(client: HttpClient, uri: String): Document {
+    private suspend fun getDocument(
+        client: HttpClient,
+        uri: String,
+        checkLogin: Boolean = false,
+    ): Document? {
         val req = client.get(uri)
         val reqBody: String = req.body()
-        return Jsoup.parse(reqBody)
+        var res = true
+        if (checkLogin)
+            res = checkIfLoginSuccess(reqBody)
+        return if (res)
+            Jsoup.parse(reqBody)
+        else
+            null
+
     }
 
     suspend fun getNewsBanners(): MutableList<NewsBanner> {
 
-        val t = this.getDocument(client, "https://www.piugame.com")
+        val t = getDocument(client, "https://www.piugame.com") ?: return mutableListOf()
 
         val r = t.select("a.img.resize.bgfix")
         val uniqueElements: MutableList<Element> = mutableListOf()
@@ -188,7 +204,7 @@ object RequestHandler {
     suspend fun getNewsList(): MutableList<NewsThumbnailObject> {
         val res: MutableList<NewsThumbnailObject> = mutableListOf()
 
-        val t = this.getDocument(client, "https://www.piugame.com/phoenix_notice")
+        val t = getDocument(client, "https://www.piugame.com/phoenix_notice") ?: return res
         val table = t.select("tbody")
 
         val trElements: Elements = table.select("tr")
@@ -210,9 +226,9 @@ object RequestHandler {
         return res
     }
 
-    suspend fun getUserInfo(): User {
-        val t = this.getDocument(client, "https://www.piugame.com/my_page/play_data.php")
-
+    suspend fun getUserInfo(): User? {
+        val t = getDocument(client, "https://www.piugame.com/my_page/play_data.php", true)
+            ?: return null
         val profileBox = t.select("div.box0.inner.flex.vc.bgfix")
         val avatarBox = t.select("div.re.bgfix")
 
@@ -318,14 +334,14 @@ object RequestHandler {
                     else
                         uri += "&page=$i"
                     val t =
-                        this.getDocument(client, uri)
+                        getDocument(client, uri, true) ?: return Pair(mutableListOf(), false)
                     isRecent = parseBestUserScores(t, res, bgs = bgs)
                 }
             }
         } else {
             uri += "&page=$page"
             val t =
-                this.getDocument(client, uri)
+                getDocument(client, uri, true) ?: return Pair(mutableListOf(), false)
             isRecent = parseBestUserScores(t, res, bgs = bgs)
         }
         return Pair(res, isRecent)
@@ -335,7 +351,8 @@ object RequestHandler {
     suspend fun getLatestScores(length: Int): MutableList<LatestScore> {
         val res: MutableList<LatestScore> = mutableListOf()
 
-        val t = this.getDocument(client, "https://www.piugame.com/my_page/recently_played.php")
+        val t = getDocument(client, "https://www.piugame.com/my_page/recently_played.php", true)
+            ?: return mutableListOf()
 
         val scoreTable = t.select("ul.recently_playeList.flex.wrap")
         val scores = scoreTable.select("li").filter { element ->

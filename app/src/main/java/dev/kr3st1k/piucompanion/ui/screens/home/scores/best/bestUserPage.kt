@@ -9,19 +9,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.helpers.Utils
-import dev.kr3st1k.piucompanion.objects.checkAndSaveNewUpdatedFiles
-import dev.kr3st1k.piucompanion.objects.readBgJson
+import dev.kr3st1k.piucompanion.core.helpers.Utils
+import dev.kr3st1k.piucompanion.core.objects.checkAndSaveNewUpdatedFiles
+import dev.kr3st1k.piucompanion.core.objects.readBgJson
 import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.LazyBestScore
-import dev.kr3st1k.piucompanion.ui.screens.Screen
 
 @SuppressLint("MutableCollectionMutableState", "CoroutineCreationDuringComposition")
 @Composable
 fun BestUserPage(
-    navControllerGlobal: NavController,
+    navController: NavController,
     lifecycleOwner: LifecycleOwner,
 )
 {
@@ -81,11 +80,7 @@ fun BestUserPage(
                     showDialog = true,
                     title = "Login failed!",
                     content = "You need to authorize",
-                    onDismiss = {
-                        navControllerGlobal.navigate(Screen.LoginWebViewScreen.route) {
-                            popUpTo(Screen.HomeScreen.route) { inclusive = false }
-                        }
-                    }
+                    onDismiss = {}
                 )
             }
         }

@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.helpers.Utils
+import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.news.LazyNews
 import dev.kr3st1k.piucompanion.ui.components.home.news.NewsSlider
@@ -34,13 +34,12 @@ fun NewsScreen(navController: NavController, lifecycleOwner: LifecycleOwner) {
             Spacer(modifier = Modifier.height(8.dp))
         }
 
+        LazyNews(
+            news = news.value ?: mutableListOf(),
+            onRefresh = { viewModel.refreshNews() }
+        )
         if (news.value.isNullOrEmpty()) {
             YouSpinMeRightRoundBabyRightRound("Getting news...")
-        } else {
-            LazyNews(
-                news = news.value,
-                onRefresh = { viewModel.refreshNews() }
-            )
         }
     }
 }

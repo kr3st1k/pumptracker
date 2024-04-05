@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
-import dev.kr3st1k.piucompanion.objects.LatestScore
+import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
+import dev.kr3st1k.piucompanion.core.objects.LatestScore
 import kotlinx.coroutines.launch
 
 class HistoryViewModel : ViewModel() {
@@ -25,7 +25,7 @@ class HistoryViewModel : ViewModel() {
         viewModelScope.launch {
             _checkingLogin.value = true
             scores.value = mutableListOf()
-            _checkLogin.value = RequestHandler.checkIfLoginSuccess()
+            _checkLogin.value = RequestHandler.checkIfLoginSuccessRequest()
             _checkingLogin.value = false
             if (checkLogin.value == true) {
                 scores.value = RequestHandler.getLatestScores(

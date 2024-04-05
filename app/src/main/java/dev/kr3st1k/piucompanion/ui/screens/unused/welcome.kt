@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.R
-import dev.kr3st1k.piucompanion.helpers.PreferencesManager
+import dev.kr3st1k.piucompanion.core.helpers.PreferencesManager
 import dev.kr3st1k.piucompanion.ui.screens.Screen
 import dev.kr3st1k.piucompanion.ui.screens.unused.Tags.TAG_ONBOARD_SCREEN_IMAGE_VIEW
 import dev.kr3st1k.piucompanion.ui.screens.unused.Tags.TAG_ONBOARD_SCREEN_NAV_BUTTON

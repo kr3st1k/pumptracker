@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.helpers
+package dev.kr3st1k.piucompanion.core.helpers
 
 import android.content.Context
 import android.content.SharedPreferences

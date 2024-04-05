@@ -5,46 +5,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import dev.kr3st1k.piucompanion.ui.screens.home.HomeScreen
+import dev.kr3st1k.piucompanion.core.prefs.LoginManager
 import dev.kr3st1k.piucompanion.ui.screens.home.news.NewsScreen
 import dev.kr3st1k.piucompanion.ui.screens.home.scores.best.BestUserPage
 import dev.kr3st1k.piucompanion.ui.screens.home.scores.history.HistoryPage
 import dev.kr3st1k.piucompanion.ui.screens.home.user.UserScreen
-import dev.kr3st1k.piucompanion.ui.screens.login.LoginWebViewScreen
-
-@Composable
-fun Navigation() {
-    val navController = rememberNavController()
-
-    val startDist = Screen.HomeScreen.route;
-
-    BackHandler(enabled = true) {
-
-    }
-    NavHost(navController = navController, startDestination = startDist)
-    {
-        composable(route = Screen.LoginWebViewScreen.route) {
-            LoginWebViewScreen(navController = navController)
-        }
-        composable(route = Screen.HomeScreen.route) {
-            HomeScreen(navController = navController)
-        }
-    }
-}
+import dev.kr3st1k.piucompanion.ui.screens.login.AuthLoadingPage
+import dev.kr3st1k.piucompanion.ui.screens.login.LoginPage
 
 @Composable
 fun HomeNavHost(
     modifier: Modifier,
     navController: NavHostController,
-    navControllerGlobal: NavController,
-    startDestination: String,
+    onNavigateShowBottomBar: () -> Unit,
+    onNavigateNotShowBottomBar: () -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    var startDestination = Screen.LoginPage.route
+
+    if (LoginManager().hasLoginData())
+        startDestination = Screen.AuthLoadingPage.route
+
 
     BackHandler(enabled = true) {
 
@@ -53,8 +38,25 @@ fun HomeNavHost(
         NavHost(
             navController = navController, startDestination = startDestination, modifier = modifier
         ) {
+            composable(route = Screen.LoginPage.route) {
+                onNavigateNotShowBottomBar()
+                LoginPage(
+                    navController = navController,
+                    viewModel = viewModel()
+                )
+            }
+
+            composable(route = Screen.AuthLoadingPage.route)
+            {
+                onNavigateNotShowBottomBar()
+                AuthLoadingPage(
+                    viewModel = viewModel(),
+                    navController = navController
+                )
+            }
 
             composable(route = Screen.NewsPage.route) {
+                onNavigateShowBottomBar()
                 NewsScreen(
                     navController = navController,
                     lifecycleOwner = lifecycleOwner
@@ -62,23 +64,25 @@ fun HomeNavHost(
             }
 
             composable(route = Screen.UserPage.route) {
+                onNavigateShowBottomBar()
                 UserScreen(
                     navController = navController,
-                    navControllerGlobal = navControllerGlobal,
                     lifecycleOwner = lifecycleOwner
                 )
             }
 
             composable(route = Screen.HistoryPage.route) {
+                onNavigateShowBottomBar()
                 HistoryPage(
-                    navControllerGlobal = navControllerGlobal,
+                    navController = navController,
                     lifecycleOwner = lifecycleOwner
                 )
             }
 
             composable(route = Screen.BestUserPage.route) {
+                onNavigateShowBottomBar()
                 BestUserPage(
-                    navControllerGlobal = navControllerGlobal,
+                    navController = navController,
                     lifecycleOwner = lifecycleOwner
                 )
             }

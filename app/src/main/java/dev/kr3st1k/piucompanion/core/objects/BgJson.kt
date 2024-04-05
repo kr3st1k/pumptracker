@@ -1,7 +1,7 @@
-package dev.kr3st1k.piucompanion.objects
+package dev.kr3st1k.piucompanion.core.objects
 
 import android.content.Context
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
+import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

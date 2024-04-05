@@ -4,13 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.helpers.Utils
-import dev.kr3st1k.piucompanion.objects.User
-import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
+import dev.kr3st1k.piucompanion.core.helpers.Utils
+import dev.kr3st1k.piucompanion.core.objects.User
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.screens.Screen
@@ -18,27 +16,18 @@ import dev.kr3st1k.piucompanion.ui.screens.Screen
 @Composable
 fun UserScreen(
     navController: NavController,
-    navControllerGlobal: NavController,
     lifecycleOwner: LifecycleOwner,
 ) {
 
-    val context = LocalContext.current
     val viewModel = viewModel<UserViewModel>()
 
-    val checkLogin =
-        Utils.rememberLiveData(viewModel.checkLogin, lifecycleOwner, initialValue = false)
-    val checkingLogin =
-        Utils.rememberLiveData(viewModel.checkingLogin, lifecycleOwner, initialValue = true)
     val user =
         Utils.rememberLiveData(viewModel.user, lifecycleOwner, initialValue = User())
-
-    if (checkingLogin.value) {
-        YouSpinMeRightRoundBabyRightRound("Checking if you're logged in...")
-    } else {
-        if (checkLogin.value) {
-            if (user.value.trueUser) {
+    if (user.value == null)
+        navController.navigate(Screen.LoginPage.route)
+    if (user.value?.trueUser == true) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    UserCard(user.value)
+                    UserCard(user.value!!)
 //                    Button(
 //                        icon = Icons.Default.Info,
 //                        title = "Placeholder",
@@ -82,15 +71,6 @@ fun UserScreen(
             } else {
                 YouSpinMeRightRoundBabyRightRound("Getting User Info...")
             }
-        } else {
-            MyAlertDialog(
-                showDialog = true,
-                title = "Login failed!",
-                content = "You need to authorize",
-                onDismiss = {
-                    navControllerGlobal.navigate(Screen.LoginWebViewScreen.route)
-                }
-            )
+
         }
-    }
-}
+

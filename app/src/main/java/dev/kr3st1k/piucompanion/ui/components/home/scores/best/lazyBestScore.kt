@@ -19,7 +19,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.objects.BestUserScore
+import dev.kr3st1k.piucompanion.core.objects.BestUserScore
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh

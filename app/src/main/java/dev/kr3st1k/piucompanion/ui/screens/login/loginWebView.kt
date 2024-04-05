@@ -36,8 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.helpers.PreferencesManager
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
+import dev.kr3st1k.piucompanion.core.helpers.PreferencesManager
+import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.ui.screens.Screen
 import kotlinx.coroutines.launch
@@ -71,7 +71,7 @@ fun LoginWebViewScreen(navController: NavController) {
                 IconButton(onClick = {
                     scope.launch {
                         val t = webView?.settings?.userAgentString?.let {
-                            RequestHandler.checkIfLoginSuccess()
+                            RequestHandler.checkIfLoginSuccessRequest()
                         }
 
                         if (t!!) {
@@ -133,7 +133,7 @@ fun LoginWebViewScreen(navController: NavController) {
 //                            );
                             scope.launch {
                                 val t = webView?.settings?.userAgentString?.let {
-                                    RequestHandler.checkIfLoginSuccess()
+                                    RequestHandler.checkIfLoginSuccessRequest()
                                 }
 
                                 if (t!!) {

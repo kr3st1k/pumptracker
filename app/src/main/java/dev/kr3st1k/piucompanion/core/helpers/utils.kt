@@ -1,5 +1,8 @@
-package dev.kr3st1k.piucompanion.helpers
+package dev.kr3st1k.piucompanion.core.helpers
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
@@ -19,10 +22,25 @@ import java.util.regex.Pattern
 object Utils
 {
     private const val DIFFICULTY = "https://www\\.piugame\\.com/l_img/stepball/full/[a-zA-Z]_num_([0-9])\\.png"
-//    private const val DIFFICULTYBEST = "https://piugame\\.com/l_img/stepball/full/[a-zA-Z]_num_([0-9])\\.png"
     private const val DIFFICULTYTYPE = "https://www\\.piugame\\.com\\/l_img\\/stepball\\/full\\/([a-zA-Z])_text\\.png"
     private const val DIFFICULTYTYPEBEST = "https://www.piugame\\.com\\/l_img\\/stepball\\/full\\/([a-zA-Z])_bg\\.png"
     private const val RANK = "https://www\\.piugame\\.com\\/l_img\\/grade\\/(\\w+)\\.png"
+
+    private var androidId: String = ""
+
+    fun getAndroidId(): String {
+        return androidId
+    }
+
+    @SuppressLint("HardwareIds")
+    fun setDeviceId(context: Context) {
+        try {
+            val contentResolver = context.contentResolver
+            androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
     fun parseDifficultyFromUri(uri: String): String? = getFirstRegex(DIFFICULTY, uri)
 
     fun parseRankFromUri(uri: String): String? = getFirstRegex(RANK, uri)

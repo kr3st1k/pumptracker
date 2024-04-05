@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
-import dev.kr3st1k.piucompanion.objects.BestUserScore
-import dev.kr3st1k.piucompanion.objects.BgInfo
+import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
+import dev.kr3st1k.piucompanion.core.objects.BestUserScore
+import dev.kr3st1k.piucompanion.core.objects.BgInfo
 import kotlinx.coroutines.launch
 
 class BestUserViewModel(
@@ -55,7 +55,7 @@ class BestUserViewModel(
             _isRecent.value = false
             if (_isFirstTime.value == true)
                 _checkingLogin.value = true
-            _checkLogin.value = RequestHandler.checkIfLoginSuccess()
+            _checkLogin.value = RequestHandler.checkIfLoginSuccessRequest()
             if (_isFirstTime.value == true) {
                 _checkingLogin.value = false
                 _isFirstTime.value = false

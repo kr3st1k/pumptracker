@@ -1,6 +1,5 @@
 package dev.kr3st1k.piucompanion
 
-import android.app.Application
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
@@ -10,11 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
-import dev.kr3st1k.piucompanion.ui.screens.Navigation
+import dev.kr3st1k.piucompanion.ui.screens.home.HomeScreen
 import dev.kr3st1k.piucompanion.ui.theme.PIUCompanionTheme
 
 class MainActivity : ComponentActivity() {
@@ -49,27 +44,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation()
+                    HomeScreen()
                 }
             }
         }
     }
 }
 
-class PIUCompanion : Application(), ImageLoaderFactory {
-    override fun newImageLoader(): ImageLoader {
-        return ImageLoader.Builder(this)
-            .memoryCache {
-                MemoryCache.Builder(this)
-                    .maxSizePercent(0.20)
-                    .build()
-            }
-            .diskCache {
-                DiskCache.Builder()
-                    .directory(filesDir.resolve("image_cache"))
-                    .maxSizeBytes(250 * 1024 * 1024)
-                    .build()
-            }
-            .build()
-    }
-}

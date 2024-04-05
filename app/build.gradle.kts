@@ -11,7 +11,6 @@ android {
     defaultConfig {
         applicationId = "dev.kr3st1k.piucompanion"
         minSdk = 31
-        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -54,38 +53,31 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation(platform("androidx.compose:compose-bom:2024.03.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("io.ktor:ktor-client-encoding:2.3.9")
-    implementation("androidx.compose.material3:material3")
-    implementation("io.ktor:ktor-client-logging:2.3.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-    implementation("eu.bambooapps:compose-material3-pullrefresh:1.1.1")
-    testImplementation("junit:junit:4.13.2")
-    implementation("org.jsoup:jsoup:1.17.2")
-    implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("androidx.browser:browser:1.8.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("org.slf4j:slf4j-nop:2.0.11")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("io.ktor:ktor-client-core:2.3.9")
-    implementation("io.ktor:ktor-client-core:2.3.9")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("io.ktor:ktor-client-okhttp:2.3.9")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("io.ktor:ktor-client-json:2.3.9")
-
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.ktor)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.autofill)
+    implementation(libs.kotlinx.serialization.json.v163)
+    implementation(libs.compose.material3.pullrefresh)
+    testImplementation(libs.junit)
+    implementation(libs.jsoup)
+    implementation(libs.coil.compose)
+    implementation(libs.koin.android)
+    implementation(libs.androidx.browser)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    implementation(libs.slf4j.nop.v2012)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.logging.interceptor)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }

@@ -3,9 +3,9 @@ package dev.kr3st1k.piucompanion.ui.screens.home.news
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.kr3st1k.piucompanion.helpers.RequestHandler
-import dev.kr3st1k.piucompanion.objects.NewsBanner
-import dev.kr3st1k.piucompanion.objects.NewsThumbnailObject
+import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
+import dev.kr3st1k.piucompanion.core.objects.NewsBanner
+import dev.kr3st1k.piucompanion.core.objects.NewsThumbnailObject
 import kotlinx.coroutines.launch
 
 class NewsViewModel : ViewModel() {
