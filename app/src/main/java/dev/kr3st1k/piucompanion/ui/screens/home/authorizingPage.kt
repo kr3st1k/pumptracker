@@ -24,17 +24,17 @@ fun AuthLoadingPage(viewModel: AuthViewModel, navController: NavController) {
     if (!viewModel.isLoading.value)
         if (viewModel.isFailed.value)
             navController.navigate(Screen.LoginPage.route) {
-                popUpTo(Screen.AuthLoadingPage.route) {
+                popUpTo(navController.graph.id)
+                {
                     inclusive = true
                 }
             }
         else
             navController.navigate(Screen.NewsPage.route) {
-                popUpTo(Screen.AuthLoadingPage.route) {
+                popUpTo(navController.graph.id)
+                {
                     inclusive = true
                 }
-                launchSingleTop = true
-                restoreState = true
             }
 }
 

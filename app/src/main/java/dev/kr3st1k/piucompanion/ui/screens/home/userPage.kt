@@ -31,7 +31,12 @@ fun UserScreen(
     val user =
         Utils.rememberLiveData(viewModel.user, lifecycleOwner, initialValue = User())
     if (user.value == null)
-        navController.navigate(Screen.LoginPage.route)
+        navController.navigate(Screen.AuthLoadingPage.route) {
+            popUpTo(navController.graph.id)
+            {
+                inclusive = true
+            }
+        }
     if (user.value?.trueUser == true) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     UserCard(user.value!!)

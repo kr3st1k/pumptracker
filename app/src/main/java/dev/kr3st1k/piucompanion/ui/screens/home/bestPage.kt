@@ -1,9 +1,9 @@
-package dev.kr3st1k.piucompanion.ui.screens.home.scores
+package dev.kr3st1k.piucompanion.ui.screens.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleOwner
@@ -20,13 +20,12 @@ import dev.kr3st1k.piucompanion.core.objects.BestUserScore
 import dev.kr3st1k.piucompanion.core.objects.BgInfo
 import dev.kr3st1k.piucompanion.core.objects.checkAndSaveNewUpdatedFiles
 import dev.kr3st1k.piucompanion.core.objects.readBgJson
-import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.LazyBestScore
+import dev.kr3st1k.piucompanion.ui.screens.Screen
 import kotlinx.coroutines.launch
 
-@SuppressLint("MutableCollectionMutableState", "CoroutineCreationDuringComposition")
 @Composable
 fun BestUserPage(
     navController: NavController,
@@ -40,21 +39,14 @@ fun BestUserPage(
     val viewModel = viewModel<BestUserViewModel>(
         factory = BestUserViewModelFactory { readBgJson(context) }
     )
-
-    val checkingLogin = Utils.rememberLiveData(
-        liveData = viewModel.checkingLogin,
-        lifecycleOwner,
-        initialValue = true
-    )
-    val checkLogin = Utils.rememberLiveData(
-        liveData = viewModel.checkLogin,
-        lifecycleOwner,
-        initialValue = false
-    )
     val isRecent =
         Utils.rememberLiveData(liveData = viewModel.isRecent, lifecycleOwner, initialValue = false)
     val scores =
-        Utils.rememberLiveData(liveData = viewModel.scores, lifecycleOwner, initialValue = null)
+        Utils.rememberLiveData(
+            liveData = viewModel.scores,
+            lifecycleOwner,
+            initialValue = mutableListOf()
+        )
     val selectedOption = Utils.rememberLiveData(
         liveData = viewModel.selectedOption,
         lifecycleOwner,
@@ -62,73 +54,62 @@ fun BestUserPage(
     )
 
     Column (
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DropdownMenuBestScores(
             viewModel.options,
             selectedOption.value,
             onUpdate = { viewModel.refreshScores(it) })
-        if (checkingLogin.value) {
-            YouSpinMeRightRoundBabyRightRound("Check if you logged in...")
-        } else {
-            if (checkLogin.value) {
-                if (scores.value.isNotEmpty()) {
-                    LazyBestScore(
-                        scores.value,
-                        onRefresh = { viewModel.loadScores() },
-                        onLoadNext = { viewModel.addScores() },
-                        isRecent = isRecent.value
-                    )
-                }
-                else
+
+        if (scores.value == null) {
+            navController.navigate(Screen.AuthLoadingPage.route) {
+                popUpTo(navController.graph.id)
                 {
-                    YouSpinMeRightRoundBabyRightRound("Getting best scores...")
+                    inclusive = true
                 }
-            } else {
-                MyAlertDialog(
-                    showDialog = true,
-                    title = "Login failed!",
-                    content = "You need to authorize",
-                    onDismiss = {}
-                )
+            }
+        } else {
+            LazyBestScore(
+                scores.value!!,
+                onRefresh = { viewModel.loadScores() },
+                onLoadNext = { viewModel.addScores() },
+                isRecent = isRecent
+            )
+            if (scores.value!!.isEmpty()) {
+                YouSpinMeRightRoundBabyRightRound("Getting best scores...")
             }
         }
     }
 }
 
+
 class BestUserViewModel(
     private val bgs: () -> MutableList<BgInfo>,
 ) : ViewModel() {
 
-    private val _isFirstTime = MutableLiveData(true)
-
     private var _bgs = MutableLiveData(bgs())
-
-    private val _checkLogin = MutableLiveData(false)
-    val checkLogin: LiveData<Boolean> = _checkLogin
-
-    private val _checkingLogin = MutableLiveData(true)
-    val checkingLogin: LiveData<Boolean> = _checkingLogin
 
     private val _addingScores = MutableLiveData(false)
 
-    var _pages = MutableLiveData(3)
+    private var _pages = MutableLiveData(3)
 
-    var _selectedOption = MutableLiveData(Pair("All", ""))
+    private var _selectedOption = MutableLiveData(Pair("All", ""))
     val selectedOption: LiveData<Pair<String, String>> = _selectedOption
 
     val options = mutableListOf<Pair<String, String>>()
         .apply {
             add("All" to "")
+            add("LEVEL 10 OVER" to "10over")
             for (i in 10..27)
                 add("LEVEL $i" to i.toString())
             add("LEVEL 27 OVER" to "27over")
             add("CO-OP" to "coop")
         }
 
-    val scores = MutableLiveData<List<BestUserScore>>(mutableListOf())
+    val scores = MutableLiveData<List<BestUserScore>?>(mutableListOf())
 
-    var _isRecent = MutableLiveData(false)
+    private var _isRecent = MutableLiveData(false)
     var isRecent: LiveData<Boolean> = _isRecent
 
     init {
@@ -139,24 +120,16 @@ class BestUserViewModel(
         viewModelScope.launch {
             scores.value = mutableListOf()
             _isRecent.value = false
-            if (_isFirstTime.value == true)
-                _checkingLogin.value = true
-            _checkLogin.value = RequestHandler.checkIfLoginSuccessRequest()
-            if (_isFirstTime.value == true) {
-                _checkingLogin.value = false
-                _isFirstTime.value = false
-            }
-            if (checkLogin.value == true) {
-                _bgs = MutableLiveData(bgs())
-                val newScores = RequestHandler.getBestUserScores(
-                    lvl = selectedOption.value!!.second,
-                    bgs = _bgs.value!!
-                )
+            _bgs = MutableLiveData(bgs())
+            val newScores = RequestHandler.getBestUserScores(
+                lvl = selectedOption.value!!.second,
+                bgs = _bgs.value!!
+            )
+            if (newScores != null) {
                 scores.value = newScores.first.toList()
-                _pages.value = 3
                 _isRecent.value = newScores.second
+                _pages.value = 3
             }
-
         }
     }
 
@@ -177,10 +150,14 @@ class BestUserViewModel(
                     lvl = _selectedOption.value!!.second,
                     bgs = _bgs.value!!
                 )
-                scores.value = scores.value?.plus(additionalScores.first.toList())
-                _isRecent.value = additionalScores.second
-                _pages.value = _pages.value?.plus(1)
-                _addingScores.value = false
+                if (additionalScores != null) {
+                    scores.value = scores.value?.plus(additionalScores.first.toList())
+                    _isRecent.value = additionalScores.second
+                    _pages.value = _pages.value?.plus(1)
+                    _addingScores.value = false
+                } else {
+                    scores.value = null
+                }
             }
         }
     }

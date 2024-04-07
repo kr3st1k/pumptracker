@@ -322,7 +322,7 @@ object RequestHandler {
         lvl: String = "",
         res: MutableList<BestUserScore> = mutableListOf(),
         bgs: MutableList<BgInfo>,
-    ): Pair<MutableList<BestUserScore>, Boolean> {
+    ): Pair<MutableList<BestUserScore>, Boolean>? {
         var uri = "https://www.piugame.com/my_page/my_best_score.php"
         var isRecent = false
         uri += "?lv=$lvl"
@@ -334,25 +334,25 @@ object RequestHandler {
                     else
                         uri += "&page=$i"
                     val t =
-                        getDocument(client, uri, true) ?: return Pair(mutableListOf(), false)
+                        getDocument(client, uri, true) ?: return null
                     isRecent = parseBestUserScores(t, res, bgs = bgs)
                 }
             }
         } else {
             uri += "&page=$page"
             val t =
-                getDocument(client, uri, true) ?: return Pair(mutableListOf(), false)
+                getDocument(client, uri, true) ?: return null
             isRecent = parseBestUserScores(t, res, bgs = bgs)
         }
         return Pair(res, isRecent)
 
     }
 
-    suspend fun getLatestScores(length: Int): MutableList<LatestScore> {
+    suspend fun getLatestScores(length: Int): MutableList<LatestScore>? {
         val res: MutableList<LatestScore> = mutableListOf()
 
         val t = getDocument(client, "https://www.piugame.com/my_page/recently_played.php", true)
-            ?: return mutableListOf()
+            ?: return null
 
         val scoreTable = t.select("ul.recently_playeList.flex.wrap")
         val scores = scoreTable.select("li").filter { element ->

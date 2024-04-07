@@ -1,6 +1,5 @@
 package dev.kr3st1k.piucompanion.ui.screens.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,6 @@ import dev.kr3st1k.piucompanion.ui.components.home.news.LazyNews
 import dev.kr3st1k.piucompanion.ui.components.home.news.NewsSlider
 import kotlinx.coroutines.launch
 
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun NewsScreen(lifecycleOwner: LifecycleOwner) {
     val viewModel = viewModel<NewsViewModel>()

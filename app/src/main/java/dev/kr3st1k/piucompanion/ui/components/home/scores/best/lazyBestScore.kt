@@ -12,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.kr3st1k.piucompanion.core.objects.BestUserScore
-import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -33,7 +33,7 @@ fun LazyBestScore(
     scores: List<BestUserScore>,
     onRefresh: () -> Unit,
     onLoadNext: () -> Unit,
-    isRecent: Boolean,
+    isRecent: State<Boolean>,
 ) {
     val isRefreshing by remember {
         mutableStateOf(false)
@@ -50,34 +50,29 @@ fun LazyBestScore(
                 .collect { lastVisibleItem ->
                     lastVisibleItem?.let {
                         if (it.index == listState.layoutInfo.totalItemsCount - 1) {
-                            if (!isRecent) {
+                            if (!isRecent.value) {
                                 onLoadNext()
                             }
                         }
                     }
                 }
         }
-        if (scores.isNotEmpty()) {
-
-            LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
-                items(scores) { data ->
-                    BestScore(data)
-                    if (scores.indexOf(data) == scores.count() - 1 && !isRecent)
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Spacer(modifier = Modifier.size(2.dp))
-                            CircularProgressIndicator()
-                        }
-                }
+        LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
+            items(scores) { data ->
+                BestScore(data)
+                if (scores.indexOf(data) == scores.count() - 1 && !isRecent.value)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Spacer(modifier = Modifier.size(2.dp))
+                        CircularProgressIndicator()
+                    }
             }
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = state
-            )
-        } else {
-            YouSpinMeRightRoundBabyRightRound("Getting best scores...")
         }
+        PullRefreshIndicator(
+            refreshing = isRefreshing,
+            state = state
+        )
     }
 }

@@ -1,6 +1,7 @@
 package dev.kr3st1k.piucompanion.ui.components.home.scores.latest
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +26,7 @@ fun LazyLatestScore(scores: MutableList<LatestScore>, onRefresh: () -> Unit) {
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     Box (
         contentAlignment = Alignment.TopCenter,
+        modifier = Modifier.fillMaxWidth()
     ) {
         LazyColumn(modifier = Modifier.pullRefresh(state)) {
             items(scores.toList()) { data ->

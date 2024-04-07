@@ -2,7 +2,9 @@ package dev.kr3st1k.piucompanion.ui.components.home.scores.best
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -35,13 +37,14 @@ fun DropdownMenuBestScores(
             .fillMaxWidth()
     ) {
         ExposedDropdownMenuBox(
-            expanded = expanded,
             modifier = Modifier.fillMaxWidth(),
+            expanded = expanded,
             onExpandedChange = { expanded = !expanded }
         ) {
             TextField(
                 value = selectedOption.first,
                 onValueChange = {},
+                singleLine = true,
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(
                         expanded = expanded
@@ -53,17 +56,19 @@ fun DropdownMenuBestScores(
                     .fillMaxWidth(),
                 readOnly = true
             )
-            ExposedDropdownMenu(
+            DropdownMenu(
                 expanded = expanded,
-                modifier = Modifier.fillMaxWidth(),
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .height(475.dp)
+                    .exposedDropdownSize()
+                    .padding(horizontal = 16.dp),
             ) {
                 options.forEach { (name, value) ->
                     DropdownMenuItem(
                         text = {
                             Text(text = name)
                         },
-                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             onUpdate(Pair(name, value))
                             expanded = false

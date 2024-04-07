@@ -8,8 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -52,18 +50,17 @@ fun HomeScreen() {
 
     )
 
-    val showBottomBar = rememberSaveable { mutableStateOf(false) }
-
     val navControllerLocal = rememberNavController()
+
+    val currentRoute = navControllerLocal.currentBackStackEntryAsState().value?.destination?.route
 
     Scaffold(
         topBar = {
-            if (showBottomBar.value) {
+            if (currentRoute in topLevelDestinations.map { it.route }) {
                 CenterAlignedTopAppBar(title = {
                     Text(
                         text = topLevelDestinations.find { t ->
-                            t.route == (navControllerLocal.currentBackStackEntryAsState().value?.destination?.route
-                                ?: "")
+                            t.route == (currentRoute ?: "")
                         }?.iconText ?: "",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
@@ -72,7 +69,7 @@ fun HomeScreen() {
             }
         },
         bottomBar = {
-            if (showBottomBar.value) {
+            if (currentRoute in topLevelDestinations.map { it.route }) {
                 HomeBottomBar(destinations = topLevelDestinations,
                     currentDestination = navControllerLocal.currentBackStackEntryAsState().value?.destination,
                     onNavigateToDestination = {
@@ -98,9 +95,7 @@ fun HomeScreen() {
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f),
-                navController = navControllerLocal,
-                onNavigateShowBottomBar = { showBottomBar.value = true },
-                onNavigateNotShowBottomBar = { showBottomBar.value = false }
+                navController = navControllerLocal
             )
         }
     }

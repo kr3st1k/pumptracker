@@ -11,18 +11,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.kr3st1k.piucompanion.core.prefs.LoginManager
 import dev.kr3st1k.piucompanion.ui.screens.home.AuthLoadingPage
+import dev.kr3st1k.piucompanion.ui.screens.home.BestUserPage
+import dev.kr3st1k.piucompanion.ui.screens.home.HistoryPage
 import dev.kr3st1k.piucompanion.ui.screens.home.LoginPage
 import dev.kr3st1k.piucompanion.ui.screens.home.NewsScreen
 import dev.kr3st1k.piucompanion.ui.screens.home.UserScreen
-import dev.kr3st1k.piucompanion.ui.screens.home.scores.BestUserPage
-import dev.kr3st1k.piucompanion.ui.screens.home.scores.HistoryPage
 
 @Composable
 fun HomeNavHost(
     modifier: Modifier,
     navController: NavHostController,
-    onNavigateShowBottomBar: () -> Unit,
-    onNavigateNotShowBottomBar: () -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var startDestination = Screen.LoginPage.route
@@ -39,7 +37,6 @@ fun HomeNavHost(
             navController = navController, startDestination = startDestination, modifier = modifier
         ) {
             composable(route = Screen.LoginPage.route) {
-                onNavigateNotShowBottomBar()
                 LoginPage(
                     navController = navController,
                     viewModel = viewModel()
@@ -48,7 +45,6 @@ fun HomeNavHost(
 
             composable(route = Screen.AuthLoadingPage.route)
             {
-                onNavigateNotShowBottomBar()
                 AuthLoadingPage(
                     navController = navController,
                     viewModel = viewModel(),
@@ -56,14 +52,12 @@ fun HomeNavHost(
             }
 
             composable(route = Screen.NewsPage.route) {
-                onNavigateShowBottomBar()
                 NewsScreen(
                     lifecycleOwner = lifecycleOwner
                 )
             }
 
             composable(route = Screen.UserPage.route) {
-                onNavigateShowBottomBar()
                 UserScreen(
                     navController = navController,
                     lifecycleOwner = lifecycleOwner
@@ -71,7 +65,6 @@ fun HomeNavHost(
             }
 
             composable(route = Screen.HistoryPage.route) {
-                onNavigateShowBottomBar()
                 HistoryPage(
                     navController = navController,
                     lifecycleOwner = lifecycleOwner
@@ -79,7 +72,6 @@ fun HomeNavHost(
             }
 
             composable(route = Screen.BestUserPage.route) {
-                onNavigateShowBottomBar()
                 BestUserPage(
                     navController = navController,
                     lifecycleOwner = lifecycleOwner
