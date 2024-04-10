@@ -1,39 +1,56 @@
 package dev.kr3st1k.piucompanion.ui.components
 
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 
 @Composable
-fun MyAlertDialog(
+fun AlertDialogWithButton(
     showDialog: Boolean,
     title: String,
     content: String,
     onDismiss: () -> Unit,
-    onConfirm: (() -> Unit)? = null,
 ) {
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = onDismiss,
             title = { Text(text = title) },
             text = {
                 Text(text = content)
             },
             confirmButton = {
-                Button(onClick = {
-                    onDismiss()
-                }) {
-                    Text(text = if (onConfirm == null) "OK" else "Cancel")
+                TextButton(onClick = onDismiss) {
+                    Text(text = "OK")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun AlertDialogWithTwoButton(
+    showDialog: Boolean,
+    title: String,
+    content: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(text = title) },
+            text = {
+                Text(text = content)
+            },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(text = "Confirm")
                 }
             },
             dismissButton = {
-                if (onConfirm != null) {
-                    Button(onClick = {
-                        onDismiss()
-                    }) {
-                        Text(text = "OK")
-                    }
+                TextButton(onClick = onDismiss) {
+                    Text(text = "Cancel")
                 }
             }
         )

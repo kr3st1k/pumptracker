@@ -1,6 +1,7 @@
 package dev.kr3st1k.piucompanion.ui.components.home.news
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,13 +13,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dev.kr3st1k.piucompanion.core.network.data.News
+import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
+import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LazyNews(news: MutableList<News>, onRefresh: () -> Unit) {
+fun LazyNews(news: MutableList<News>, newsBanners: MutableList<NewsBanner>, onRefresh: () -> Unit) {
     val isRefreshing by remember {
         mutableStateOf(false)
     }
@@ -30,6 +33,17 @@ fun LazyNews(news: MutableList<News>, onRefresh: () -> Unit) {
         modifier = Modifier.fillMaxWidth()
     ) {
         LazyColumn(modifier = Modifier.pullRefresh(state)) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    if (newsBanners.isNotEmpty())
+                        NewsSlider(newsBanners = newsBanners)
+                    else
+                        YouSpinMeRightRoundBabyRightRound()
+                }
+            }
             items(news.toList()) { data ->
                 NewsThumbnail(news = data)
             }

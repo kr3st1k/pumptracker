@@ -40,7 +40,7 @@ import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.core.helpers.Crypto
 import dev.kr3st1k.piucompanion.core.modules.LoginManager
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
-import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
+import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithButton
 import dev.kr3st1k.piucompanion.ui.screens.Screen
 import kotlinx.coroutines.launch
 
@@ -55,7 +55,8 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        MyAlertDialog(showDialog = viewModel.showFailedDialog.value, title = "Failed",
+        AlertDialogWithButton(
+            showDialog = viewModel.showFailedDialog.value, title = "Failed",
             content = "Try Again", onDismiss = {
                 viewModel.showFailedDialog.value = false
             })

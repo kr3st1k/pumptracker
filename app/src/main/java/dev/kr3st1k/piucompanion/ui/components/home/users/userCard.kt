@@ -31,7 +31,6 @@ fun UserCard(user: User)
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 10.dp)
             .clip(RoundedCornerShape(8.dp))
     ) {
         Box(

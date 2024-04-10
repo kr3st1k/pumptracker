@@ -14,8 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithTwoButton
 import dev.kr3st1k.piucompanion.ui.components.Button
-import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
 
 @Composable
 fun SettingsPage(
@@ -30,7 +30,7 @@ fun SettingsPage(
         Column(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {
-            MyAlertDialog(
+            AlertDialogWithTwoButton(
                 showDialog = showLogoutDialogue.value,
                 title = "Exit from account?",
                 content = "Are you sure about that?",

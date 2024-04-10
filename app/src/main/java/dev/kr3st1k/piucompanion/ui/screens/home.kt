@@ -42,18 +42,41 @@ val topLevelDestinations = listOf(
     )
 )
 
-public val underLevelDestination = listOf(
+public val homeDestinations = listOf(
     TopLevelDestination(
         route = Screen.NewsPage.route,
         selectedIcon = R.drawable.baseline_newspaper_24,
         unselectedIcon = R.drawable.baseline_newspaper_24,
-        iconText = "News"
+        iconText = "News",
+        summary = "Read latest news about Pump It Up"
+    ),
+    TopLevelDestination(
+        route = Screen.NewsPage.route,
+        selectedIcon = R.drawable.baseline_leaderboard_24,
+        unselectedIcon = R.drawable.baseline_leaderboard_24,
+        iconText = "Leaderboard",
+        summary = "Let's see who sniped FEFEMZ's scores"
+    ),
+    TopLevelDestination(
+        route = Screen.NewsPage.route,
+        selectedIcon = R.drawable.baseline_dvr_24,
+        unselectedIcon = R.drawable.baseline_dvr_24,
+        iconText = "Title Changer",
+        summary = "Select the most beautiful title available"
+    ),
+    TopLevelDestination(
+        route = Screen.NewsPage.route,
+        selectedIcon = R.drawable.baseline_account_circle_24,
+        unselectedIcon = R.drawable.baseline_account_circle_24,
+        iconText = "Avatar Shop",
+        summary = "Wow! Nice picture!"
     ),
     TopLevelDestination(
         route = Screen.SettingsPage.route,
-        selectedIcon = R.drawable.baseline_newspaper_24,
-        unselectedIcon = R.drawable.baseline_newspaper_24,
-        iconText = "Settings"
+        selectedIcon = R.drawable.baseline_settings_24,
+        unselectedIcon = R.drawable.baseline_settings_24,
+        iconText = "Settings",
+        summary = "He he"
     )
 )
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,10 +90,10 @@ fun HomeScreen() {
 
     Scaffold(
         topBar = {
-            if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in underLevelDestination.map { it.route }) {
+            if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
                 CenterAlignedTopAppBar(
                     navigationIcon = {
-                        if (currentRoute in underLevelDestination.map { it.route })
+                        if (currentRoute in homeDestinations.map { it.route })
                             IconButton(onClick = {
                                 navControllerLocal.popBackStack()
                             }) {
@@ -84,7 +107,7 @@ fun HomeScreen() {
                     Text(
                         text = topLevelDestinations.find { t ->
                             t.route == (currentRoute ?: "")
-                        }?.iconText ?: underLevelDestination.find { t ->
+                        }?.iconText ?: homeDestinations.find { t ->
                             t.route == (currentRoute ?: "")
                         }?.iconText ?: "",
                         fontWeight = FontWeight.Bold,
@@ -94,7 +117,7 @@ fun HomeScreen() {
             }
         },
         bottomBar = {
-            if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in underLevelDestination.map { it.route }) {
+            if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
                 HomeBottomBar(destinations = topLevelDestinations,
                     currentDestination = navControllerLocal.currentBackStackEntryAsState().value?.destination,
                     onNavigateToDestination = {

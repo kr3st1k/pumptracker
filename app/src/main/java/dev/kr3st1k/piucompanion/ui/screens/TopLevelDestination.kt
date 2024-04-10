@@ -5,4 +5,5 @@ data class TopLevelDestination(
     val selectedIcon: Int,
     val unselectedIcon: Int,
     val iconText: String,
+    val summary: String? = null,
 )
