@@ -10,9 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.core.modules.BgManager
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
-import dev.kr3st1k.piucompanion.core.prefs.BgManager
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.LazyBestScore

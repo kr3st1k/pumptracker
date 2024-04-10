@@ -9,7 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.kr3st1k.piucompanion.core.prefs.LoginManager
+import dev.kr3st1k.piucompanion.core.modules.LoginManager
 import dev.kr3st1k.piucompanion.ui.screens.home.AuthLoadingPage
 import dev.kr3st1k.piucompanion.ui.screens.home.BestUserPage
 import dev.kr3st1k.piucompanion.ui.screens.home.HistoryPage

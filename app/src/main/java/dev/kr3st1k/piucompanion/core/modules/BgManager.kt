@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.core.prefs
+package dev.kr3st1k.piucompanion.core.modules
 
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
