@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import dev.kr3st1k.piucompanion.core.network.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
@@ -58,15 +58,15 @@ class NewsViewModel : ViewModel() {
 
     private fun loadNews() {
         viewModelScope.launch {
-            newsBanners.value = RequestHandler.getNewsBanners()
-            news.value = RequestHandler.getNewsList()
+            newsBanners.value = NetworkRepositoryImpl.getNewsBanners()
+            news.value = NetworkRepositoryImpl.getNewsList()
         }
     }
 
     fun refreshNews() {
         viewModelScope.launch {
             news.value = mutableListOf()
-            news.value = RequestHandler.getNewsList()
+            news.value = NetworkRepositoryImpl.getNewsList()
         }
     }
 }

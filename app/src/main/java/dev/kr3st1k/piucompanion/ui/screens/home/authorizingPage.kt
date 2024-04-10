@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.helpers.Crypto
-import dev.kr3st1k.piucompanion.core.network.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.prefs.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.screens.Screen
@@ -52,7 +52,7 @@ class AuthViewModel : ViewModel() {
             val r = loginData.first?.let { Crypto.decryptData(it) }
                 ?.let {
                     loginData.second?.let { it1 -> Crypto.decryptData(it1) }?.let { it2 ->
-                        RequestHandler.loginToAmPass(it, it2)
+                        NetworkRepositoryImpl.loginToAmPass(it, it2)
                     }
                 }
             if (r == null || r == false)

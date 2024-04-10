@@ -1,7 +1,6 @@
 package dev.kr3st1k.piucompanion.core.prefs
 
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
-import dev.kr3st1k.piucompanion.core.network.RequestHandler
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,11 +19,11 @@ class BgManager : KoinComponent {
 
     fun checkAndSaveNewUpdatedFiles() {
         CoroutineScope(Dispatchers.IO).launch {
-            val newUpdateValue = NetworkRepositoryImpl.getUpdateInfo()
+            val newUpdateValue = NetworkRepositoryImpl.getUpdateInfo().replace("\n", "") // WTF
             val currentValue = readUpdateValue()
             if (currentValue != newUpdateValue) {
                 saveNewUpdateValue(newUpdateValue)
-                val bgJson = RequestHandler.getBgJson()
+                val bgJson = NetworkRepositoryImpl.getBgJson()
                 saveBgJson(bgJson)
             }
         }

@@ -37,7 +37,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.core.helpers.Crypto
-import dev.kr3st1k.piucompanion.core.network.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.prefs.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.ui.screens.Screen
@@ -138,7 +138,7 @@ class LoginViewModel : ViewModel() {
         }
         viewModelScope.launch {
             isLoading.value = true
-            val r = RequestHandler.loginToAmPass(username.value.text, password.value.text)
+            val r = NetworkRepositoryImpl.loginToAmPass(username.value.text, password.value.text)
             if (r) {
                 Crypto.encryptData(username.value.text)
                     ?.let {

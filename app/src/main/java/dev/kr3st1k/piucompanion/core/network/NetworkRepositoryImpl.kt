@@ -18,51 +18,80 @@ import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.http.Parameters
-import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import io.ktor.http.parameters
+import io.ktor.http.path
 import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 object NetworkRepositoryImpl : NetworkRepository {
-    private const val BASEURL = "https://am-pass.net"
-    private const val BASEPIUURL = "https://www.piugame.com"
-    private const val PIUVERSIONURL = "https://kr3st1k.me/piu/update.txt"
-    private const val BGJSONURL = "https://kr3st1k.me/piu/piu_bg_database.json"
-    private const val LOGINPOSTPATH = "/bbs/login_check.php"
+    private const val BASEURL = "am-pass.net"
+    private const val BASEPIUURL = "www.piugame.com"
+    private const val UPDATEHOST = "kr3st1k.me"
+    private const val PIUVERSIONURL = "piu/update.txt"
+    private const val BGJSONURL = "piu/piu_bg_database.json"
+    private const val LOGINPOSTPATH = "bbs/login_check.php"
     private val jsonWorker = Json { isLenient = true }
     private val client: HttpClient = KtorInstance.getHttpClient()
     override suspend fun getDocument(
-        url: String,
+        host: String,
+        path: String,
+        params: Parameters,
         checkLogin: Boolean,
     ): Document? {
-        val request = client.get(url)
+        val request = client.get {
+            url {
+                protocol = URLProtocol.HTTPS
+                this.host = host
+                path(path)
+                parameters.appendAll(params)
+            }
+
+        }
         val requestText: String = request.body()
 
         if (checkLogin && !checkIfLoginSuccess(requestText)) {
             if (!checkIfLoginSuccessRequest()) {
                 return null
             }
-            return getDocument(url)
+            return getDocument(host, path, params, true)
         }
 
         return Jsoup.parse(requestText)
     }
 
     override suspend fun getUpdateInfo(): String {
-        val response = client.get(PIUVERSIONURL)
+        val response = client.get {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = UPDATEHOST
+                path(PIUVERSIONURL)
+            }
+        }
         return response.body<String>()
     }
 
     override suspend fun getBgJson(): MutableList<BgInfo> {
-        val response = client.get(BGJSONURL)
+        val response = client.get {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = UPDATEHOST
+                path(BGJSONURL)
+            }
+        }
         val responseJsonText = response.body<String>()
         return jsonWorker.decodeFromString(responseJsonText)
     }
 
     override suspend fun checkIfLoginSuccessRequest(): Boolean {
-        val t = client.get(BASEURL)
+        val t = client.get {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = BASEURL
+                path("/")
+            }
+        }
         return checkIfLoginSuccess(t.body())
     }
 
@@ -71,8 +100,9 @@ object NetworkRepositoryImpl : NetworkRepository {
         password: String,
         rememberMe: Boolean,
     ): Boolean {
+        client.get("https://$BASEURL")
         client.submitForm(
-            url = "$BASEURL$LOGINPOSTPATH",
+            url = "https://$BASEURL/$LOGINPOSTPATH",
             formParameters = parameters {
                 append("url", "/")
                 append("mb_id", login)
@@ -90,48 +120,50 @@ object NetworkRepositoryImpl : NetworkRepository {
     }
 
     override suspend fun getNewsList(): MutableList<News> {
-        val document = getDocument("$BASEPIUURL/phoenix_notice") ?: return mutableListOf()
+        val document = getDocument(BASEPIUURL, "phoenix_notice") ?: return mutableListOf()
         return NewsListParser.parse(document)
     }
 
     override suspend fun getUserInfo(): User? {
-        val document = getDocument("$BASEPIUURL/my_page/play_data.php", true)
+        val document = getDocument(BASEPIUURL, "my_page/play_data.php", checkLogin = true)
             ?: return null
         return UserParser.parse(document)
+    }
+
+    private suspend fun <T> reqAndAddAll(
+        params: Parameters,
+        resList: MutableList<T>,
+        onRequest: suspend (url: Parameters) -> LoadableList<T>?,
+    ): Boolean? {
+        val result = onRequest(params) ?: return null
+        resList.addAll(result.res)
+        return result.isLoadMore
     }
 
     private suspend fun <T> buildRequestScorePagination(
         page: Int? = null,
         lvl: String = "",
-        path: String,
         resList: MutableList<T>,
-        onRequest: suspend (url: URLBuilder) -> LoadableList<T>?,
+        onRequest: suspend (url: Parameters) -> LoadableList<T>?,
     ): LoadableList<T>? {
         var isLoadMore = true
 
-        val url = URLBuilder(
-            protocol = URLProtocol.HTTPS,
-            host = "www.piugame.com",
-            pathSegments = path.split("/"),
-            parameters = Parameters.build {
-                append("lv", lvl)
-                append("page", "")
-            }
-        )
         if (page == null) {
             for (i in 1..2) {
                 if (!isLoadMore)
                     break
-                url.parameters["page"] = i.toString()
-                val result = onRequest(url) ?: return null
-                resList.addAll(result.res)
-                isLoadMore = result.isLoadMore
+                val result = reqAndAddAll(Parameters.build {
+                    append("lv", lvl)
+                    append("page", i.toString())
+                }, resList, onRequest) ?: return null
+                isLoadMore = result
             }
         } else {
-            url.parameters["page"] = page.toString()
-            val result = onRequest(url) ?: return null
-            resList.addAll(result.res)
-            isLoadMore = result.isLoadMore
+            val result = reqAndAddAll(Parameters.build {
+                append("lv", lvl)
+                append("page", page.toString())
+            }, resList, onRequest) ?: return null
+            isLoadMore = result
         }
         return LoadableList(resList, isLoadMore)
     }
@@ -141,15 +173,17 @@ object NetworkRepositoryImpl : NetworkRepository {
         lvl: String,
         res: MutableList<BestUserScore>,
     ): LoadableList<BestUserScore>? {
-        return buildRequestScorePagination(page, lvl, "my_page/my_best_score.php", res) { url ->
+        return buildRequestScorePagination(page, lvl, res) { parameters ->
             val document =
-                getDocument(url.buildString(), true) ?: return@buildRequestScorePagination null
+                getDocument(BASEPIUURL, "my_page/my_best_score.php", params = parameters, true)
+                    ?: return@buildRequestScorePagination null
             return@buildRequestScorePagination BestUserScoresParser.parse(document)
         }
     }
 
     override suspend fun getLatestScores(length: Int): MutableList<LatestScore>? {
-        val document = getDocument("$BASEPIUURL/my_page/recently_played.php", true)
+        val document =
+            getDocument(BASEPIUURL, path = "my_page/recently_played.php", checkLogin = true)
             ?: return null
         return LatestScoresParser.parse(document)
     }

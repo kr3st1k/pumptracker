@@ -7,10 +7,16 @@ import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.core.network.data.User
+import io.ktor.http.Parameters
 import org.jsoup.nodes.Document
 
 interface NetworkRepository {
-    suspend fun getDocument(url: String, checkLogin: Boolean = false): Document?
+    suspend fun getDocument(
+        host: String,
+        path: String = "/",
+        params: Parameters = Parameters.Empty,
+        checkLogin: Boolean = false,
+    ): Document?
     suspend fun getUpdateInfo(): String
     suspend fun getBgJson(): MutableList<BgInfo>
     suspend fun checkIfLoginSuccessRequest(): Boolean
