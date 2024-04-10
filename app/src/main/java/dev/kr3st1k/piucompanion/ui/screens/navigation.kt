@@ -53,28 +53,28 @@ fun HomeNavHost(
 
             composable(route = Screen.NewsPage.route) {
                 NewsScreen(
-                    lifecycleOwner = lifecycleOwner
+                    viewModel = viewModel()
                 )
             }
 
             composable(route = Screen.UserPage.route) {
                 UserScreen(
                     navController = navController,
-                    lifecycleOwner = lifecycleOwner
+                    viewModel = viewModel()
                 )
             }
 
             composable(route = Screen.HistoryPage.route) {
                 HistoryPage(
                     navController = navController,
-                    lifecycleOwner = lifecycleOwner
+                    viewModel = viewModel()
                 )
             }
 
             composable(route = Screen.BestUserPage.route) {
                 BestUserPage(
                     navController = navController,
-                    lifecycleOwner = lifecycleOwner
+                    viewModel = viewModel()
                 )
             }
         }

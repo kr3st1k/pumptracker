@@ -5,52 +5,52 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.network.RequestHandler
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.news.LazyNews
 import dev.kr3st1k.piucompanion.ui.components.home.news.NewsSlider
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun NewsScreen(lifecycleOwner: LifecycleOwner) {
-    val viewModel = viewModel<NewsViewModel>()
-    val newsBanners = Utils.rememberLiveData(viewModel.newsBanners, lifecycleOwner, null)
-    val news = Utils.rememberLiveData(viewModel.news, lifecycleOwner, null)
+fun NewsScreen(
+    viewModel: NewsViewModel,
+) {
+    val newsBanners by viewModel.newsBanners.collectAsStateWithLifecycle()
+    val news = viewModel.news.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        if (newsBanners.value.isNullOrEmpty()) {
+        if (newsBanners.isEmpty()) {
             YouSpinMeRightRoundBabyRightRound("Getting news banners...")
         } else {
-            NewsSlider(newsBanners = newsBanners.value)
+            NewsSlider(newsBanners = newsBanners)
         }
 
-        if (newsBanners.value != null && news.value != null && news.value.isNotEmpty()) {
+        if (news.value.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
         }
 
         LazyNews(
-            news = news.value ?: mutableListOf(),
+            news = news.value,
             onRefresh = { viewModel.refreshNews() }
         )
-        if (news.value.isNullOrEmpty()) {
+        if (news.value.isEmpty()) {
             YouSpinMeRightRoundBabyRightRound("Getting news...")
         }
     }
 }
 
 class NewsViewModel : ViewModel() {
-    val newsBanners = MutableLiveData<MutableList<NewsBanner>>(mutableListOf())
-    val news = MutableLiveData<MutableList<News>>(mutableListOf())
+    val newsBanners = MutableStateFlow<MutableList<NewsBanner>>(mutableListOf())
+    val news = MutableStateFlow<MutableList<News>>(mutableListOf())
 
     init {
         loadNews()

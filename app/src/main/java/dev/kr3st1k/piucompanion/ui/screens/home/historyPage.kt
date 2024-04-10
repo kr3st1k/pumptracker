@@ -3,33 +3,30 @@ package dev.kr3st1k.piucompanion.ui.screens.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.core.helpers.Utils
-import dev.kr3st1k.piucompanion.core.network.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.LatestScore
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.latest.LazyLatestScore
 import dev.kr3st1k.piucompanion.ui.screens.Screen
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
 fun HistoryPage(
     navController: NavController,
-    lifecycleOwner: LifecycleOwner,
+    viewModel: HistoryViewModel,
 ) {
-    val viewModel = viewModel<HistoryViewModel>()
-    val scores =
-        Utils.rememberLiveData(viewModel.scores, lifecycleOwner, initialValue = mutableListOf())
+    val scores by viewModel.scores.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize()) {
 
-        if (scores.value == null) {
+        if (scores == null) {
             navController.navigate(Screen.AuthLoadingPage.route) {
                 popUpTo(navController.graph.id)
                 {
@@ -37,8 +34,8 @@ fun HistoryPage(
                 }
             }
         } else {
-            LazyLatestScore(scores.value!!, onRefresh = { viewModel.loadScores() })
-            if (scores.value?.isEmpty() == true) {
+            LazyLatestScore(scores!!, onRefresh = { viewModel.loadScores() })
+            if (scores?.isEmpty() == true) {
                 YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
             }
         }
@@ -47,7 +44,7 @@ fun HistoryPage(
 
 
 class HistoryViewModel : ViewModel() {
-    val scores = MutableLiveData<MutableList<LatestScore>?>(mutableListOf())
+    val scores = MutableStateFlow<MutableList<LatestScore>?>(mutableListOf())
 
     init {
         loadScores()
@@ -56,9 +53,7 @@ class HistoryViewModel : ViewModel() {
     fun loadScores() {
         viewModelScope.launch {
             scores.value = mutableListOf()
-            scores.value = RequestHandler.getLatestScores(
-                50
-            )
+            scores.value = NetworkRepositoryImpl.getLatestScores(50)
         }
     }
 }

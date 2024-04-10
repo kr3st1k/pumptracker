@@ -8,9 +8,12 @@ import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import dev.kr3st1k.piucompanion.core.prefs.BgManager
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.koin.core.Koin
+import org.koin.core.context.GlobalContext
 import java.util.Locale
 
 object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
+    private val koin: Koin = GlobalContext.get()
 
     private fun parseBestScore(element: Element, bgs: MutableList<BgInfo>): BestUserScore? {
         val songName = element.select("div.song_name").select("p").first()?.text() ?: return null
@@ -38,7 +41,7 @@ object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
     override fun parse(document: Document): LoadableList<BestUserScore> {
         val resList = mutableListOf<BestUserScore>()
         var isLoadMore = false
-        val bgs = BgManager().readBgJson()
+        val bgs = koin.get<BgManager>().readBgJson()
 
         if (document.select("div.no_con").isNotEmpty()) {
             resList.add(
@@ -54,7 +57,7 @@ object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
                 val bestUserScore = parseBestScore(element, bgs) ?: BestUserScore()
                 resList.add(bestUserScore)
             }
-            isLoadMore = document.select("button.icon").isEmpty()
+            isLoadMore = document.select("i.xi.last").isNotEmpty()
 
         }
         return LoadableList(resList, isLoadMore)

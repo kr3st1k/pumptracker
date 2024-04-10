@@ -7,8 +7,15 @@ import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
+import okhttp3.logging.HttpLoggingInterceptor
 
 object KtorInstance {
+    fun logInterceptor(): HttpLoggingInterceptor {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.HEADERS
+        return loggingInterceptor
+    }
+
     private val client = HttpClient(OkHttp) {
         engine {
             //addInterceptor(logInterceptor()) TODO only in debug

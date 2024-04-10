@@ -111,7 +111,7 @@ object NetworkRepositoryImpl : NetworkRepository {
 
         val url = URLBuilder(
             protocol = URLProtocol.HTTPS,
-            host = BASEPIUURL,
+            host = "www.piugame.com",
             pathSegments = path.split("/"),
             parameters = Parameters.build {
                 append("lv", lvl)

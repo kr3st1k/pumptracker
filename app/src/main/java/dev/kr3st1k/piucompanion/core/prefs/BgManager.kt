@@ -1,5 +1,6 @@
 package dev.kr3st1k.piucompanion.core.prefs
 
+import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.RequestHandler
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
 import kotlinx.coroutines.CoroutineScope
@@ -11,19 +12,15 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.BufferedReader
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.InputStreamReader
 
 class BgManager : KoinComponent {
-    private val openFileInput: (name: String) -> FileInputStream by inject()
-    private val openFileOutput: (name: String) -> FileOutputStream by inject()
     private val filesDir: File by inject()
     private val jsonWorker = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
     fun checkAndSaveNewUpdatedFiles() {
         CoroutineScope(Dispatchers.IO).launch {
-            val newUpdateValue = RequestHandler.getUpdateInfo()
+            val newUpdateValue = NetworkRepositoryImpl.getUpdateInfo()
             val currentValue = readUpdateValue()
             if (currentValue != newUpdateValue) {
                 saveNewUpdateValue(newUpdateValue)
@@ -36,16 +33,17 @@ class BgManager : KoinComponent {
     fun readBgJson(): MutableList<BgInfo> {
         val file = File(filesDir, "piu_bg_database.json")
         if (!file.exists()) {
+            file.createNewFile()
             saveBgJson(mutableListOf())
         }
-        val inputStream = openFileInput("piu_bg_database.json")
+        val inputStream = file.inputStream()
         val jsonString = inputStream.bufferedReader().use { it.readText() }
         return jsonWorker.decodeFromString(jsonString)
     }
 
     private fun saveBgJson(list: MutableList<BgInfo>) {
         val listText = jsonWorker.encodeToString(list)
-        val outputStream = openFileOutput("piu_bg_database.json")
+        val outputStream = File(filesDir, "piu_bg_database.json").outputStream()
         outputStream.write(listText.toByteArray())
         outputStream.close()
     }
@@ -53,9 +51,10 @@ class BgManager : KoinComponent {
     fun readUpdateValue(): String? {
         val file = File(filesDir, "update.txt")
         if (!file.exists()) {
+            file.createNewFile()
             saveNewUpdateValue("")
         }
-        val inputStream = openFileInput("update.txt")
+        val inputStream = file.inputStream()
         val reader = BufferedReader(InputStreamReader(inputStream))
         val currentValue = reader.readLine()
         reader.close()
@@ -64,7 +63,7 @@ class BgManager : KoinComponent {
     }
 
     private fun saveNewUpdateValue(newValue: String) {
-        val outputStream = openFileOutput("update.txt")
+        val outputStream = File(filesDir, "update.txt").outputStream()
         outputStream.write(newValue.toByteArray())
         outputStream.close()
     }
