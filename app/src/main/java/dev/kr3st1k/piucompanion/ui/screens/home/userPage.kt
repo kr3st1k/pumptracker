@@ -1,11 +1,15 @@
 package dev.kr3st1k.piucompanion.ui.screens.home
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -40,63 +44,70 @@ fun UserScreen(
                 inclusive = true
             }
         }
-    if (user?.trueUser == true) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    UserCard(user!!)
-                    Spacer(modifier = Modifier.size(14.dp))
-                    Box(
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                    )
-                    {
-                        Button(
-                            icon = ImageVector.vectorResource(R.drawable.baseline_newspaper_24),
-                            title = "News",
-                            summary = "Read latest news about Pump It Up",
-                            onClick = {
-                                navController.navigate(Screen.NewsPage.route)
-                            }
-                        )
-                    }
+    Column(modifier = Modifier.fillMaxSize()) {
 
-//                    Button(
-//                        icon = Icons.Default.Info,
-//                        title = "Titles",
-//                        summary = "wow. button",
-//                        onClick = {}
-//                    )
-//                    Button(
-//                        icon = Icons.Default.Info,
-//                        title = "Avatar Shop",
-//                        summary = "wow. button",
-//                        onClick = {}
-//                    )
-//                    Button(
-//                        icon = Icons.Default.Settings,
-//                        title = "Settings",
-//                        summary = "wow. button",
-//                        onClick = {}
-//                    )
-//                    Button(
-//                        icon = Icons.Default.Info,
-//                        title = "Logout from account",
-//                        summary = "wow. button",
-//                        onClick = {
-//                            viewModel.logout(pref)
-//                            navControllerGlobal.navigate(Screen.NewsPage.route)
-//                        }
-//                    )
-//                    Button(
-//                        icon = Icons.Default.Info,
-//                        title = "About",
-//                        summary = "wow. button",
-//                        onClick = {}
-//                    )
-                }
+
+        Column(modifier = Modifier
+            .fillMaxHeight(0.25f)
+            .fillMaxWidth()) {
+            if (user?.trueUser == true) {
+                UserCard(user!!)
             } else {
-                YouSpinMeRightRoundBabyRightRound("Getting User Info...")
+                YouSpinMeRightRoundBabyRightRound()
             }
-
         }
+        Spacer(modifier = Modifier.size(14.dp))
+        Column(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        )
+        {
+            Button(
+                icon = ImageVector.vectorResource(R.drawable.baseline_newspaper_24),
+                title = "News",
+                summary = "Read latest news about Pump It Up",
+                onClick = {
+                    navController.navigate(Screen.NewsPage.route)
+                }
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            Button(
+                icon = ImageVector.vectorResource(R.drawable.baseline_leaderboard_24),
+                title = "Leaderboard",
+                summary = "Let's see who sniped FEFEMZ's scores",
+                onClick = {
+                    navController.navigate(Screen.NewsPage.route)
+                }
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            Button(
+                icon = ImageVector.vectorResource(R.drawable.baseline_dvr_24),
+                title = "Title Changer",
+                summary = "Select the most beautiful title available",
+                onClick = {
+                    navController.navigate(Screen.NewsPage.route)
+                }
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            Button(
+                icon = Icons.Filled.AccountCircle,
+                title = "Avatar Shop",
+                summary = "Wow, nice picture!",
+                onClick = {
+                    navController.navigate(Screen.NewsPage.route)
+                }
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            Button(
+                icon = Icons.Filled.Settings,
+                title = "Settings",
+                summary = "Touch me, Senpai!",
+                onClick = {
+                    navController.navigate(Screen.SettingsPage.route)
+                }
+            )
+        }
+    }
+}
 
 class UserViewModel : ViewModel() {
 

@@ -8,4 +8,6 @@ sealed class Screen(val route: String)
     object LoginPage : Screen("login_page")
     object HistoryPage : Screen("history_page")
     object BestUserPage : Screen("best_user_page")
+
+    object SettingsPage : Screen("settings_page")
 }

@@ -10,7 +10,8 @@ fun MyAlertDialog(
     showDialog: Boolean,
     title: String,
     content: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onConfirm: (() -> Unit)? = null,
 ) {
     if (showDialog) {
         AlertDialog(
@@ -23,7 +24,16 @@ fun MyAlertDialog(
                 Button(onClick = {
                     onDismiss()
                 }) {
-                    Text(text = "OK")
+                    Text(text = if (onConfirm == null) "OK" else "Cancel")
+                }
+            },
+            dismissButton = {
+                if (onConfirm != null) {
+                    Button(onClick = {
+                        onDismiss()
+                    }) {
+                        Text(text = "OK")
+                    }
                 }
             }
         )

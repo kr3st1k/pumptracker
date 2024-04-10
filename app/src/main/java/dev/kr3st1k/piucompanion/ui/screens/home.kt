@@ -48,6 +48,12 @@ public val underLevelDestination = listOf(
         selectedIcon = R.drawable.baseline_newspaper_24,
         unselectedIcon = R.drawable.baseline_newspaper_24,
         iconText = "News"
+    ),
+    TopLevelDestination(
+        route = Screen.SettingsPage.route,
+        selectedIcon = R.drawable.baseline_newspaper_24,
+        unselectedIcon = R.drawable.baseline_newspaper_24,
+        iconText = "Settings"
     )
 )
 @OptIn(ExperimentalMaterial3Api::class)

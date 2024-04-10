@@ -33,14 +33,13 @@ fun UserCard(user: User)
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 10.dp)
             .clip(RoundedCornerShape(8.dp))
-            .height(230.dp),
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
             AsyncImage(
-                model = user.backgroundUri,
+                model = "https://www.piugame.com/l_img/bg1.png",
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

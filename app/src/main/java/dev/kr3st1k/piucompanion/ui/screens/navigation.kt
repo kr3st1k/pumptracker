@@ -15,6 +15,7 @@ import dev.kr3st1k.piucompanion.ui.screens.home.BestUserPage
 import dev.kr3st1k.piucompanion.ui.screens.home.HistoryPage
 import dev.kr3st1k.piucompanion.ui.screens.home.LoginPage
 import dev.kr3st1k.piucompanion.ui.screens.home.NewsScreen
+import dev.kr3st1k.piucompanion.ui.screens.home.SettingsPage
 import dev.kr3st1k.piucompanion.ui.screens.home.UserScreen
 
 @Composable
@@ -68,6 +69,12 @@ fun HomeNavHost(
                 HistoryPage(
                     navController = navController,
                     viewModel = viewModel()
+                )
+            }
+
+            composable(route = Screen.SettingsPage.route) {
+                SettingsPage(
+                    navController = navController
                 )
             }
 
