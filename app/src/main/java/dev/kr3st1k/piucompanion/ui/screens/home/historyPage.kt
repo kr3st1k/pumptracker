@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.LatestScore
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.ui.components.home.scores.latest.LazyLatestScore
+import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyLatestScore
 import dev.kr3st1k.piucompanion.ui.screens.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

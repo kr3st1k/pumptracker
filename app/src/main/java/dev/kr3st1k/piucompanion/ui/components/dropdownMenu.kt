@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.components.home.scores.best
+package dev.kr3st1k.piucompanion.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

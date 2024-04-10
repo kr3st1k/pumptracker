@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.Settings
 import org.jsoup.nodes.Element
+import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -44,6 +45,15 @@ object Utils
     fun parseTypeDifficultyFromUriBestScore(uri: String): String? = getFirstRegex(DIFFICULTYTYPEBEST, uri)
 
     fun checkIfLoginSuccess(data: String): Boolean = data.indexOf("bbs/logout.php") > 0
+
+    fun removeUrlParameters(urlString: String): String {
+        return try {
+            val url = URL(urlString)
+            url.protocol + "://" + url.host + url.path
+        } catch (e: Exception) {
+            urlString // Return the original string if there's an error parsing the URL
+        }
+    }
 
     fun getBackgroundImg(element: Element, addDomain: Boolean = true): String {
         val style = element.attr("style")

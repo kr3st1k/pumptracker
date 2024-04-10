@@ -13,9 +13,9 @@ import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.modules.BgManager
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
+import dev.kr3st1k.piucompanion.ui.components.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.ui.components.home.scores.best.DropdownMenuBestScores
-import dev.kr3st1k.piucompanion.ui.components.home.scores.best.LazyBestScore
+import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyBestScore
 import dev.kr3st1k.piucompanion.ui.screens.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -30,7 +30,7 @@ fun AuthLoadingPage(viewModel: AuthViewModel, navController: NavController) {
                 }
             }
         else
-            navController.navigate(Screen.NewsPage.route) {
+            navController.navigate(Screen.HistoryPage.route) {
                 popUpTo(navController.graph.id)
                 {
                     inclusive = true

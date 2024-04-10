@@ -4,12 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -49,7 +50,8 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .imePadding()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -58,7 +60,7 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
                 viewModel.showFailedDialog.value = false
             })
         if (viewModel.enterHomeScreen.value)
-            navController.navigate(Screen.NewsPage.route) {
+            navController.navigate(Screen.HistoryPage.route) {
                 popUpTo(Screen.LoginPage.route) {
                     inclusive = true
                 }
@@ -73,6 +75,7 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
             value = viewModel.username.value,
             onValueChange = { viewModel.username.value = it },
             singleLine = true,
+            modifier = Modifier.padding(4.dp),
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
@@ -80,11 +83,11 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
                 autoCorrect = false
             )
         )
-        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = viewModel.password.value,
             onValueChange = { viewModel.password.value = it },
             label = { Text("Password") },
+            modifier = Modifier.padding(4.dp),
             singleLine = true,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
@@ -108,8 +111,10 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
             }
 
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { viewModel.onLoginClicked() }) {
+        Button(
+            onClick = { viewModel.onLoginClicked() },
+            modifier = Modifier.padding(8.dp)
+        ) {
             Text("Login")
         }
     }

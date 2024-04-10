@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.components.home.scores.latest
+package dev.kr3st1k.piucompanion.ui.components.home.scores
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +30,7 @@ fun LazyLatestScore(scores: MutableList<LatestScore>, onRefresh: () -> Unit) {
     ) {
         LazyColumn(modifier = Modifier.pullRefresh(state)) {
             items(scores.toList()) { data ->
-                RecentScore(data)
+                ScoreCard(data)
             }
         }
         PullRefreshIndicator(

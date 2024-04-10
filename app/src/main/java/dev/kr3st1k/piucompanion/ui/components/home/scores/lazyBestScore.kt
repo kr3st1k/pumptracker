@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.components.home.scores.best
+package dev.kr3st1k.piucompanion.ui.components.home.scores
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
@@ -60,7 +60,7 @@ fun LazyBestScore(
     ) {
         LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
             items(scores) { data ->
-                BestScore(data)
+                ScoreCard(data)
                 if (scores.indexOf(data) == scores.count() - 1 && isLoadMore)
                     Box(
                         modifier = Modifier.fillMaxSize(),

@@ -1,10 +1,10 @@
 package dev.kr3st1k.piucompanion.core.network.data
 
 data class LatestScore(
-    val songName: String,
-    val songBackgroundUri: String,
-    val difficulty: String,
-    val score: String,
-    val rank: String,
+    override val songName: String,
+    override val songBackgroundUri: String,
+    override val difficulty: String,
+    override val score: String,
+    override val rank: String,
     val datetime: String,
-)
+) : Score(songName, songBackgroundUri, difficulty, score, rank)

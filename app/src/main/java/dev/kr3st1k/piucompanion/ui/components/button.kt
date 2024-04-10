@@ -31,7 +31,6 @@ fun Button(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(start = 16.dp, end = 16.dp, top = 14.dp)
             .clip(RoundedCornerShape(8.dp))
             .height(80.dp)
             .border(

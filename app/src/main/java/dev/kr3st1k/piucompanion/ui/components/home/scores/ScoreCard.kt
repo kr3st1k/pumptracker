@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.components.home.scores.latest
+package dev.kr3st1k.piucompanion.ui.components.home.scores
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,11 +28,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import dev.kr3st1k.piucompanion.core.helpers.Utils.removeUrlParameters
 import dev.kr3st1k.piucompanion.core.network.data.LatestScore
+import dev.kr3st1k.piucompanion.core.network.data.Score
 
 @Composable
-fun RecentScore(score: LatestScore)
-{
+fun ScoreCard(score: Score) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,7 +54,7 @@ fun RecentScore(score: LatestScore)
             Box()
             {
                 AsyncImage(
-                    model = score.songBackgroundUri,
+                    model = removeUrlParameters(score.songBackgroundUri),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -77,29 +78,29 @@ fun RecentScore(score: LatestScore)
                         .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(2f)
-                                .padding(end = 8.dp)
-                                .fillMaxHeight(),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = score.songName,
-                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
+                    Column(
+                        modifier = Modifier
+                            .weight(2f)
+                            .padding(end = 8.dp)
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = score.songName,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
 
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = score.difficulty,
-                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                color = Color(0xffd1cfcf),
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = score.difficulty,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            color = Color(0xffd1cfcf),
 
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                     Column(
                         modifier = Modifier
                             .weight(2f)
@@ -124,12 +125,13 @@ fun RecentScore(score: LatestScore)
 
                             textAlign = TextAlign.End
                         )
-                        Text(
-                            text = score.datetime,
-                            fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                            color = Color(0xffadadad),
-                            textAlign = TextAlign.End
-                        )
+                        if (score is LatestScore)
+                            Text(
+                                text = score.datetime,
+                                fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                                color = Color(0xffadadad),
+                                textAlign = TextAlign.End
+                            )
                     }
                 }
             }
