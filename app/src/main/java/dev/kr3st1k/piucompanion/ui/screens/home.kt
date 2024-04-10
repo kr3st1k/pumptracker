@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.kr3st1k.piucompanion.R
-import dev.kr3st1k.piucompanion.ui.TopLevelDestination
 import dev.kr3st1k.piucompanion.ui.components.home.HomeBottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)

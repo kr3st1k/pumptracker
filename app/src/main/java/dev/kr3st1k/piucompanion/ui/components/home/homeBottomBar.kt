@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import dev.kr3st1k.piucompanion.ui.TopLevelDestination
+import dev.kr3st1k.piucompanion.ui.screens.TopLevelDestination
 
 @Composable
 fun HomeBottomBar(

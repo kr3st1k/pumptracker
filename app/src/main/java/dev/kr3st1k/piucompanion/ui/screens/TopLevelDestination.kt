@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui
+package dev.kr3st1k.piucompanion.ui.screens
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
