@@ -1,116 +1,33 @@
-package dev.kr3st1k.piucompanion.core.helpers
+package dev.kr3st1k.piucompanion.core.network
 
-import android.webkit.CookieManager
-import dev.kr3st1k.piucompanion.MainActivity
-import dev.kr3st1k.piucompanion.core.objects.BestUserScore
-import dev.kr3st1k.piucompanion.core.objects.BgInfo
-import dev.kr3st1k.piucompanion.core.objects.LatestScore
-import dev.kr3st1k.piucompanion.core.objects.NewsBanner
-import dev.kr3st1k.piucompanion.core.objects.NewsThumbnailObject
-import dev.kr3st1k.piucompanion.core.objects.User
+import dev.kr3st1k.piucompanion.core.helpers.Utils
+import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
+import dev.kr3st1k.piucompanion.core.network.data.BgInfo
+import dev.kr3st1k.piucompanion.core.network.data.LatestScore
+import dev.kr3st1k.piucompanion.core.network.data.News
+import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
+import dev.kr3st1k.piucompanion.core.network.data.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.compression.ContentEncoding
-import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
-import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
-import io.ktor.http.Cookie
 import io.ktor.http.parameters
-import io.ktor.util.date.GMTDate
 import kotlinx.serialization.json.Json
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.logging.HttpLoggingInterceptor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-import java.util.Calendar
 import java.util.Locale
-
-
-data class Cookie(
-    val name: String,
-    val value: String,
-    val domain: String,
-    val path: String,
-    val secure: Boolean,
-    val httpOnly: Boolean,
-    val expires: GMTDate,
-    val maxAge: Int
-)
 
 object RequestHandler {
     private const val BASE_URL = "https://am-pass.net"
     private const val BASE_PIU_URL = "https://www.piugame.com"
-    private const val API_BASE_URL = "https://api.am-pass.net"
     private const val UPDATE_INFO_URL = "https://kr3st1k.me/piu/update.txt"
     private const val BG_JSON_URL = "https://kr3st1k.me/piu/piu_bg_database.json"
     private const val LOGOUT_STRING = "bbs/logout.php"
     private const val LOGIN_CHECK_URL = "$BASE_URL/bbs/login_check.php"
     private const val AUTO_LOGIN_PARAM = "auto_login"
 
-    private val client: HttpClient = HttpClient(OkHttp) {
-        engine {
-            addInterceptor(createLoggingInterceptor())
-        }
-
-        install(ContentEncoding) {
-            gzip()
-        }
-
-        install(UserAgent) {
-            agent = MainActivity.userAgent
-        }
-
-        install(HttpCookies) {
-            storage = AcceptAllCookiesStorage()
-        }
-
-        followRedirects = true
-    }
-
-    private fun createLoggingInterceptor(): HttpLoggingInterceptor {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.HEADERS
-        return loggingInterceptor
-    }
-
-    private fun getCookiesFromWebView(): MutableList<Cookie> {
-        val cookieManager = CookieManager.getInstance()
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_MONTH, 1)
-        val timestamp = calendar.timeInMillis
-        var cookies = cookieManager.getCookie(BASE_URL)
-        if (cookies != null) {
-            if (cookies.contains("nullsid") || cookies.split(";").size >= 5) {
-                val uri = BASE_URL.toHttpUrl()
-                val uri3 = API_BASE_URL.toHttpUrl()
-                val parsedCookies = cookies.split(";").map { okhttp3.Cookie.parse(uri, it) }.toMutableList()
-                cookies = cookieManager.getCookie(API_BASE_URL)
-                parsedCookies += cookies.split(";").map { okhttp3.Cookie.parse(uri3, it) }
-                parsedCookies += okhttp3.Cookie.parse(uri, "_gat_gtag_UA_210606414_1=1;")
-                return parsedCookies.toKtorCookie(timestamp)
-            }
-        }
-        return mutableListOf()
-    }
-
-    fun MutableList<okhttp3.Cookie?>.toKtorCookie(time: Long): MutableList<Cookie> =
-        this.map {
-            Cookie(
-                name = it?.name ?: "",
-                value = it?.value?.replace("%25", "%") ?: "",
-                domain = it?.domain ?: "",
-                path = it?.path ?: "",
-                secure = it?.secure ?: true,
-                httpOnly = it?.httpOnly ?: false,
-                expires = GMTDate(time),
-                maxAge = 86400
-            )
-        }.toMutableList()
+    private val client: HttpClient = KtorInstance.getHttpClient()
 
     suspend fun getUpdateInfo(): String {
         val response = client.get(UPDATE_INFO_URL)
@@ -125,13 +42,13 @@ object RequestHandler {
         return list
     }
 
-    suspend fun checkIfLoginSuccessRequest(): Boolean {
+    private suspend fun checkIfLoginSuccessRequest(): Boolean {
         val t = client.get(BASE_URL)
         return checkIfLoginSuccess(t.body())
     }
 
     private fun checkIfLoginSuccess(data: String): Boolean = data.indexOf(LOGOUT_STRING) > 0
-    //UNUSED
+
     suspend fun loginToAmPass(
         login: String,
         password: String,
@@ -165,53 +82,47 @@ object RequestHandler {
     ): Document? {
         val req = client.get(uri)
         val reqBody: String = req.body()
-        var res = true
-        if (checkLogin)
-            res = checkIfLoginSuccess(reqBody)
-        return if (res)
-            Jsoup.parse(reqBody)
-        else
-            null
 
+        if (checkLogin && !checkIfLoginSuccess(reqBody)) {
+            if (!checkIfLoginSuccessRequest()) {
+                return null
+            }
+            return getDocument(client, uri, true)
+        }
+
+        return Jsoup.parse(reqBody)
     }
 
     suspend fun getNewsBanners(): MutableList<NewsBanner> {
 
         val t = getDocument(client, "https://www.piugame.com") ?: return mutableListOf()
 
-        val r = t.select("a.img.resize.bgfix")
-        val uniqueElements: MutableList<Element> = mutableListOf()
-        val res: MutableList<NewsBanner> = mutableListOf()
+        val uniqueElements = t.select("a.img.resize.bgfix")
+            .map { it to it.attr("href") }
+            .distinctBy { it.second }
+            .map { it.first }
 
-        for (element in r) {
-            if (!uniqueElements.any { it.attr("href") == element.attr("href") }) {
-                uniqueElements.add(element)
-            }
-        }
-
-        for (element in uniqueElements) {
-            res.add(
-                NewsBanner(
-                    Utils.getWrId(element.attr("href"))?.toInt() ?: 0,
-                    getBackgroundImg(element),
-                    element.attr("href")
-                )
+        return uniqueElements.map { element ->
+            NewsBanner(
+                Utils.getWrId(element.attr("href"))?.toInt() ?: 0,
+                getBackgroundImg(element),
+                element.attr("href")
             )
-        }
-        return res
+        }.toMutableList()
+
     }
 
-    suspend fun getNewsList(): MutableList<NewsThumbnailObject> {
-        val res: MutableList<NewsThumbnailObject> = mutableListOf()
+    suspend fun getNewsList(): MutableList<News> {
+        val t =
+            getDocument(client, "https://www.piugame.com/phoenix_notice") ?: return mutableListOf()
 
-        val t = getDocument(client, "https://www.piugame.com/phoenix_notice") ?: return res
         val table = t.select("tbody")
+        val trElements = table.select("tr")
 
-        val trElements: Elements = table.select("tr")
+        val res = mutableListOf<News>()
 
         for (elem in trElements) {
-            if (res.count() == 7)
-                break
+            if (res.count() == 7) break
             val titleAndLinkElem = elem.select("td.w_tit").select("a")
             val title = titleAndLinkElem.text()
             val typeElem = elem.select("td.w_type").select("i")
@@ -220,7 +131,7 @@ object RequestHandler {
             val id = Utils.getWrId(titleAndLinkElem.attr("href"))!!.toInt()
 
             if (type == "Notice" || type == "Event")
-                res.add(NewsThumbnailObject(title, id, type, link))
+                res.add(News(title, id, type, link))
         }
 
         return res
@@ -229,11 +140,11 @@ object RequestHandler {
     suspend fun getUserInfo(): User? {
         val t = getDocument(client, "https://www.piugame.com/my_page/play_data.php", true)
             ?: return null
-        val profileBox = t.select("div.box0.inner.flex.vc.bgfix")
-        val avatarBox = t.select("div.re.bgfix")
+        val profileBox = t.select("div.box0.inner.flex.vc.bgfix").first()
+        val avatarBox = t.select("div.re.bgfix").first()
 
-        val backgroundUri = getBackgroundImg(profileBox.first()!!)
-        val avatarUri = getBackgroundImg(avatarBox.first()!!, false)
+        val backgroundUri = getBackgroundImg(profileBox!!)
+        val avatarUri = getBackgroundImg(avatarBox!!, false)
 
         val profileTitleAndName = t.select("div.name_w").select("p")
 
@@ -246,12 +157,37 @@ object RequestHandler {
         return User(username, titleName, backgroundUri, avatarUri, recentGame, coinValue, true)
     }
 
+    private fun parseBestUserScoreElement(
+        element: Element,
+        bgs: MutableList<BgInfo>,
+    ): BestUserScore? {
+        val songName = element.select("div.song_name").select("p").first()?.text() ?: return null
+        var bg = bgs.find { tt -> tt.song_name == songName }?.jacket
+        if (bg == null) bg = "https://www.piugame.com/l_img/bg1.png"
+
+        val diffElems = element.select("div.numw.flex.vc.hc")
+        val typeDiffImgUri = getBackgroundImg(
+            element.select("div.stepBall_in.flex.vc.col.hc.wrap.bgfix.cont").first()!!, false
+        )
+        val typeDiff = Utils.parseTypeDifficultyFromUriBestScore(typeDiffImgUri)!!
+
+        val diff = diffElems.select("img").map { Utils.parseDifficultyFromUri(it.attr("src")) }
+            .joinToString("").let { typeDiff.uppercase(Locale.ENGLISH) + it }
+
+        val scoreInfoElement = element.select("ul.list.flex.vc.hc.wrap")
+        val score = scoreInfoElement.select("span.num").text()
+        val rankImg = scoreInfoElement.select("img").first()!!.attr("src")
+        val rank = Utils.parseRankFromUri(rankImg).toString()
+            .uppercase(Locale.ENGLISH).replace("_p", "+").replace("_P", "+")
+
+        return BestUserScore(songName, bg, diff, score, rank)
+    }
+
     private fun parseBestUserScores(
         t: Document,
         res: MutableList<BestUserScore>,
         bgs: MutableList<BgInfo>
     ): Boolean {
-
         if (t.select("div.no_con").isNotEmpty()) {
             res.add(
                 BestUserScore(
@@ -270,48 +206,8 @@ object RequestHandler {
         }
 
         for (element in scores) {
-
-            val songName = element.select("div.song_name").select("p").first()!!.text()
-            var bg = bgs.find { tt -> tt.song_name == songName }?.jacket
-            if (bg == null)
-                bg = "https://www.piugame.com/l_img/bg1.png"
-
-            val diffElems = element.select("div.numw.flex.vc.hc")
-
-            var diff = ""
-
-            val typeDiffImgUri = getBackgroundImg(
-                element.select("div.stepBall_in.flex.vc.col.hc.wrap.bgfix.cont").first()!!, false
-            )
-
-            val typeDiff = Utils.parseTypeDifficultyFromUriBestScore(typeDiffImgUri)!!
-
-            for (i in diffElems.select("img")) {
-                diff += Utils.parseDifficultyFromUri(i.attr("src"))
-            }
-
-            diff = typeDiff.uppercase(Locale.ENGLISH) + diff
-
-            val scoreInfoElement = element.select("ul.list.flex.vc.hc.wrap")
-
-            val score = scoreInfoElement.select("span.num").text()
-
-            var rank = ""
-
-            val rankImg = scoreInfoElement.select("img").first()!!.attr("src")
-            rank = Utils.parseRankFromUri(rankImg).toString()
-            rank = rank.uppercase(Locale.ENGLISH).replace("_p", "+").replace("_P", "+")
-
-            res.add(
-                BestUserScore(
-                    songName,
-                    bg,
-                    diff,
-                    score,
-                    rank
-                )
-            )
-
+            val bestUserScore = parseBestUserScoreElement(element, bgs)
+            if (bestUserScore != null) res.add(bestUserScore)
         }
 
         return t.select("button.icon").isEmpty()
@@ -323,7 +219,7 @@ object RequestHandler {
         res: MutableList<BestUserScore> = mutableListOf(),
         bgs: MutableList<BgInfo>,
     ): Pair<MutableList<BestUserScore>, Boolean>? {
-        var uri = "https://www.piugame.com/my_page/my_best_score.php"
+        var uri = "$BASE_PIU_URL/my_page/my_best_score.php"
         var isRecent = false
         uri += "?lv=$lvl"
         if (page == null) {

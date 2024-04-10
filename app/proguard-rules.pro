@@ -20,11 +20,10 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -dontwarn org.slf4j.impl.StaticLoggerBinder
-#-repackageclasses
-#-allowaccessmodification
-#-optimizations
-#-optimizationpasses 5
-#-keepattributes SourceFile, LineNumberTable
+-repackageclasses
+-allowaccessmodification
+#-renamesourcefileattribute " "
+
 #-keep,allowoptimization class dev.kr3st1k.piucompanion.helpers.**, dev.kr3st1k.piucompanion.objects.** {
 #  public <fields>;
 #  public <methods>;

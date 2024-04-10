@@ -11,10 +11,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.core.helpers.PreferencesManager
-import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.core.helpers.Utils
-import dev.kr3st1k.piucompanion.core.objects.User
+import dev.kr3st1k.piucompanion.core.network.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.screens.Screen
@@ -100,9 +99,5 @@ class UserViewModel : ViewModel() {
             _user.value =
                 RequestHandler.getUserInfo()
         }
-    }
-
-    fun logout(pref: PreferencesManager) {
-        pref.removeLoginData()
     }
 }

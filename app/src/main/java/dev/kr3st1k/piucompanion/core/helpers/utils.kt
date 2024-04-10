@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import org.jsoup.nodes.Element
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -69,6 +70,14 @@ object Utils
     fun parseTypeDifficultyFromUri(uri: String): String? = getFirstRegex(DIFFICULTYTYPE, uri)
 
     fun parseTypeDifficultyFromUriBestScore(uri: String): String? = getFirstRegex(DIFFICULTYTYPEBEST, uri)
+
+    fun checkIfLoginSuccess(data: String): Boolean = data.indexOf("bbs/logout.php") > 0
+
+    fun getBackgroundImg(element: Element, addDomain: Boolean = true): String {
+        val style = element.attr("style")
+        return (if (addDomain) "https://www.piugame.com" else "") + style.substringAfter("background-image:url('")
+            .substringBefore("')")
+    }
 
     fun getWrId(url: String): String? = getFirstRegex("wr_id=(\\d+)", url)
 

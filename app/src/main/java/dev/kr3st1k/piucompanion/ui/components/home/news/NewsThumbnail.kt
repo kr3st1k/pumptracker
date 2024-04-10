@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.core.objects.NewsThumbnailObject
+import dev.kr3st1k.piucompanion.core.network.data.News
 
 @Composable
-fun NewsThumbnail(news: NewsThumbnailObject)
+fun NewsThumbnail(news: News)
 {
     val context = LocalContext.current
     Card(modifier = Modifier

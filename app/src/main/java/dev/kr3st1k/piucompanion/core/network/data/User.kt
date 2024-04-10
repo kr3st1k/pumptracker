@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.core.objects
+package dev.kr3st1k.piucompanion.core.network.data
 
 data class User(
     val username: String,
@@ -11,3 +11,4 @@ data class User(
 ) {
     constructor() : this("unavailable","unavailable","unavailable","unavailable","unavailable","unavailable")
 }
+//TODO remove constructor

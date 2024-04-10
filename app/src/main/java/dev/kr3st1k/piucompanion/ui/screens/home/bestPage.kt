@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,12 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.core.helpers.Utils
-import dev.kr3st1k.piucompanion.core.objects.BestUserScore
-import dev.kr3st1k.piucompanion.core.objects.BgInfo
-import dev.kr3st1k.piucompanion.core.objects.checkAndSaveNewUpdatedFiles
-import dev.kr3st1k.piucompanion.core.objects.readBgJson
+import dev.kr3st1k.piucompanion.core.network.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
+import dev.kr3st1k.piucompanion.core.network.data.BgInfo
+import dev.kr3st1k.piucompanion.core.prefs.BgManager
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.home.scores.best.LazyBestScore
@@ -32,12 +30,10 @@ fun BestUserPage(
     lifecycleOwner: LifecycleOwner,
 )
 {
-    val context = LocalContext.current
-
-    checkAndSaveNewUpdatedFiles(context)
+    BgManager().checkAndSaveNewUpdatedFiles()
 
     val viewModel = viewModel<BestUserViewModel>(
-        factory = BestUserViewModelFactory { readBgJson(context) }
+        factory = BestUserViewModelFactory { BgManager().readBgJson() }
     )
     val isRecent =
         Utils.rememberLiveData(liveData = viewModel.isRecent, lifecycleOwner, initialValue = false)
@@ -129,6 +125,8 @@ class BestUserViewModel(
                 scores.value = newScores.first.toList()
                 _isRecent.value = newScores.second
                 _pages.value = 3
+            } else {
+                scores.value = null
             }
         }
     }

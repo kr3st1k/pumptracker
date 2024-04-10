@@ -37,7 +37,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.R
 import dev.kr3st1k.piucompanion.core.helpers.Crypto
-import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.RequestHandler
 import dev.kr3st1k.piucompanion.core.prefs.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.MyAlertDialog
 import dev.kr3st1k.piucompanion.ui.screens.Screen

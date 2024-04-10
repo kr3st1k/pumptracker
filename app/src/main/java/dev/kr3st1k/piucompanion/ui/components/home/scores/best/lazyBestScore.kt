@@ -20,7 +20,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.core.objects.BestUserScore
+import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -41,26 +41,25 @@ fun LazyBestScore(
     val listState = rememberLazyListState()
 
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
-
-    Box(
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        LaunchedEffect(listState) {
-            snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull() }
-                .collect { lastVisibleItem ->
-                    lastVisibleItem?.let {
-                        if (it.index == listState.layoutInfo.totalItemsCount - 1) {
-                            if (!isRecent.value) {
-                                onLoadNext()
-                            }
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull() }
+            .collect { lastVisibleItem ->
+                lastVisibleItem?.let {
+                    if (it.index == listState.layoutInfo.totalItemsCount - 1) {
+                        if (!isRecent) {
+                            onLoadNext()
                         }
                     }
                 }
-        }
+            }
+    }
+    Box(
+        contentAlignment = Alignment.TopCenter,
+    ) {
         LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
             items(scores) { data ->
                 BestScore(data)
-                if (scores.indexOf(data) == scores.count() - 1 && !isRecent.value)
+                if (scores.indexOf(data) == scores.count() - 1 && !isRecent)
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center

@@ -11,14 +11,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import dev.kr3st1k.piucompanion.core.objects.NewsThumbnailObject
+import dev.kr3st1k.piucompanion.core.network.data.News
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LazyNews(news: MutableList<NewsThumbnailObject>, onRefresh: () -> Unit) {
+fun LazyNews(news: MutableList<News>, onRefresh: () -> Unit) {
     val isRefreshing by remember {
         mutableStateOf(false)
     }

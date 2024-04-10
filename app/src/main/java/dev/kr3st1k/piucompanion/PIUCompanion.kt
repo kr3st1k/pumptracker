@@ -6,6 +6,7 @@ import coil.ImageLoaderFactory
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import dev.kr3st1k.piucompanion.core.helpers.Utils
+import dev.kr3st1k.piucompanion.core.prefs.BgManagerModule
 import dev.kr3st1k.piucompanion.core.prefs.SharedPrefModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -18,7 +19,7 @@ class PIUCompanion : Application(), ImageLoaderFactory {
         startKoin {
             androidLogger()
             androidContext(this@PIUCompanion)
-            modules(SharedPrefModule.prefModule)
+            modules(SharedPrefModule.prefModule, BgManagerModule.bgModule)
         }
         Utils.setDeviceId(baseContext)
     }

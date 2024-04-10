@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import dev.kr3st1k.piucompanion.core.objects.BestUserScore
+import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 
 @Composable
 fun BestScore(score: BestUserScore)

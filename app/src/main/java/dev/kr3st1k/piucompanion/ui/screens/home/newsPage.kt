@@ -12,10 +12,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.kr3st1k.piucompanion.core.helpers.RequestHandler
 import dev.kr3st1k.piucompanion.core.helpers.Utils
-import dev.kr3st1k.piucompanion.core.objects.NewsBanner
-import dev.kr3st1k.piucompanion.core.objects.NewsThumbnailObject
+import dev.kr3st1k.piucompanion.core.network.RequestHandler
+import dev.kr3st1k.piucompanion.core.network.data.News
+import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.news.LazyNews
 import dev.kr3st1k.piucompanion.ui.components.home.news.NewsSlider
@@ -50,7 +50,7 @@ fun NewsScreen(lifecycleOwner: LifecycleOwner) {
 
 class NewsViewModel : ViewModel() {
     val newsBanners = MutableLiveData<MutableList<NewsBanner>>(mutableListOf())
-    val news = MutableLiveData<MutableList<NewsThumbnailObject>>(mutableListOf())
+    val news = MutableLiveData<MutableList<News>>(mutableListOf())
 
     init {
         loadNews()
