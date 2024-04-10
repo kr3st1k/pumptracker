@@ -18,7 +18,7 @@ object KtorInstance {
 
     private val client = HttpClient(OkHttp) {
         engine {
-            addInterceptor(logInterceptor())
+//            addInterceptor(logInterceptor())
         }
 
         install(ContentEncoding) {
