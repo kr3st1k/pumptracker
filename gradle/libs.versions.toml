@@ -17,6 +17,7 @@ kotlinxCoroutinesCore = "1.8.0"
 kotlinxSerializationJsonVersion = "1.6.3"
 ktorClientEncoding = "2.3.9"
 loggingInterceptor = "4.12.0"
+materialIconsExtended = "1.6.5"
 slf4j = "2.0.11"
 espressoCore = "3.5.1"
 kotlinxSerializationJson = "1.6.2"
@@ -42,6 +43,7 @@ androidx-browser = { module = "androidx.browser:browser", version.ref = "browser
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }

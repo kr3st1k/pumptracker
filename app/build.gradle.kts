@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.coil.compose)
     implementation(libs.koin.android)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.browser)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

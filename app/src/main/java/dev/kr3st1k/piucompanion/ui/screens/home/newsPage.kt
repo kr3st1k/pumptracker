@@ -2,6 +2,7 @@ package dev.kr3st1k.piucompanion.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NewsScreen(
     viewModel: NewsViewModel,
+    listState: LazyListState,
 ) {
     val newsBanners by viewModel.newsBanners.collectAsStateWithLifecycle()
     val news = viewModel.news.collectAsStateWithLifecycle()
@@ -27,6 +29,7 @@ fun NewsScreen(
         LazyNews(
             news = news.value,
             newsBanners = newsBanners,
+            listState = listState,
             onRefresh = { viewModel.refreshNews() }
         )
         if (news.value.isEmpty()) {

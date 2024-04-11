@@ -2,6 +2,7 @@ package dev.kr3st1k.piucompanion.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import org.koin.core.context.GlobalContext.get
 fun BestUserPage(
     navController: NavController,
     viewModel: BestUserViewModel,
+    listState: LazyListState,
 )
 {
     val koin: Koin = get()
@@ -41,11 +43,6 @@ fun BestUserPage(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DropdownMenuBestScores(
-            options,
-            selectedOption,
-            onUpdate = { viewModel.refreshScores(it) })
-
         if (scores == null) {
             navController.navigate(Screen.AuthLoadingPage.route) {
                 popUpTo(navController.graph.id)
@@ -56,6 +53,14 @@ fun BestUserPage(
         } else {
             LazyBestScore(
                 scores!!,
+                dropDownMenu = {
+                    DropdownMenuBestScores(
+                        options,
+                        selectedOption,
+                        onUpdate = { viewModel.refreshScores(it) }
+                    )
+                },
+                listState = listState,
                 onRefresh = { viewModel.loadScores() },
                 onLoadNext = { viewModel.addScores() },
                 isLoadMoreFlow = viewModel.isLoadMore

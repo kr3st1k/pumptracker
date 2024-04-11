@@ -2,6 +2,7 @@ package dev.kr3st1k.piucompanion.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 fun HistoryPage(
     navController: NavController,
     viewModel: HistoryViewModel,
+    listState: LazyListState,
 ) {
     val scores by viewModel.scores.collectAsStateWithLifecycle()
 
@@ -34,7 +36,11 @@ fun HistoryPage(
                 }
             }
         } else {
-            LazyLatestScore(scores!!, onRefresh = { viewModel.loadScores() })
+            LazyLatestScore(
+                scores!!,
+                onRefresh = { viewModel.loadScores() },
+                listState = listState
+            )
             if (scores?.isEmpty() == true) {
                 YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
             }

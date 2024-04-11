@@ -16,8 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -76,7 +74,7 @@ fun UserScreen(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(it.selectedIcon),
+                        imageVector = it.selectedIcon,
                         contentDescription = it.iconText
                     )
                 },

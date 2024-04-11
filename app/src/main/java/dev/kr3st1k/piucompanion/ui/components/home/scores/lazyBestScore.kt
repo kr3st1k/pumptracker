@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -35,11 +35,12 @@ fun LazyBestScore(
     onRefresh: () -> Unit,
     onLoadNext: () -> Unit,
     isLoadMoreFlow: StateFlow<Boolean>,
+    dropDownMenu: @Composable () -> Unit,
+    listState: LazyListState,
 ) {
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val listState = rememberLazyListState()
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     val isLoadMore by isLoadMoreFlow.collectAsStateWithLifecycle()
 
@@ -59,6 +60,9 @@ fun LazyBestScore(
         contentAlignment = Alignment.TopCenter,
     ) {
         LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
+            item {
+                dropDownMenu()
+            }
             items(scores) { data ->
                 ScoreCard(data)
                 if (scores.indexOf(data) == scores.count() - 1 && isLoadMore)

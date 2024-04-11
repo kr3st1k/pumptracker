@@ -3,7 +3,9 @@ package dev.kr3st1k.piucompanion.ui.components.home.news
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -12,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
@@ -21,7 +24,12 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LazyNews(news: MutableList<News>, newsBanners: MutableList<NewsBanner>, onRefresh: () -> Unit) {
+fun LazyNews(
+    news: MutableList<News>,
+    newsBanners: MutableList<NewsBanner>,
+    onRefresh: () -> Unit,
+    listState: LazyListState,
+) {
     val isRefreshing by remember {
         mutableStateOf(false)
     }
@@ -32,11 +40,12 @@ fun LazyNews(news: MutableList<News>, newsBanners: MutableList<NewsBanner>, onRe
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxWidth()
     ) {
-        LazyColumn(modifier = Modifier.pullRefresh(state)) {
+        LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(130.dp)
                 ) {
                     if (newsBanners.isNotEmpty())
                         NewsSlider(newsBanners = newsBanners)

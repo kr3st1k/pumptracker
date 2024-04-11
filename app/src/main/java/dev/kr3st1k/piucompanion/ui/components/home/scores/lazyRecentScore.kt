@@ -3,6 +3,7 @@ package dev.kr3st1k.piucompanion.ui.components.home.scores
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -18,7 +19,11 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LazyLatestScore(scores: MutableList<LatestScore>, onRefresh: () -> Unit) {
+fun LazyLatestScore(
+    scores: MutableList<LatestScore>,
+    onRefresh: () -> Unit,
+    listState: LazyListState,
+) {
     val isRefreshing by remember {
         mutableStateOf(false)
     }
@@ -28,7 +33,7 @@ fun LazyLatestScore(scores: MutableList<LatestScore>, onRefresh: () -> Unit) {
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxWidth()
     ) {
-        LazyColumn(modifier = Modifier.pullRefresh(state)) {
+        LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
             items(scores.toList()) { data ->
                 ScoreCard(data)
             }
