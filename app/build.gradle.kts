@@ -9,15 +9,16 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "dev.kr3st1k.piucompanion"
+        applicationId = "com.kr3st1k.pumptracker"
         minSdk = 31
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 59
+        versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+        signingConfig = signingConfigs.getByName("debug")
     }
 
     buildTypes {
