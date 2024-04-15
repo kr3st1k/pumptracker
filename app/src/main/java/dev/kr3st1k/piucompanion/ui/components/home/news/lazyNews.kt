@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,14 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
-import eu.bambooapps.material3.pullrefresh.pullRefresh
-import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LazyNews(
     news: MutableList<News>,
@@ -34,34 +31,39 @@ fun LazyNews(
         mutableStateOf(false)
     }
 
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
+    val state = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
     Box (
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxWidth()
     ) {
-        LazyColumn(state = listState, modifier = Modifier.pullRefresh(state)) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(130.dp)
-                ) {
-                    if (newsBanners.isNotEmpty())
-                        NewsSlider(newsBanners = newsBanners)
-                    else
-                        YouSpinMeRightRoundBabyRightRound()
+        SwipeRefresh(
+            state = state,
+            onRefresh = onRefresh
+        ) {
+            LazyColumn(state = listState) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(130.dp)
+                    ) {
+                        if (newsBanners.isNotEmpty())
+                            NewsSlider(newsBanners = newsBanners)
+                        else
+                            YouSpinMeRightRoundBabyRightRound()
+                    }
                 }
-            }
-            items(news.toList()) { data ->
-                NewsThumbnail(news = data)
+                items(news.toList()) { data ->
+                    NewsThumbnail(news = data)
+                }
             }
         }
 
-        PullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = state
-        )
+//        PullRefreshIndicator(
+//            refreshing = isRefreshing,
+//            state = state
+//        )
     }
 
 }

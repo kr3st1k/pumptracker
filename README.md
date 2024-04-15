@@ -1,7 +1,11 @@
-# Pump It Up Companion
+# PumpTracker (PIU Companion)
 
-* PoC of Pump it Up Info-Application like [piugame.com](https://piugame.com) made in Kotlin/Compose
-* Maybe Kotlin Multiplatform?
+![play_store_feature_graphic.png](https://i.imgur.com/e6UwRB8.png)
+
+---
+
+* PoC of Pump it Up Info-Application which takes info from [piugame.com](https://piugame.com) made
+  in Kotlin/Compose
 
 # What does it have already?
 
@@ -20,12 +24,9 @@
 
 Goals of project: Learn more about Mobile Developing
 
-## Authors
-- [@Kr3st1k](https://github.com/kr3st1k)
-- [@Neo_Life](https://github.com/TiredClone)
-- Soon will be more?
-
 # Special thanks to:
+
+* [@Neo_Life](https://github.com/TiredClone) for explaining the basics of jetpack compose apps
 * [iTaysonLab](https://github.com/iTaysonLab) for explaining architecture stuff
 * GPT for helping with everything
 * Soon will be more?

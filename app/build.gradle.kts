@@ -65,7 +65,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.autofill)
     implementation(libs.kotlinx.serialization.json.v163)
-    implementation(libs.compose.material3.pullrefresh)
+    implementation(libs.accompanist.swiperefresh)
     testImplementation(libs.junit)
     implementation(libs.jsoup)
     implementation(libs.coil.compose)
