@@ -26,7 +26,7 @@ Goals of project: Learn more about Mobile Developing
 
 # Special thanks to:
 
-* [@Neo_Life](https://github.com/TiredClone) for explaining the basics of jetpack compose apps
+* [Neo_Life](https://github.com/TiredClone) for explaining the basics of jetpack compose apps
 * [iTaysonLab](https://github.com/iTaysonLab) for explaining architecture stuff
 * GPT for helping with everything
 * Soon will be more?
