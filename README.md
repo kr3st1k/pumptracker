@@ -22,11 +22,9 @@
 * Step ranking
 * Notifications
 
-Goals of project: Learn more about Mobile Developing
+Goals of project: Learn more about Mobile Developing after Desktop Development
 
-# Special thanks to:
-
-* [Neo_Life](https://github.com/TiredClone) for explaining the basics of jetpack compose apps
+* Big thanks to [Neo_Life](https://github.com/TiredClone) for explaining the basics of jetpack compose apps and also helping with everything
 * [iTaysonLab](https://github.com/iTaysonLab) for explaining architecture stuff
-* GPT for helping with everything
+* GPT for helping with ui parts (realisation examples and such)
 * Soon will be more?
