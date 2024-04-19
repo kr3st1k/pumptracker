@@ -28,6 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -47,6 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val controller = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -113,7 +115,10 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
 
         )
         Button(
-            onClick = { viewModel.onLoginClicked() },
+            onClick = {
+                controller?.hide()
+                viewModel.onLoginClicked()
+            },
             modifier = Modifier.padding(8.dp)
         ) {
             Text("Login")

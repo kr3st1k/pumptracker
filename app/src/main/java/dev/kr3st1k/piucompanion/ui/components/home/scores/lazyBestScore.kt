@@ -50,28 +50,24 @@ fun LazyBestScore(
                 }
             }
     }
-    Box(
-        contentAlignment = Alignment.TopCenter,
+    SwipeRefresh(
+        state = state,
+        onRefresh = onRefresh
     ) {
-        SwipeRefresh(
-            state = state,
-            onRefresh = onRefresh
-        ) {
-            LazyColumn(state = listState) {
-                item {
-                    dropDownMenu()
-                }
-                items(scores) { data ->
-                    ScoreCard(data)
-                    if (scores.indexOf(data) == scores.count() - 1 && isLoadMore)
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Spacer(modifier = Modifier.size(2.dp))
-                            CircularProgressIndicator()
-                        }
-                }
+        LazyColumn(state = listState) {
+            item {
+                dropDownMenu()
+            }
+            items(scores) { data ->
+                ScoreCard(data)
+                if (scores.indexOf(data) == scores.count() - 1 && isLoadMore)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Spacer(modifier = Modifier.size(2.dp))
+                        CircularProgressIndicator()
+                    }
             }
         }
     }

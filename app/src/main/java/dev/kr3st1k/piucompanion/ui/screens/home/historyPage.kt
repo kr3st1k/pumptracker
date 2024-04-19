@@ -1,11 +1,8 @@
 package dev.kr3st1k.piucompanion.ui.screens.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -26,26 +23,26 @@ fun HistoryPage(
 ) {
     val scores by viewModel.scores.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize()) {
 
-        if (scores == null) {
-            navController.navigate(Screen.AuthLoadingPage.route) {
-                popUpTo(navController.graph.id)
-                {
-                    inclusive = true
-                }
-            }
-        } else {
-            LazyLatestScore(
-                scores!!,
-                onRefresh = { viewModel.loadScores() },
-                listState = listState
-            )
-            if (scores?.isEmpty() == true) {
-                YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
+
+    if (scores == null) {
+        navController.navigate(Screen.AuthLoadingPage.route) {
+            popUpTo(navController.graph.id)
+            {
+                inclusive = true
             }
         }
+    } else {
+        LazyLatestScore(
+            scores!!,
+            onRefresh = { viewModel.loadScores() },
+            listState = listState
+        )
+        if (scores?.isEmpty() == true) {
+            YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
+        }
     }
+
 }
 
 

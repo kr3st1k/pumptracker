@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
@@ -50,33 +51,41 @@ fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
             pagerState, Orientation.Horizontal
         ),
         pageContent = { page ->
-            Card(
-                colors = CardDefaults.cardColors(Color.Transparent),
-                shape = RoundedCornerShape(10.dp),
-                elevation = CardDefaults.cardElevation(0.dp),
-                onClick = {
-                    val customTabsIntent = CustomTabsIntent.Builder().build()
-                    customTabsIntent.launchUrl(context, Uri.parse(newsBanners[page].uri))
-                }
-            ) {
-
-                SubcomposeAsyncImage(
-                    model = newsBanners[page].pictureUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .height(130.dp),
-                    loading = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        )
-                        {
-                            CircularProgressIndicator()
-                        }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            )
+            {
+                Card(
+                    colors = CardDefaults.cardColors(Color.Transparent),
+                    shape = RoundedCornerShape(10.dp),
+                    elevation = CardDefaults.cardElevation(0.dp),
+                    modifier = Modifier.width(400.dp),
+                    onClick = {
+                        val customTabsIntent = CustomTabsIntent.Builder().build()
+                        customTabsIntent.launchUrl(context, Uri.parse(newsBanners[page].uri))
                     }
-                )
+                ) {
+
+                    SubcomposeAsyncImage(
+                        model = newsBanners[page].pictureUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(130.dp),
+                        loading = {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                CircularProgressIndicator()
+                            }
+                        }
+                    )
+                }
             }
         }
     )

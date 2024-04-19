@@ -1,12 +1,8 @@
 package dev.kr3st1k.piucompanion.ui.screens.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -39,38 +35,35 @@ fun BestUserPage(
     val options by viewModel.options.collectAsStateWithLifecycle()
     val selectedOption by viewModel.selectedOption.collectAsStateWithLifecycle()
 
-    Column (
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (scores == null) {
-            navController.navigate(Screen.AuthLoadingPage.route) {
-                popUpTo(navController.graph.id)
-                {
-                    inclusive = true
-                }
+
+    if (scores == null) {
+        navController.navigate(Screen.AuthLoadingPage.route) {
+            popUpTo(navController.graph.id)
+            {
+                inclusive = true
             }
-        } else {
-            LazyBestScore(
-                scores!!,
-                dropDownMenu = {
-                    DropdownMenuBestScores(
-                        options,
-                        selectedOption,
-                        onUpdate = { viewModel.refreshScores(it) }
-                    )
-                },
-                listState = listState,
-                onRefresh = { viewModel.loadScores() },
-                onLoadNext = { viewModel.addScores() },
-                isLoadMoreFlow = viewModel.isLoadMore
-            )
-            if (scores!!.isEmpty()) {
-                YouSpinMeRightRoundBabyRightRound("Getting best scores...")
-            }
+        }
+    } else {
+        LazyBestScore(
+            scores!!,
+            dropDownMenu = {
+                DropdownMenuBestScores(
+                    options,
+                    selectedOption,
+                    onUpdate = { viewModel.refreshScores(it) }
+                )
+            },
+            listState = listState,
+            onRefresh = { viewModel.loadScores() },
+            onLoadNext = { viewModel.addScores() },
+            isLoadMoreFlow = viewModel.isLoadMore
+        )
+        if (scores!!.isEmpty()) {
+            YouSpinMeRightRoundBabyRightRound("Getting best scores...")
         }
     }
 }
+
 
 
 class BestUserViewModel : ViewModel() {

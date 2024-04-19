@@ -1,11 +1,8 @@
 package dev.kr3st1k.piucompanion.ui.screens.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -25,17 +22,16 @@ fun NewsScreen(
     val newsBanners by viewModel.newsBanners.collectAsStateWithLifecycle()
     val news = viewModel.news.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        LazyNews(
-            news = news.value,
-            newsBanners = newsBanners,
-            listState = listState,
-            onRefresh = { viewModel.refreshNews() }
-        )
-        if (news.value.isEmpty()) {
-            YouSpinMeRightRoundBabyRightRound("Getting news...")
-        }
+    LazyNews(
+        news = news.value,
+        newsBanners = newsBanners,
+        listState = listState,
+        onRefresh = { viewModel.refreshNews() }
+    )
+    if (news.value.isEmpty()) {
+        YouSpinMeRightRoundBabyRightRound("Getting news...")
     }
+
 }
 
 class NewsViewModel : ViewModel() {

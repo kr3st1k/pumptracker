@@ -34,6 +34,9 @@ navigationCompose = "2.7.7"
 koin = "3.6.0-wasm-alpha2"
 roomRuntime = "2.6.1"
 slf4jNop = "2.0.12"
+roomCommon = "2.6.1"
+roomCompiler = "2.6.1"
+roomKtx = "2.6.1"
 
 [libraries]
 
@@ -78,6 +81,9 @@ logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 slf4j-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 slf4j-nop-v2012 = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
+androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
 [plugins]
 
