@@ -4,15 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import dev.kr3st1k.piucompanion.core.db.data.BestUserScore
+import dev.kr3st1k.piucompanion.core.db.dao.LatestScoresDao
+import dev.kr3st1k.piucompanion.core.db.data.BestScore
 import dev.kr3st1k.piucompanion.core.db.data.LatestScore
 
-@Database(entities = [LatestScore::class, BestUserScore::class], version = 1)
+@Database(entities = [LatestScore::class, BestScore::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
-//    abstract fun latestScoreDao(): LatestScoreDao
-//
-//    abstract fun bestScoreDao(): BestScoreDao
+    abstract fun scoresDao(): LatestScoresDao
 
     companion object {
         @Volatile

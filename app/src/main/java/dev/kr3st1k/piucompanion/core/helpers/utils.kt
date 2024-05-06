@@ -5,6 +5,7 @@ import android.content.Context
 import android.provider.Settings
 import org.jsoup.nodes.Element
 import java.net.URL
+import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -26,6 +27,12 @@ object Utils
         return androidId
     }
 
+    fun generateHashForScore(score: String, difficulty: String, score1: String): String {
+        val input = "$score-$difficulty-$score1"
+        val md = MessageDigest.getInstance("SHA-256")
+        val byteArray = md.digest(input.toByteArray())
+        return byteArray.joinToString("") { String.format("%02x", it) }
+    }
     @SuppressLint("HardwareIds")
     fun setDeviceId(context: Context) {
         try {

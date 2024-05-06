@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import dev.kr3st1k.piucompanion.core.db.AppDatabase
 import dev.kr3st1k.piucompanion.ui.screens.HomeScreen
 import dev.kr3st1k.piucompanion.ui.theme.PIUCompanionTheme
 
@@ -16,25 +17,15 @@ class MainActivity : ComponentActivity() {
     companion object {
         lateinit var userAgent: String
             private set
-        lateinit var secChUa: String
+        lateinit var db: AppDatabase
             private set
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val webView = WebView(this)
-        userAgent = webView.settings.userAgentString
-        val secChUaPattern = Regex("""(Chromium|Chrome)\/(\d+)\.(\d+)\.(\d+)\.(\d+)""")
 
-        secChUa = buildString {
-            val chromeMatch = secChUaPattern.find(userAgent)
-            if (chromeMatch != null) {
-                append("\"Chromium\";v=\"${chromeMatch.groupValues[2]}\"")
-            }
-            if (chromeMatch != null) {
-                append(", \"Android WebView\";v=\"${chromeMatch.groupValues[2]}\"")
-            }
-            append(", \"Not-A.Brand\";v=\"99\"")
-        }
+        userAgent = webView.settings.userAgentString
+        db = AppDatabase.getInstance(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {

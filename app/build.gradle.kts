@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -21,6 +22,10 @@ android {
         signingConfig = signingConfigs.getByName("debug")
     }
 
+    kotlin {
+        jvmToolchain(17)
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -33,17 +38,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     packaging {
@@ -65,11 +70,12 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.autofill)
+    implementation(libs.androidx.room.runtime)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
     implementation(libs.kotlinx.serialization.json.v163)
     implementation(libs.accompanist.swiperefresh)
-    implementation(libs.androidx.room.common)
-    implementation(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     implementation(libs.jsoup)
     implementation(libs.coil.compose)
@@ -77,6 +83,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.browser)
     androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.mockito.core)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
