@@ -21,4 +21,9 @@ class LoginManager : KoinComponent {
         sharedPreferences.edit().putString("login", login).apply()
         sharedPreferences.edit().putString("password", password).apply()
     }
+
+    fun removeLoginData() {
+        sharedPreferences.edit().remove("login").apply()
+        sharedPreferences.edit().remove("password").apply()
+    }
 }

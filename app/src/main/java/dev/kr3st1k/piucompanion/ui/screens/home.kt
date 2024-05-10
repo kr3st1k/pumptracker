@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Dvr
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -66,27 +63,27 @@ public val homeDestinations = listOf(
         iconText = "News",
         summary = "Read latest news about Pump It Up"
     ),
-    TopLevelDestination(
-        route = Screen.NewsPage.route,
-        selectedIcon = Icons.Filled.Leaderboard,
-        unselectedIcon = Icons.Filled.Leaderboard,
-        iconText = "Leaderboard",
-        summary = "Let's see who sniped FEFEMZ's scores"
-    ),
-    TopLevelDestination(
-        route = Screen.NewsPage.route,
-        selectedIcon = Icons.AutoMirrored.Filled.Dvr,
-        unselectedIcon = Icons.AutoMirrored.Filled.Dvr,
-        iconText = "Title Changer",
-        summary = "Select the most beautiful title available"
-    ),
-    TopLevelDestination(
-        route = Screen.NewsPage.route,
-        selectedIcon = Icons.Filled.AccountCircle,
-        unselectedIcon = Icons.Filled.AccountCircle,
-        iconText = "Avatar Shop",
-        summary = "Wow! Nice picture!"
-    ),
+//    TopLevelDestination(
+//        route = Screen.NewsPage.route,
+//        selectedIcon = Icons.Filled.Leaderboard,
+//        unselectedIcon = Icons.Filled.Leaderboard,
+//        iconText = "Leaderboard",
+//        summary = "Let's see who sniped FEFEMZ's scores"
+//    ),
+//    TopLevelDestination(
+//        route = Screen.NewsPage.route,
+//        selectedIcon = Icons.AutoMirrored.Filled.Dvr,
+//        unselectedIcon = Icons.AutoMirrored.Filled.Dvr,
+//        iconText = "Title Changer",
+//        summary = "Select the most beautiful title available"
+//    ),
+//    TopLevelDestination(
+//        route = Screen.NewsPage.route,
+//        selectedIcon = Icons.Filled.AccountCircle,
+//        unselectedIcon = Icons.Filled.AccountCircle,
+//        iconText = "Avatar Shop",
+//        summary = "Wow! Nice picture!"
+//    ),
     TopLevelDestination(
         route = Screen.SettingsPage.route,
         selectedIcon = Icons.Filled.Settings,

@@ -1,59 +1,98 @@
 package dev.kr3st1k.piucompanion.ui.screens.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.core.modules.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithTwoButton
-import dev.kr3st1k.piucompanion.ui.components.Button
+import dev.kr3st1k.piucompanion.ui.screens.Screen
 
 @Composable
 fun SettingsPage(
     navController: NavController,
-//    viewModel: HistoryViewModel
 ) {
     val showLogoutDialogue = remember {
         mutableStateOf(false)
     }
 
-    Column(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-    ) {
-        AlertDialogWithTwoButton(
-            showDialog = showLogoutDialogue.value,
-            title = "Exit from account?",
-            content = "Are you sure about that?",
-            onDismiss = {
-                showLogoutDialogue.value = false
-            },
-            onConfirm = {
-                showLogoutDialogue.value = false
+    AlertDialogWithTwoButton(
+        showDialog = showLogoutDialogue.value,
+        title = "Exit from account?",
+        content = "Are you sure about that?",
+        onDismiss = {
+            showLogoutDialogue.value = false
+        },
+        onConfirm = {
+            LoginManager().removeLoginData()
+            showLogoutDialogue.value = false
+            navController.navigate(Screen.LoginPage.route) {
+                popUpTo(navController.graph.id)
+                {
+                    inclusive = true
+                }
             }
-        )
-        Button(
-            icon = Icons.Default.Info,
-            title = "About",
-            summary = "Who made this? Where can i complain",
-            onClick = {}
-        )
-        Spacer(modifier = Modifier.size(14.dp))
-        Button(
-            icon = Icons.AutoMirrored.Filled.ExitToApp,
-            title = "Log Out",
-            summary = "Exit from the account",
-            onClick = {
-                showLogoutDialogue.value = true
-            }
-        )
+        }
+    )
 
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        item {
+            ListItem(
+                headlineContent = {
+                    Text(text = "Log Out")
+                },
+                supportingContent = {
+                    Text(text = "Exit from the account")
+                },
+                leadingContent = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = "Log Out"
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        showLogoutDialogue.value = true
+                    }
+            )
+        }
+
+        item {
+            ListItem(
+                headlineContent = {
+                    Text(text = "About")
+                },
+                supportingContent = {
+                    Text(text = "Who made this? Where can i complain")
+                },
+                leadingContent = {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "About"
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        print("TODO BRO")
+                    }
+            )
+        }
     }
 }
