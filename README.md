@@ -4,6 +4,8 @@
 
 ---
 
+* THIS VERSION FOR COURSEWORK. Ignore me lmao
+
 * PoC of Pump it Up Info-Application which takes info from [piugame.com](https://piugame.com) made
   in Kotlin/Compose
 
