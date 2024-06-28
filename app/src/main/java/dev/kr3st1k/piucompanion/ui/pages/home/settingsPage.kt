@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.home
+package dev.kr3st1k.piucompanion.ui.pages.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.modules.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithTwoButton
-import dev.kr3st1k.piucompanion.ui.screens.Screen
+import dev.kr3st1k.piucompanion.ui.pages.Screen
 
 @Composable
 fun SettingsPage(

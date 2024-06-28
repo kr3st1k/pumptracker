@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.home
+package dev.kr3st1k.piucompanion.ui.pages.home
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -13,7 +13,7 @@ import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 import dev.kr3st1k.piucompanion.ui.components.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyBestScore
-import dev.kr3st1k.piucompanion.ui.screens.Screen
+import dev.kr3st1k.piucompanion.ui.pages.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

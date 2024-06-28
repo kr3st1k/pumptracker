@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.home
+package dev.kr3st1k.piucompanion.ui.pages.home
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable

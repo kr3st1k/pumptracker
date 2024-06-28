@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens.home
+package dev.kr3st1k.piucompanion.ui.pages.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +12,7 @@ import dev.kr3st1k.piucompanion.core.helpers.Crypto
 import dev.kr3st1k.piucompanion.core.modules.LoginManager
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.ui.screens.Screen
+import dev.kr3st1k.piucompanion.ui.pages.Screen
 import kotlinx.coroutines.launch
 
 @Composable

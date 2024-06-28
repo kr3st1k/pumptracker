@@ -27,7 +27,7 @@ import coil.compose.AsyncImage
 import dev.kr3st1k.piucompanion.core.network.data.User
 
 @Composable
-fun UserCard(user: User)
+fun UserCard(user: User, small: Boolean = false)
 {
     Card(
         modifier = Modifier
@@ -65,7 +65,7 @@ fun UserCard(user: User)
                 Text(
                     text = user.titleName,
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = Color.White.copy(0.7f),
+                    color = Color.White.copy(0.6f),
                     textAlign = TextAlign.Center
                 )
                 Text(
@@ -74,23 +74,26 @@ fun UserCard(user: User)
                     textAlign = TextAlign.Center,
                     color = Color.White,
                 )
-                Text(
-                    text = user.recentGameAccess,
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = Color.White.copy(0.7f)
-                )
+                if (!small)
+                    Text(
+                        text = user.recentGameAccess,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        color = Color.White.copy(0.7f)
+                    )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "PUMBILITY ${user.pumbility}",
+                        text = "${user.pumbility}pp",
                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        color = Color.White.copy(0.8f) // or any other color you want
+                        color = Color.White.copy(0.9f) // or any other color you want
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Add some space between the two texts
-                    Text(
-                        text = "$${user.coinValue}",
-                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                        color = Color.Green // or any other color you want
-                    )
+                    if (!small) {
+                        Spacer(modifier = Modifier.width(8.dp)) // Add some space between the two texts
+                        Text(
+                            text = "$${user.coinValue}",
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            color = Color.Green.copy(0.9f) // or any other color you want
+                        )
+                    }
                 }
             }
         }

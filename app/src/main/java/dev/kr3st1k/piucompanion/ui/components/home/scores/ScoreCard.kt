@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.kr3st1k.piucompanion.core.helpers.Utils.removeUrlParameters
 import dev.kr3st1k.piucompanion.core.network.data.LatestScore
+import dev.kr3st1k.piucompanion.core.network.data.PumbilityScore
 import dev.kr3st1k.piucompanion.core.network.data.Score
 
 @Composable
@@ -111,6 +112,14 @@ fun ScoreCard(score: Score) {
                                 color = Color(0xffadadad),
                                 textAlign = TextAlign.End
                             )
+                        if (score is PumbilityScore)
+                            Text(
+                                text = score.datetime,
+                                fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                                color = Color(0xffadadad),
+                                textAlign = TextAlign.End
+                            )
+
                     }
                 }
             }

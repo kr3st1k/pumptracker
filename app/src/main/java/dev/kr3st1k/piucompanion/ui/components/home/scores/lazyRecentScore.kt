@@ -23,15 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.core.network.data.LatestScore
+import dev.kr3st1k.piucompanion.core.network.data.Score
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LazyLatestScore(
-    scores: List<LatestScore>,
+    scores: List<Score>,
     onRefresh: () -> Unit,
     listState: LazyListState,
+    item: @Composable() (() -> Unit)? = null,
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
 
@@ -66,6 +67,10 @@ fun LazyLatestScore(
                     }
                 )
         ) {
+            item {
+                if (item != null)
+                    item()
+            }
             items(scores) { data ->
                 ScoreCard(data)
             }

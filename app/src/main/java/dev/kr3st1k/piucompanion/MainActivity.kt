@@ -10,7 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import dev.kr3st1k.piucompanion.core.db.AppDatabase
-import dev.kr3st1k.piucompanion.ui.screens.HomeScreen
+import dev.kr3st1k.piucompanion.ui.pages.HomeScreen
 import dev.kr3st1k.piucompanion.ui.theme.PIUCompanionTheme
 
 class MainActivity : ComponentActivity() {

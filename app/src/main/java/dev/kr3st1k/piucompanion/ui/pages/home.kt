@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.ui.screens
+package dev.kr3st1k.piucompanion.ui.pages
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -63,7 +63,7 @@ public val homeDestinations = listOf(
         summary = "Read latest news about Pump It Up"
     ),
     TopLevelDestination(
-        route = Screen.NewsPage.route,
+        route = Screen.PumbilityPage.route,
         selectedIcon = Icons.Filled.Analytics,
         unselectedIcon = Icons.Filled.Analytics,
         iconText = "PUMBILITY",

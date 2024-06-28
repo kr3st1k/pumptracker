@@ -7,11 +7,13 @@ import dev.kr3st1k.piucompanion.core.network.data.LatestScore
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
+import dev.kr3st1k.piucompanion.core.network.data.Pumbility
 import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.core.network.parsers.BestUserScoresParser
 import dev.kr3st1k.piucompanion.core.network.parsers.LatestScoresParser
 import dev.kr3st1k.piucompanion.core.network.parsers.NewsBannerParser
 import dev.kr3st1k.piucompanion.core.network.parsers.NewsListParser
+import dev.kr3st1k.piucompanion.core.network.parsers.PumbilityParser
 import dev.kr3st1k.piucompanion.core.network.parsers.UserParser
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -122,6 +124,12 @@ object NetworkRepositoryImpl : NetworkRepository {
     override suspend fun getNewsList(): MutableList<News> {
         val document = getDocument(BASEPIUURL, "phoenix_notice") ?: return mutableListOf()
         return NewsListParser.parse(document)
+    }
+
+    override suspend fun getPumbilityInfo(): Pumbility? {
+        val document = getDocument(BASEPIUURL, "my_page/pumbility.php", checkLogin = true)
+            ?: return null
+        return PumbilityParser.parse(document)
     }
 
     override suspend fun getUserInfo(): User? {
