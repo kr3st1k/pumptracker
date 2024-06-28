@@ -3,6 +3,7 @@ package dev.kr3st1k.piucompanion.ui.components.home.users
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,7 +65,7 @@ fun UserCard(user: User)
                 Text(
                     text = user.titleName,
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = Color.Gray,
+                    color = Color.White.copy(0.7f),
                     textAlign = TextAlign.Center
                 )
                 Text(
@@ -76,13 +77,21 @@ fun UserCard(user: User)
                 Text(
                     text = user.recentGameAccess,
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = Color.Gray
+                    color = Color.White.copy(0.7f)
                 )
-                Text(
-                    text = "$${user.coinValue}",
-                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                    color = Color.Green
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "PUMBILITY ${user.pumbility}",
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        color = Color.White.copy(0.8f) // or any other color you want
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) // Add some space between the two texts
+                    Text(
+                        text = "$${user.coinValue}",
+                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                        color = Color.Green // or any other color you want
+                    )
+                }
             }
         }
     }

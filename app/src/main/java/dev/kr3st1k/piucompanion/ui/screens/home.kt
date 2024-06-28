@@ -2,12 +2,11 @@ package dev.kr3st1k.piucompanion.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Newspaper
@@ -63,6 +62,13 @@ public val homeDestinations = listOf(
         iconText = "News",
         summary = "Read latest news about Pump It Up"
     ),
+    TopLevelDestination(
+        route = Screen.NewsPage.route,
+        selectedIcon = Icons.Filled.Analytics,
+        unselectedIcon = Icons.Filled.Analytics,
+        iconText = "PUMBILITY",
+        summary = "Best 50 scores"
+    ),
 //    TopLevelDestination(
 //        route = Screen.NewsPage.route,
 //        selectedIcon = Icons.Filled.Leaderboard,
@@ -101,9 +107,7 @@ fun HomeScreen() {
 
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-
     val currentRoute = navControllerLocal.currentBackStackEntryAsState().value?.destination?.route
-
     Scaffold(
         topBar = {
             if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
@@ -111,7 +115,7 @@ fun HomeScreen() {
                     navigationIcon = {
                         if (currentRoute in homeDestinations.map { it.route })
                             IconButton(onClick = {
-                                navControllerLocal.popBackStack()
+                                navControllerLocal.navigateUp()
                             }) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -160,18 +164,11 @@ fun HomeScreen() {
             }
         }
     ) {
-        Column(
+        HomeNavHost(
             modifier = Modifier
-                .padding(it)
-                .fillMaxSize()
-        ) {
-            HomeNavHost(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
-                navController = navControllerLocal,
-                listState = listState
-            )
-        }
+                .padding(it),
+            navController = navControllerLocal,
+            listState = listState
+        )
     }
 }

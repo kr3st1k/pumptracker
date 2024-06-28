@@ -33,7 +33,7 @@ fun DropdownMenuBestScores(
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier
-            .padding(16.dp)
+            .padding(bottom = 16.dp)
             .fillMaxWidth()
     ) {
         ExposedDropdownMenuBox(

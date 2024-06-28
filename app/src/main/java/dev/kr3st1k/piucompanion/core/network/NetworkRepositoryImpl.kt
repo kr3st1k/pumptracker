@@ -125,7 +125,7 @@ object NetworkRepositoryImpl : NetworkRepository {
     }
 
     override suspend fun getUserInfo(): User? {
-        val document = getDocument(BASEPIUURL, "my_page/play_data.php", checkLogin = true)
+        val document = getDocument(BASEPIUURL, "my_page/pumbility.php", checkLogin = true)
             ?: return null
         return UserParser.parse(document)
     }

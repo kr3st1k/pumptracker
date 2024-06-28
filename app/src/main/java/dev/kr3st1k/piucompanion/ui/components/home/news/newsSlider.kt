@@ -44,7 +44,6 @@ fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
         userScrollEnabled = true,
         reverseLayout = false,
         contentPadding = PaddingValues(horizontal = 32.dp),
-        beyondBoundsPageCount = 0,
         pageSize = PageSize.Fill,
         key = null,
         pageNestedScrollConnection = PagerDefaults.pageNestedScrollConnection(

@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -34,41 +34,28 @@ fun ScoreCard(score: Score) {
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 4.dp, start = 16.dp, end = 16.dp)
-            .wrapContentSize()
+            .padding(bottom = 4.dp)
             .height(115.dp)
+            .heightIn(min = 115.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Box()
-            {
-                AsyncImage(
-                    model = removeUrlParameters(score.songBackgroundUri),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.7f))
-                )
-            }
+        Box {
+            AsyncImage(
+                model = removeUrlParameters(score.songBackgroundUri),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.7f))
+            )
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+                Row {
                     Column(
                         modifier = Modifier
                             .weight(2f)
@@ -109,13 +96,14 @@ fun ScoreCard(score: Score) {
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.End
                         )
-                        Text(
-                            text = score.rank,
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                            color = Color(0xffd1cfcf),
+                        if (score.rank != "F")
+                            Text(
+                                text = score.rank,
+                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                color = Color(0xffd1cfcf),
 
-                            textAlign = TextAlign.End
-                        )
+                                textAlign = TextAlign.End
+                            )
                         if (score is LatestScore)
                             Text(
                                 text = score.datetime,

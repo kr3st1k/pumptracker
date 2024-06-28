@@ -23,8 +23,6 @@ fun HistoryPage(
 ) {
     val scores by viewModel.scores.collectAsStateWithLifecycle()
 
-
-
     if (scores == null) {
         navController.navigate(Screen.AuthLoadingPage.route) {
             popUpTo(navController.graph.id)
@@ -42,12 +40,11 @@ fun HistoryPage(
             YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
         }
     }
-
 }
 
 
 class HistoryViewModel : ViewModel() {
-    val scores = MutableStateFlow<MutableList<LatestScore>?>(mutableListOf())
+    val scores = MutableStateFlow<List<LatestScore>?>(mutableListOf())
 
     init {
         loadScores()
