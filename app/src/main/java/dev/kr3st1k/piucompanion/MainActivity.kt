@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
                 lifecycleScope.launch {
                     val update = NetworkRepositoryImpl.getGithubUpdateInfo()
-                    if (update.assets[0].name != version) {
+                    if (update.name != version) {
                         mustUpdate = true
                         uri = update.assets[0].browser_download_url
                     }
