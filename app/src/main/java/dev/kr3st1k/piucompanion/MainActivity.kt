@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
         db = AppDatabase.getInstance(this)
 
         val packageInfo = baseContext.packageManager.getPackageInfo("com.kr3st1k.pumptracker", 0)
-        version = "${packageInfo.versionName} ${packageInfo.longVersionCode}"
+        version = "${packageInfo.versionName} (${packageInfo.longVersionCode})"
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
@@ -61,6 +61,8 @@ class MainActivity : ComponentActivity() {
 
                 lifecycleScope.launch {
                     val update = NetworkRepositoryImpl.getGithubUpdateInfo()
+                    println(update.name)
+                    println(version)
                     if (update.name != version) {
                         mustUpdate = true
                         uri = update.assets[0].browser_download_url
