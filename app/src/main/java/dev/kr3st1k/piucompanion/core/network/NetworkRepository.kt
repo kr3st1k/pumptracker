@@ -7,6 +7,7 @@ import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.core.network.data.Pumbility
+import dev.kr3st1k.piucompanion.core.network.data.ReleaseResponse
 import dev.kr3st1k.piucompanion.core.network.data.User
 import io.ktor.http.Parameters
 import org.jsoup.nodes.Document
@@ -26,6 +27,7 @@ interface NetworkRepository {
     suspend fun getNewsList(): MutableList<News>
     suspend fun getUserInfo(): User?
     suspend fun getPumbilityInfo(): Pumbility?
+    suspend fun getGithubUpdateInfo(): ReleaseResponse
     suspend fun getBestUserScores(
         page: Int? = null,
         lvl: String = "",

@@ -81,9 +81,9 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
             modifier = Modifier.padding(4.dp),
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next,
-                autoCorrect = false
+                imeAction = ImeAction.Next
             )
         )
         OutlinedTextField(
@@ -94,9 +94,9 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
             singleLine = true,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done,
-                autoCorrect = false
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
                 onDone = { this.defaultKeyboardAction(ImeAction.Done); viewModel.onLoginClicked() }

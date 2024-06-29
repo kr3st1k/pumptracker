@@ -33,6 +33,7 @@ object Utils
         val byteArray = md.digest(input.toByteArray())
         return byteArray.joinToString("") { String.format("%02x", it) }
     }
+
     @SuppressLint("HardwareIds")
     fun setDeviceId(context: Context) {
         try {

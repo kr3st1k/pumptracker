@@ -8,6 +8,7 @@ import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import dev.kr3st1k.piucompanion.core.network.data.News
 import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.core.network.data.Pumbility
+import dev.kr3st1k.piucompanion.core.network.data.ReleaseResponse
 import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.core.network.parsers.BestUserScoresParser
 import dev.kr3st1k.piucompanion.core.network.parsers.LatestScoresParser
@@ -17,12 +18,15 @@ import dev.kr3st1k.piucompanion.core.network.parsers.PumbilityParser
 import dev.kr3st1k.piucompanion.core.network.parsers.UserParser
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.http.Parameters
 import io.ktor.http.URLProtocol
 import io.ktor.http.parameters
 import io.ktor.http.path
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -61,6 +65,18 @@ object NetworkRepositoryImpl : NetworkRepository {
         }
 
         return Jsoup.parse(requestText)
+    }
+
+    override suspend fun getGithubUpdateInfo(): ReleaseResponse {
+        val cl = HttpClient(OkHttp) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+        }
+        val req = cl.get("https://api.github.com/repos/kr3st1k/PIU_companion/releases/latest")
+        val res: ReleaseResponse = req.body()
+
+        return res
     }
 
     override suspend fun getUpdateInfo(): String {
