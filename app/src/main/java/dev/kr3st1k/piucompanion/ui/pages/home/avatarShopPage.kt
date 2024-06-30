@@ -32,7 +32,7 @@ fun AvatarShopScreen(
 ) {
     val avatars by viewModel.avatars.collectAsStateWithLifecycle()
 
-    if (avatars == null) {
+    if (avatars == null && viewModel.user.value == null) {
         navController.navigate(Screen.AuthLoadingPage.route) {
             popUpTo(navController.graph.id)
             {
@@ -43,6 +43,7 @@ fun AvatarShopScreen(
         LazyAvatar(
             avatars!!,
             onRefresh = { viewModel.loadAvatars() },
+            onUpdate = { viewModel.updateAvatars() },
             item = {
                 Column(
                     modifier = Modifier
@@ -57,7 +58,8 @@ fun AvatarShopScreen(
                 }
                 Spacer(modifier = Modifier.size(4.dp))
 
-            }
+            },
+            userMoney = viewModel.user.value?.coinValue ?: "0"
         )
         if (avatars?.isEmpty() == true) {
             YouSpinMeRightRoundBabyRightRound("Getting avatars...")
@@ -77,6 +79,18 @@ class AvatarShopModel : ViewModel() {
     fun loadAvatars() {
         viewModelScope.launch {
             avatars.value = mutableListOf()
+            val data = NetworkRepositoryImpl.getAvatarShopInfo()
+            if (data == null) {
+                avatars.value = null
+            } else {
+                avatars.value = data.items
+                user.value = data.user
+            }
+        }
+    }
+
+    fun updateAvatars() {
+        viewModelScope.launch {
             val data = NetworkRepositoryImpl.getAvatarShopInfo()
             if (data == null) {
                 avatars.value = null

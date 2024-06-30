@@ -20,6 +20,12 @@ interface NetworkRepository {
         params: Parameters = Parameters.Empty,
         checkLogin: Boolean = false,
     ): Document?
+    suspend fun formPost(
+        host: String,
+        path: String = "/",
+        params: Parameters = Parameters.Empty,
+        checkLogin: Boolean = false,
+    ): Boolean?
     suspend fun getUpdateInfo(): String
     suspend fun getBgJson(): MutableList<BgInfo>
     suspend fun checkIfLoginSuccessRequest(): Boolean
@@ -28,6 +34,8 @@ interface NetworkRepository {
     suspend fun getNewsList(): MutableList<News>
     suspend fun getUserInfo(): User?
     suspend fun getPumbilityInfo(): Pumbility?
+    suspend fun setAvatar(value: String): Boolean?
+    suspend fun buyAvatar(value: String): Boolean?
     suspend fun getAvatarShopInfo(): AvatarShop?
     suspend fun getGithubUpdateInfo(): ReleaseResponse
     suspend fun getBestUserScores(

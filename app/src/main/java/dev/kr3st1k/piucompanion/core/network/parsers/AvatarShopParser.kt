@@ -15,13 +15,17 @@ object AvatarShopParser : Parser<AvatarShop>() {
         val isBought = element.attr("class").toString() == "have"
 
         val isSelected =
-            element.select("button").first()!!.attr("class").toString() == "stateBox.bg2"
+            element.select("button.stateBox.bg2").isNotEmpty()
 
         val price = if (!isBought) element.select("i.tt.en").first()!!.text() else "0"
 
         val bg = getBackgroundImg(element.select("div.re.img.bgfix").first()!!, false)
 
-        return AvatarItem(name, isBought, isSelected, price, bg)
+        val value =
+            element.select("div.state_w.mgL").first()?.select("form")?.first()?.select("input")
+                ?.attr("value")?.toString() ?: "null"
+
+        return AvatarItem(name, isBought, isSelected, price, bg, value)
     }
 
     override fun parse(document: Document): AvatarShop {

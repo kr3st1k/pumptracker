@@ -1,7 +1,10 @@
 package dev.kr3st1k.piucompanion.ui.components.home.avatars
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -27,12 +30,15 @@ import dev.kr3st1k.piucompanion.core.helpers.Utils.removeUrlParameters
 import dev.kr3st1k.piucompanion.core.network.data.AvatarItem
 
 @Composable
-fun AvatarCard(avatar: AvatarItem) {
+fun AvatarCard(avatar: AvatarItem, action: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(bottom = 8.dp)
             .width(100.dp)
-            .heightIn(min = 120.dp),
+            .heightIn(min = 120.dp)
+            .clickable {
+                action()
+            },
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF222933)
         )
@@ -40,7 +46,10 @@ fun AvatarCard(avatar: AvatarItem) {
         Column(
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 16.dp)
-                .background(color = Color(0xFF222933)),
+                .background(color = Color(0xFF222933))
+                .clickable {
+                    action()
+                },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
@@ -68,19 +77,21 @@ fun AvatarCard(avatar: AvatarItem) {
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-//            Spacer(modifier = Modifier.padding(bottom = 10.dp))
-//            Box(
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Text(
-//                    text = "Buy",
-//                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color.Green,
-//                    maxLines = 2,
-//                    overflow = TextOverflow.Ellipsis
-//                )
-//            }
+            if (avatar.isBought) {
+                Spacer(modifier = Modifier.padding(bottom = 2.dp))
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (!avatar.isSelected) "Set" else "Avatar in use",
+                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Green,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
     }
 }

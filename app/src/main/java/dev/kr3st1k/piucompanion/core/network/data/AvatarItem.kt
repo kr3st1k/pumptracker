@@ -6,4 +6,5 @@ data class AvatarItem(
     val isSelected: Boolean = false,
     val price: String,
     val avatarUrl: String,
+    val value: String = ""
 )

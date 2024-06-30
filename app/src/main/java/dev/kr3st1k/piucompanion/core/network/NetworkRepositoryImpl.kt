@@ -69,6 +69,30 @@ object NetworkRepositoryImpl : NetworkRepository {
         return Jsoup.parse(requestText)
     }
 
+    override suspend fun formPost(
+        host: String,
+        path: String,
+        params: Parameters,
+        checkLogin: Boolean
+    ): Boolean? {
+
+        val request = client.submitForm(
+            url = "https://$host/$path",
+            formParameters = params
+        )
+
+        val requestText: String = request.body()
+
+        if (checkLogin && !checkIfLoginSuccess(requestText)) {
+            if (!checkIfLoginSuccessRequest()) {
+                return null
+            }
+            return formPost(host, path, params, true)
+        }
+
+        return request.status.value == 200
+    }
+
     override suspend fun getGithubUpdateInfo(): ReleaseResponse {
         val cl = HttpClient(OkHttp) {
             install(ContentNegotiation) {
@@ -142,6 +166,25 @@ object NetworkRepositoryImpl : NetworkRepository {
     override suspend fun getAvatarShopInfo(): AvatarShop? {
         val document = getDocument(BASEPIUURL, "my_page/avatar_shop.php") ?: return null
         return AvatarShopParser.parse(document)
+    }
+
+    override suspend fun setAvatar(value: String): Boolean? {
+        return formPost(
+            BASEPIUURL,
+            "logic/user_avatar_update.php",
+            parameters {
+                append("no", value)
+            })
+    }
+
+    override suspend fun buyAvatar(value: String): Boolean? {
+        return formPost(
+            BASEPIUURL,
+            "ajax/user_avatar_buy.php",
+            parameters {
+                append("no", value)
+            }
+        )
     }
 
     override suspend fun getNewsList(): MutableList<News> {
