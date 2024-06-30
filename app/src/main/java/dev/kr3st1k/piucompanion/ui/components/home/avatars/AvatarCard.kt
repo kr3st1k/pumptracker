@@ -1,5 +1,6 @@
 package dev.kr3st1k.piucompanion.ui.components.home.avatars
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,11 +32,15 @@ fun AvatarCard(avatar: AvatarItem) {
         modifier = Modifier
             .padding(bottom = 8.dp)
             .width(100.dp)
-            .heightIn(min = 120.dp)
+            .heightIn(min = 120.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF222933)
+        )
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 16.dp),
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .background(color = Color(0xFF222933)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(

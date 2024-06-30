@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import dev.kr3st1k.piucompanion.core.network.data.AvatarItem
@@ -84,11 +85,12 @@ fun LazyAvatar(
             item(span = {
                 GridItemSpan(maxLineSpan)
             }) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    thickness = 2.dp,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+                if (avatars.isNotEmpty())
+                    HorizontalDivider(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        thickness = 2.dp,
+                        color = Color(0xFF222933)
+                    )
             }
             items(avatars.filter { !it.isBought }) { data ->
                 AvatarCard(data)
