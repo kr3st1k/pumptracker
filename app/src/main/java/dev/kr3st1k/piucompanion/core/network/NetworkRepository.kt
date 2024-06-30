@@ -1,5 +1,6 @@
 package dev.kr3st1k.piucompanion.core.network
 
+import dev.kr3st1k.piucompanion.core.network.data.AvatarShop
 import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
 import dev.kr3st1k.piucompanion.core.network.data.LatestScore
@@ -27,6 +28,7 @@ interface NetworkRepository {
     suspend fun getNewsList(): MutableList<News>
     suspend fun getUserInfo(): User?
     suspend fun getPumbilityInfo(): Pumbility?
+    suspend fun getAvatarShopInfo(): AvatarShop?
     suspend fun getGithubUpdateInfo(): ReleaseResponse
     suspend fun getBestUserScores(
         page: Int? = null,

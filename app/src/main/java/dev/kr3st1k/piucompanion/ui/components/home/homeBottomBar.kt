@@ -9,12 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import dev.kr3st1k.piucompanion.ui.pages.TopLevelDestination
+import kotlinx.coroutines.Job
 
 @Composable
 fun HomeBottomBar(
     destinations: List<TopLevelDestination>,
     currentDestination: NavDestination?,
-    onNavigateToDestination: (route: String) -> Unit
+    onNavigateToDestination: (route: String) -> Unit,
+    onListUp: () -> Job
 ) {
 
     NavigationBar(
@@ -26,7 +28,12 @@ fun HomeBottomBar(
                 currentDestination?.hierarchy?.any { it.route == destination.route } == true
             NavigationBarItem(
                 selected = selected,
-                onClick = { onNavigateToDestination(destination.route) },
+                onClick = {
+                    if (selected)
+                        onListUp()
+                    else
+                        onNavigateToDestination(destination.route)
+                },
                 icon = {
                     Icon(
                         imageVector = if (selected) destination.selectedIcon

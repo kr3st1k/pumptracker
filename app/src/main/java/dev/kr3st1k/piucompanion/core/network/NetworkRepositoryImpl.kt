@@ -1,6 +1,7 @@
 package dev.kr3st1k.piucompanion.core.network
 
 import dev.kr3st1k.piucompanion.core.helpers.Utils.checkIfLoginSuccess
+import dev.kr3st1k.piucompanion.core.network.data.AvatarShop
 import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
 import dev.kr3st1k.piucompanion.core.network.data.LatestScore
@@ -10,6 +11,7 @@ import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
 import dev.kr3st1k.piucompanion.core.network.data.Pumbility
 import dev.kr3st1k.piucompanion.core.network.data.ReleaseResponse
 import dev.kr3st1k.piucompanion.core.network.data.User
+import dev.kr3st1k.piucompanion.core.network.parsers.AvatarShopParser
 import dev.kr3st1k.piucompanion.core.network.parsers.BestUserScoresParser
 import dev.kr3st1k.piucompanion.core.network.parsers.LatestScoresParser
 import dev.kr3st1k.piucompanion.core.network.parsers.NewsBannerParser
@@ -135,6 +137,11 @@ object NetworkRepositoryImpl : NetworkRepository {
     override suspend fun getNewsBanners(): MutableList<NewsBanner> {
         val document = getDocument(BASEPIUURL) ?: return mutableListOf()
         return NewsBannerParser.parse(document)
+    }
+
+    override suspend fun getAvatarShopInfo(): AvatarShop? {
+        val document = getDocument(BASEPIUURL, "my_page/avatar_shop.php") ?: return null
+        return AvatarShopParser.parse(document)
     }
 
     override suspend fun getNewsList(): MutableList<News> {

@@ -4,6 +4,7 @@ import dev.kr3st1k.piucompanion.MainActivity
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
@@ -20,6 +21,8 @@ object KtorInstance {
         engine {
 //            addInterceptor(logInterceptor())
         }
+
+        install(HttpCache)
 
         install(ContentEncoding) {
             gzip()

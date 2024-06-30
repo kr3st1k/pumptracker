@@ -10,11 +10,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.kr3st1k.piucompanion.core.modules.LoginManager
 import dev.kr3st1k.piucompanion.ui.pages.home.AuthLoadingPage
+import dev.kr3st1k.piucompanion.ui.pages.home.AvatarShopScreen
 import dev.kr3st1k.piucompanion.ui.pages.home.BestUserPage
 import dev.kr3st1k.piucompanion.ui.pages.home.HistoryPage
 import dev.kr3st1k.piucompanion.ui.pages.home.LoginPage
 import dev.kr3st1k.piucompanion.ui.pages.home.NewsScreen
-import dev.kr3st1k.piucompanion.ui.pages.home.PumbilityPage
+import dev.kr3st1k.piucompanion.ui.pages.home.PumbilityScreen
 import dev.kr3st1k.piucompanion.ui.pages.home.SettingsPage
 import dev.kr3st1k.piucompanion.ui.pages.home.UserScreen
 @Composable
@@ -72,7 +73,7 @@ fun HomeNavHost(
             }
 
             composable(route = Screen.PumbilityPage.route) {
-                PumbilityPage(
+                PumbilityScreen(
                     navController = navController,
                     viewModel = viewModel(),
                     listState = listState
@@ -81,6 +82,13 @@ fun HomeNavHost(
 
             composable(route = Screen.SettingsPage.route) {
                 SettingsPage(
+                    navController = navController
+                )
+            }
+
+            composable(route = Screen.AvatarShopPage.route) {
+                AvatarShopScreen(
+                    viewModel = viewModel(),
                     navController = navController
                 )
             }

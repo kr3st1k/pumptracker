@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.History
@@ -83,13 +84,13 @@ public val homeDestinations = listOf(
 //        iconText = "Title Changer",
 //        summary = "Select the most beautiful title available"
 //    ),
-//    TopLevelDestination(
-//        route = Screen.NewsPage.route,
-//        selectedIcon = Icons.Filled.AccountCircle,
-//        unselectedIcon = Icons.Filled.AccountCircle,
-//        iconText = "Avatar Shop",
-//        summary = "Wow! Nice picture!"
-//    ),
+    TopLevelDestination(
+        route = Screen.AvatarShopPage.route,
+        selectedIcon = Icons.Filled.AccountCircle,
+        unselectedIcon = Icons.Filled.AccountCircle,
+        iconText = "Avatar Shop",
+        summary = "Wow! Nice picture!"
+    ),
     TopLevelDestination(
         route = Screen.SettingsPage.route,
         selectedIcon = Icons.Filled.Settings,
@@ -149,6 +150,11 @@ fun HomeScreen() {
         bottomBar = {
             if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
                 HomeBottomBar(destinations = topLevelDestinations,
+                    onListUp = {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    },
                     currentDestination = navControllerLocal.currentBackStackEntryAsState().value?.destination,
                     onNavigateToDestination = {
 

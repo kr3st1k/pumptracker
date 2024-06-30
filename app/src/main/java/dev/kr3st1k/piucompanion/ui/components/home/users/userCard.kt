@@ -27,7 +27,7 @@ import coil.compose.AsyncImage
 import dev.kr3st1k.piucompanion.core.network.data.User
 
 @Composable
-fun UserCard(user: User, small: Boolean = false)
+fun UserCard(user: User, small: Boolean = false, hideLocation: Boolean = false)
 {
     Card(
         modifier = Modifier
@@ -74,18 +74,19 @@ fun UserCard(user: User, small: Boolean = false)
                     textAlign = TextAlign.Center,
                     color = Color.White,
                 )
-                if (!small)
+                if (!small && !hideLocation)
                     Text(
                         text = user.recentGameAccess,
                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
                         color = Color.White.copy(0.7f)
                     )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "${user.pumbility}pp",
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        color = Color.White.copy(0.9f) // or any other color you want
-                    )
+                    if (user.pumbility != "null")
+                        Text(
+                            text = "${user.pumbility}pp",
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            color = Color.White.copy(0.9f) // or any other color you want
+                        )
                     if (!small) {
                         Spacer(modifier = Modifier.width(8.dp)) // Add some space between the two texts
                         Text(

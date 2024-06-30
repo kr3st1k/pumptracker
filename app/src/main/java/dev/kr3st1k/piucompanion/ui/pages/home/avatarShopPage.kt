@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -15,26 +14,25 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
-import dev.kr3st1k.piucompanion.core.network.data.PumbilityScore
+import dev.kr3st1k.piucompanion.core.network.data.AvatarItem
 import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyLatestScore
+import dev.kr3st1k.piucompanion.ui.components.home.avatars.LazyAvatar
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.pages.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun PumbilityScreen(
-    navController: NavController,
-    viewModel: PumbilityViewModel,
-    listState: LazyListState,
+fun AvatarShopScreen(
+    viewModel: AvatarShopModel,
+    navController: NavHostController,
 ) {
-    val scores by viewModel.scores.collectAsStateWithLifecycle()
+    val avatars by viewModel.avatars.collectAsStateWithLifecycle()
 
-    if (scores == null) {
+    if (avatars == null) {
         navController.navigate(Screen.AuthLoadingPage.route) {
             popUpTo(navController.graph.id)
             {
@@ -42,10 +40,9 @@ fun PumbilityScreen(
             }
         }
     } else {
-        LazyLatestScore(
-            scores!!,
-            onRefresh = { viewModel.loadScores() },
-            listState = listState,
+        LazyAvatar(
+            avatars!!,
+            onRefresh = { viewModel.loadAvatars() },
             item = {
                 Column(
                     modifier = Modifier
@@ -53,7 +50,7 @@ fun PumbilityScreen(
                         .fillMaxWidth()
                 ) {
                     if (viewModel.user.value != null) {
-                        UserCard(viewModel.user.value!!, true)
+                        UserCard(viewModel.user.value!!, hideLocation = true)
                     } else {
                         YouSpinMeRightRoundBabyRightRound()
                     }
@@ -62,31 +59,32 @@ fun PumbilityScreen(
 
             }
         )
-        if (scores?.isEmpty() == true) {
-            YouSpinMeRightRoundBabyRightRound("Getting pumbility scores...")
+        if (avatars?.isEmpty() == true) {
+            YouSpinMeRightRoundBabyRightRound("Getting avatars...")
         }
     }
+
 }
 
-
-class PumbilityViewModel : ViewModel() {
-    val scores = MutableStateFlow<List<PumbilityScore>?>(mutableListOf())
+class AvatarShopModel : ViewModel() {
+    val avatars = MutableStateFlow<List<AvatarItem>?>(mutableListOf())
     val user: MutableState<User?> = mutableStateOf(null)
 
     init {
-        loadScores()
+        loadAvatars()
     }
 
-    fun loadScores() {
+    fun loadAvatars() {
         viewModelScope.launch {
-            scores.value = mutableListOf()
-            val data = NetworkRepositoryImpl.getPumbilityInfo()
+            avatars.value = mutableListOf()
+            val data = NetworkRepositoryImpl.getAvatarShopInfo()
             if (data == null) {
-                scores.value = null
+                avatars.value = null
             } else {
-                scores.value = data.scores
+                avatars.value = data.items
                 user.value = data.user
             }
         }
     }
+
 }

@@ -33,10 +33,10 @@ object UserParser : Parser<User>() {
             .first()!!
             .text()
         val pumbility = document.select("div.pumbility_total_wrap")
-            .first()!!
-            .select("p.t2.en")
-            .first()!!
-            .text()
+            .first()
+            ?.select("p.t2.en")
+            ?.first()
+            ?.text() ?: "null"
 
         return User(
             name, title, backgroundUrl, avatarUrl,

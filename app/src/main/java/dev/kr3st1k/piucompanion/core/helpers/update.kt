@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
-import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.webkit.URLUtil
@@ -140,15 +139,11 @@ class DownloadApk(var context: Context) : AppCompatActivity() {
         }
 
         private fun getUriFromFile(filePath: String): Uri {
-            return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                Uri.fromFile(File(filePath))
-            } else {
-                FileProvider.getUriForFile(
+            return FileProvider.getUriForFile(
                     context,
                     context.packageName + ".provider",
                     File(filePath)
                 )
-            }
         }
     }
 }
