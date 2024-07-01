@@ -12,6 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +40,7 @@ class MainActivity : ComponentActivity() {
             private set
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +60,9 @@ class MainActivity : ComponentActivity() {
             PIUCompanionTheme {
                 var mustUpdate by remember { mutableStateOf(false) }
                 var uri by remember { mutableStateOf("") }
-
+                val windowClass = calculateWindowSizeClass(activity = this)
+                val showNavigationRail =
+                    windowClass.widthSizeClass != WindowWidthSizeClass.Compact
                 val r = BuildConfig.BUILD_TYPE
 
                 lifecycleScope.launch {
@@ -96,7 +102,9 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     else
-                        HomeScreen()
+                        HomeScreen(
+                            showNavigationRail
+                        )
                 }
             }
         }

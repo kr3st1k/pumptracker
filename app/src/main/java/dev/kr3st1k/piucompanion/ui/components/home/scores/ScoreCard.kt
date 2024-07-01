@@ -1,6 +1,7 @@
 package dev.kr3st1k.piucompanion.ui.components.home.scores
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,7 +70,8 @@ fun ScoreCard(score: Score) {
                             fontSize = MaterialTheme.typography.titleMedium.fontSize,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
-                            maxLines = 2,
+                            modifier = Modifier.basicMarquee(),
+                            maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(

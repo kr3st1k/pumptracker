@@ -1,10 +1,10 @@
 package dev.kr3st1k.piucompanion.ui.components.home.avatars
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -35,18 +35,25 @@ fun AvatarCard(avatar: AvatarItem, action: () -> Unit) {
         modifier = Modifier
             .padding(bottom = 8.dp)
             .width(100.dp)
+            .clip(RoundedCornerShape(8.dp))
             .heightIn(min = 120.dp)
             .clickable {
                 action()
-            },
+            }
+            .clip(RoundedCornerShape(8.dp)),
+        border = if (avatar.isSelected) BorderStroke(
+            2.dp,
+            MaterialTheme.colorScheme.primary
+        ) else BorderStroke(2.dp, Color(0xFF222933)),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF222933)
         )
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .padding(vertical = 8.dp, horizontal = 8.dp)
                 .background(color = Color(0xFF222933))
+                .clip(RoundedCornerShape(8.dp))
                 .clickable {
                     action()
                 },
@@ -59,39 +66,28 @@ fun AvatarCard(avatar: AvatarItem, action: () -> Unit) {
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(4.dp)),
+                    .clip(RoundedCornerShape(8.dp)),
             )
             Text(
+                modifier = Modifier.basicMarquee(),
                 text = avatar.name,
                 textAlign = TextAlign.Center,
                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
                 fontWeight = FontWeight.Bold,
+                maxLines = 1,
                 color = Color.White,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "$${avatar.price}",
+                text = if (avatar.price != "0") "$${avatar.price}" else if (avatar.isSelected) "In use" else "Owned",
                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
                 fontWeight = FontWeight.Bold,
-                color = Color.Green,
+                color = if (avatar.price != "0") Color.Green else if (avatar.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(
+                    0.6f
+                ),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            if (avatar.isBought) {
-                Spacer(modifier = Modifier.padding(bottom = 2.dp))
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (!avatar.isSelected) "Set" else "Avatar in use",
-                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Green,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
         }
     }
 }

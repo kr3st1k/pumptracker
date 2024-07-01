@@ -62,6 +62,8 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.material3.window)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)

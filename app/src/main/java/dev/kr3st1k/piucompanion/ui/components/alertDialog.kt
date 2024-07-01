@@ -59,7 +59,11 @@ fun DialogWithImage(
     var isConfirmed by remember {
         mutableStateOf(false)
     }
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    Dialog(onDismissRequest = {
+        if (!isConfirmed) {
+            onDismissRequest()
+        }
+    }) {
         // Draw a rectangle shape with rounded corners inside the dialog
         Card(
             modifier = Modifier

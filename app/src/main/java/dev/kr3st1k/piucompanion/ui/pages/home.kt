@@ -1,7 +1,12 @@
 package dev.kr3st1k.piucompanion.ui.pages
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -20,14 +25,20 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.kr3st1k.piucompanion.ui.components.home.HomeBottomBar
@@ -101,7 +112,7 @@ public val homeDestinations = listOf(
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(showNavigationRail: Boolean) {
 
 
     val navControllerLocal = rememberNavController()
@@ -114,7 +125,7 @@ fun HomeScreen() {
             if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
                 CenterAlignedTopAppBar(
                     navigationIcon = {
-                        if (currentRoute in homeDestinations.map { it.route })
+                        if (!showNavigationRail && (currentRoute in homeDestinations.map { it.route }))
                             IconButton(onClick = {
                                 navControllerLocal.navigateUp()
                             }) {
@@ -125,56 +136,119 @@ fun HomeScreen() {
                             }
                     },
                     title = {
-                    Text(
-                        text = topLevelDestinations.find { t ->
-                            t.route == (currentRoute ?: "")
-                        }?.iconText ?: homeDestinations.find { t ->
-                            t.route == (currentRoute ?: "")
-                        }?.iconText ?: "",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                    )
+                        Text(
+                            text = topLevelDestinations.find { t ->
+                                t.route == (currentRoute ?: "")
+                            }?.iconText ?: homeDestinations.find { t ->
+                                t.route == (currentRoute ?: "")
+                            }?.iconText ?: "",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                        )
                     },
-                    modifier = Modifier.clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {
-                            coroutineScope.launch {
-                                listState.animateScrollToItem(0)
+                    expandedHeight = if (showNavigationRail) 42.dp else 64.dp,
+                    modifier = Modifier
+                        .padding(start = if (showNavigationRail && (currentRoute in topLevelDestinations.map { it2 -> it2.route } || currentRoute in homeDestinations.map { it2 -> it2.route })) 80.dp else 0.dp)
+
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = {
+                                coroutineScope.launch {
+                                    listState.animateScrollToItem(0)
+                                }
                             }
-                        }
-                    )
+                        )
                 )
             }
         },
         bottomBar = {
-            if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
-                HomeBottomBar(destinations = topLevelDestinations,
-                    onListUp = {
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(0)
-                        }
-                    },
-                    currentDestination = navControllerLocal.currentBackStackEntryAsState().value?.destination,
-                    onNavigateToDestination = {
-
-                        navControllerLocal.navigate(it) {
-                            popUpTo(navControllerLocal.currentDestination!!.route!!) {
-                                inclusive = true
-                                saveState = true
+            if (!showNavigationRail)
+                if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
+                    HomeBottomBar(destinations = topLevelDestinations,
+                        onListUp = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
                             }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    })
-            }
+                        },
+                        currentDestination = navControllerLocal.currentBackStackEntryAsState().value?.destination,
+                        onNavigateToDestination = {
+
+                            navControllerLocal.navigate(it) {
+                                popUpTo(navControllerLocal.currentDestination!!.route!!) {
+                                    inclusive = true
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        })
+                }
         }
     ) {
         HomeNavHost(
             modifier = Modifier
-                .padding(it),
+                .padding(it)
+                .padding(start = if (showNavigationRail && (currentRoute in topLevelDestinations.map { it2 -> it2.route } || currentRoute in homeDestinations.map { it2 -> it2.route })) 80.dp else 0.dp),
             navController = navControllerLocal,
             listState = listState
         )
+        if (showNavigationRail && (currentRoute in topLevelDestinations.map { it2 -> it2.route } || currentRoute in homeDestinations.map { it2 -> it2.route })) {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.inverseOnSurface)
+                    .offset(x = (-1).dp)
+            ) {
+                NavigationRail(
+                    header = {
+                        if (currentRoute in homeDestinations.map { curr -> curr.route })
+                            IconButton(onClick = {
+                                navControllerLocal.navigateUp()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Back"
+                                )
+                            }
+                    }
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom)
+                    ) {
+                        topLevelDestinations.forEach { destination ->
+                            val selected =
+                                navControllerLocal.currentBackStackEntryAsState().value?.destination?.hierarchy?.any { it.route == destination.route } == true
+                            NavigationRailItem(
+                                selected = selected,
+                                onClick = {
+                                    if (selected)
+                                        coroutineScope.launch {
+                                            listState.animateScrollToItem(0)
+                                        }
+                                    else
+                                        navControllerLocal.navigate(destination.route) {
+                                            popUpTo(navControllerLocal.currentDestination!!.route!!) {
+                                                inclusive = true
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = if (selected) destination.selectedIcon
+                                        else destination.unselectedIcon,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+
+                        }
+                    }
+                }
+            }
+        }
     }
 }
