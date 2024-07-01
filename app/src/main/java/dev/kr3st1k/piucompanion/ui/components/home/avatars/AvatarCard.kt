@@ -53,10 +53,7 @@ fun AvatarCard(avatar: AvatarItem, action: () -> Unit) {
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 8.dp)
                 .background(color = Color(0xFF222933))
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    action()
-                },
+                .clip(RoundedCornerShape(8.dp)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
