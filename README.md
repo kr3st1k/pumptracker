@@ -12,12 +12,12 @@
 * Pump it Up Phoenix News
 * User Best Scores
 * 50 Latest scores
+* Avatar Shop
 
 # ToDo
 
 * Local Caching
 * Titles with progress
-* Avatar Shop
 * Over 20lvl Leaderboard
 * Step ranking
 * Notifications
