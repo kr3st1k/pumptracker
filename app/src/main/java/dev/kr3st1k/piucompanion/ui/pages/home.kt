@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
@@ -117,7 +117,7 @@ fun HomeScreen(showNavigationRail: Boolean) {
 
     val navControllerLocal = rememberNavController()
 
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
     val coroutineScope = rememberCoroutineScope()
     val currentRoute = navControllerLocal.currentBackStackEntryAsState().value?.destination?.route
     Scaffold(

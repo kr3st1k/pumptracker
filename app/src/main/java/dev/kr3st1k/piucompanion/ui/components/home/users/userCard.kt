@@ -31,12 +31,11 @@ fun UserCard(user: User, small: Boolean = false, hideLocation: Boolean = false)
 {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(750.dp)
             .clip(RoundedCornerShape(8.dp))
     ) {
         Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
+            contentAlignment = Alignment.Center
         ) {
             AsyncImage(
                 model = "https://www.piugame.com/l_img/bg1.png",

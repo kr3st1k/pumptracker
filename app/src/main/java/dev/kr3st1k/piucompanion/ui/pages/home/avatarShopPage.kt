@@ -1,14 +1,18 @@
 package dev.kr3st1k.piucompanion.ui.pages.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -29,6 +33,7 @@ import kotlinx.coroutines.launch
 fun AvatarShopScreen(
     viewModel: AvatarShopModel,
     navController: NavHostController,
+    listState: LazyGridState
 ) {
     val avatars by viewModel.avatars.collectAsStateWithLifecycle()
 
@@ -49,9 +54,12 @@ fun AvatarShopScreen(
                     modifier = Modifier
                         .height(160.dp)
                         .fillMaxWidth()
+                        .padding(bottom = 4.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (viewModel.user.value != null) {
-                        UserCard(viewModel.user.value!!, hideLocation = true)
+                        UserCard(viewModel.user.value!!, true)
                     } else {
                         YouSpinMeRightRoundBabyRightRound()
                     }
@@ -59,7 +67,8 @@ fun AvatarShopScreen(
                 Spacer(modifier = Modifier.size(4.dp))
 
             },
-            userMoney = viewModel.user.value?.coinValue ?: "0"
+            userMoney = viewModel.user.value?.coinValue ?: "0",
+            listState = listState
         )
         if (avatars?.isEmpty() == true) {
             YouSpinMeRightRoundBabyRightRound("Getting avatars...")

@@ -1,7 +1,8 @@
 package dev.kr3st1k.piucompanion.ui.pages
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,7 +23,7 @@ import dev.kr3st1k.piucompanion.ui.pages.home.UserScreen
 fun HomeNavHost(
     modifier: Modifier,
     navController: NavHostController,
-    listState: LazyListState
+    listState: LazyGridState
 ) {
     var startDestination = Screen.LoginPage.route
 
@@ -53,7 +54,7 @@ fun HomeNavHost(
             composable(route = Screen.NewsPage.route) {
                 NewsScreen(
                     viewModel = viewModel(),
-                    listState = listState
+                    listState = rememberLazyListState()
                 )
             }
 
@@ -89,7 +90,8 @@ fun HomeNavHost(
             composable(route = Screen.AvatarShopPage.route) {
                 AvatarShopScreen(
                     viewModel = viewModel(),
-                    navController = navController
+                    navController = navController,
+                    listState = listState
                 )
             }
 

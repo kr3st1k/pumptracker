@@ -5,12 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -41,7 +42,8 @@ fun LazyAvatar(
     onRefresh: () -> Unit,
     item: @Composable (() -> Unit)? = null,
     onUpdate: () -> Unit,
-    userMoney: String
+    userMoney: String,
+    listState: LazyGridState
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
 
@@ -77,7 +79,6 @@ fun LazyAvatar(
         if (isRefreshing) 0f
         else LinearOutSlowInEasing.transform(state.distanceFraction).coerceIn(0f, 1f)
     }
-    val stateGrid = rememberLazyGridState()
     if (isUpdating) {
         Box(
             modifier = Modifier
@@ -135,7 +136,7 @@ fun LazyAvatar(
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 120.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            state = stateGrid,
+            state = listState,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
@@ -157,7 +158,10 @@ fun LazyAvatar(
             }) {
                 if (item != null) {
                     Box(
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
                     ) {
                         item()
                     }

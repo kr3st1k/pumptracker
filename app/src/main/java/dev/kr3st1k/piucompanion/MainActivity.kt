@@ -66,12 +66,14 @@ class MainActivity : ComponentActivity() {
                 val r = BuildConfig.BUILD_TYPE
 
                 lifecycleScope.launch {
-                    val update = NetworkRepositoryImpl.getGithubUpdateInfo()
-                    println(update.name)
-                    println(version)
-                    if (update.name != version) {
-                        mustUpdate = true
-                        uri = update.assets[0].browser_download_url
+                    if (r != "debug") {
+                        val update = NetworkRepositoryImpl.getGithubUpdateInfo()
+                        println(update.name)
+                        println(version)
+                        if (update.name != version) {
+                            mustUpdate = true
+                            uri = update.assets[0].browser_download_url
+                        }
                     }
                 }
                 // A surface container using the 'background' color from the theme

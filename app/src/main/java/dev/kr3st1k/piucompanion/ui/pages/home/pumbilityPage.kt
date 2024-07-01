@@ -1,15 +1,16 @@
 package dev.kr3st1k.piucompanion.ui.pages.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
 fun PumbilityScreen(
     navController: NavController,
     viewModel: PumbilityViewModel,
-    listState: LazyListState,
+    listState: LazyGridState,
 ) {
     val scores by viewModel.scores.collectAsStateWithLifecycle()
 
@@ -51,6 +52,9 @@ fun PumbilityScreen(
                     modifier = Modifier
                         .height(160.dp)
                         .fillMaxWidth()
+                        .padding(bottom = 4.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (viewModel.user.value != null) {
                         UserCard(viewModel.user.value!!, true)
@@ -58,7 +62,7 @@ fun PumbilityScreen(
                         YouSpinMeRightRoundBabyRightRound()
                     }
                 }
-                Spacer(modifier = Modifier.size(4.dp))
+//                Spacer(modifier = Modifier.size(4.dp))
 
             }
         )

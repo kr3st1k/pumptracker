@@ -2,12 +2,15 @@ package dev.kr3st1k.piucompanion.ui.components.home.scores
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -31,7 +34,7 @@ import kotlinx.coroutines.launch
 fun LazyLatestScore(
     scores: List<Score>,
     onRefresh: () -> Unit,
-    listState: LazyListState,
+    listState: LazyGridState,
     item: @Composable() (() -> Unit)? = null,
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
@@ -39,7 +42,6 @@ fun LazyLatestScore(
     val scope = rememberCoroutineScope()
 
     val state = rememberPullToRefreshState()
-
     val scaleFraction = {
         if (isRefreshing) 0f
         else LinearOutSlowInEasing.transform(state.distanceFraction).coerceIn(0f, 1f)
@@ -48,7 +50,9 @@ fun LazyLatestScore(
         contentAlignment = Alignment.TopCenter
     )
     {
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(370.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             state = listState,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -67,7 +71,9 @@ fun LazyLatestScore(
                     }
                 )
         ) {
-            item {
+            item(span = {
+                GridItemSpan(maxLineSpan)
+            }) {
                 if (item != null)
                     item()
             }
@@ -75,7 +81,6 @@ fun LazyLatestScore(
                 ScoreCard(data)
             }
         }
-
 
         Box(
             modifier = Modifier

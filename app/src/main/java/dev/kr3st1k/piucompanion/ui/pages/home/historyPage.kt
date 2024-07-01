@@ -1,6 +1,6 @@
 package dev.kr3st1k.piucompanion.ui.pages.home
 
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 fun HistoryPage(
     navController: NavController,
     viewModel: HistoryViewModel,
-    listState: LazyListState,
+    listState: LazyGridState,
 ) {
     val scores by viewModel.scores.collectAsStateWithLifecycle()
 

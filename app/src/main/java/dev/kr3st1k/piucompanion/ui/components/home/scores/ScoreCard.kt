@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -35,7 +34,7 @@ import dev.kr3st1k.piucompanion.core.network.data.Score
 fun ScoreCard(score: Score) {
     OutlinedCard(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(220.dp)
             .padding(bottom = 4.dp)
             .height(115.dp)
             .heightIn(min = 115.dp)
