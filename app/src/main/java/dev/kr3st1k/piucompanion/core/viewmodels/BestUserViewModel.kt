@@ -25,6 +25,7 @@ class BestUserViewModel : ViewModel() {
     val nowPage = mutableIntStateOf(1)
     val isRefreshing = MutableStateFlow(false)
     val selectedOption = mutableStateOf(Pair("All", 0))
+    val needAuth = mutableStateOf(false)
 
     val options =
         mutableListOf<Pair<String, Int>>().apply {
@@ -55,6 +56,8 @@ class BestUserViewModel : ViewModel() {
                 pageCount.intValue = 1
                 var isInside = false
                 var tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
+                if (tmp == null)
+                    needAuth.value = true
                 pageCount.intValue = tmp!!.lastPageNumber
                 while (tmp?.isLoadMore == true && !isInside) {
                     for (it in tmp.res) {

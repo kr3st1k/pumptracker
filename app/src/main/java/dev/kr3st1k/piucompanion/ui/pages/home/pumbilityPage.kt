@@ -12,18 +12,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.viewmodels.PumbilityViewModel
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyLatestScore
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
+import dev.kr3st1k.piucompanion.ui.pages.Screen
 
 @Composable
 fun PumbilityScreen(
+    navController: NavController,
     viewModel: PumbilityViewModel,
     listState: LazyGridState,
 ) {
     val scores by viewModel.scores.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+
+    if (viewModel.needAuth.value)
+        navController.navigate(Screen.AuthLoadingPage.route) {
+            popUpTo(navController.graph.id)
+            {
+                inclusive = true
+            }
+        }
 
     LazyLatestScore(
         scores,

@@ -10,16 +10,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.viewmodels.BestUserViewModel
 import dev.kr3st1k.piucompanion.di.BgManager
 import dev.kr3st1k.piucompanion.di.InternetManager
 import dev.kr3st1k.piucompanion.ui.components.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyBestScore
+import dev.kr3st1k.piucompanion.ui.pages.Screen
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun BestUserPage(
+    navController: NavController,
     viewModel: BestUserViewModel,
     listState: LazyGridState,
 ) {
@@ -27,6 +30,14 @@ fun BestUserPage(
 
     val scores by viewModel.scores.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+
+    if (viewModel.needAuth.value)
+        navController.navigate(Screen.AuthLoadingPage.route) {
+            popUpTo(navController.graph.id)
+            {
+                inclusive = true
+            }
+        }
 
     LazyBestScore(
         scores,

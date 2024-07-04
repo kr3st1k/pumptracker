@@ -1,5 +1,6 @@
 package dev.kr3st1k.piucompanion.core.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
@@ -19,6 +20,7 @@ class HistoryViewModel : ViewModel() {
     private val db = DbManager()
     private val scoresDao: ScoresDao = db.getScoreDao()
     val isRefreshing = MutableStateFlow(false)
+    val needAuth = mutableStateOf(false)
 
     init {
         loadScores()
@@ -30,6 +32,8 @@ class HistoryViewModel : ViewModel() {
         if (InternetManager().hasInternetStatus())
             viewModelScope.launch {
             val tmp = getLatestScores(50)
+                if (tmp == null)
+                    needAuth.value = true
             tmp?.forEach {
                 GlobalScope.async {
                     scoresDao.insertLatest(

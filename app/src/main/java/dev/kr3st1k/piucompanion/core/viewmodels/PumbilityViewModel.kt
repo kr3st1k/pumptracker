@@ -22,6 +22,7 @@ class PumbilityViewModel : ViewModel() {
     private val db = DbManager()
     private val scoresDao: ScoresDao = db.getScoreDao()
     val isRefreshing = MutableStateFlow(false)
+    val needAuth = mutableStateOf(false)
 
     init {
         loadScores()
@@ -32,6 +33,8 @@ class PumbilityViewModel : ViewModel() {
         viewModelScope.launch {
             isRefreshing.value = true
             val tmp = NetworkRepositoryImpl.getPumbilityInfo()
+            if (tmp == null)
+                needAuth.value = true
             user.value = tmp?.user
             tmp?.scores?.forEach {
                 GlobalScope.async {
