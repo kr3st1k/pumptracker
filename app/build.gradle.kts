@@ -12,8 +12,8 @@ android {
     defaultConfig {
         applicationId = "com.kr3st1k.pumptracker"
         minSdk = 31
-        versionCode = 81
-        versionName = "0.3"
+        versionCode = 90
+        versionName = "0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
