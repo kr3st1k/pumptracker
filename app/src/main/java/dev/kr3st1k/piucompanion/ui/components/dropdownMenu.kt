@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuBestScores(
-    options: List<Pair<String, String>>,
-    selectedOption: Pair<String, String>,
-    onUpdate: (Pair<String, String>) -> Unit,
+    options: List<Pair<String, Int>>,
+    selectedOption: Pair<String, Int>,
+    onUpdate: (Pair<String, Int>) -> Unit,
 ) {
 
     var expanded by remember { mutableStateOf(false) }

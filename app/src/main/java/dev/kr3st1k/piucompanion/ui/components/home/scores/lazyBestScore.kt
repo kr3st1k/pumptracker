@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.kr3st1k.piucompanion.core.db.data.BestScore
-import dev.kr3st1k.piucompanion.core.modules.BgManager
+import dev.kr3st1k.piucompanion.di.BgManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +35,7 @@ fun LazyBestScore(
     val bgs = BgManager().readBgJson()
 
     Box(
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.TopCenter,
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(370.dp),

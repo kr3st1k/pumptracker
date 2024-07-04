@@ -38,6 +38,8 @@ class MainActivity : ComponentActivity() {
             private set
         lateinit var version: String
             private set
+        var isOffline: Boolean = false
+
     }
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)

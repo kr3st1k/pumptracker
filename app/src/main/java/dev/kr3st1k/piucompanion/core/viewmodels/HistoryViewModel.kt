@@ -5,8 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
 import dev.kr3st1k.piucompanion.core.db.data.LatestScore
 import dev.kr3st1k.piucompanion.core.helpers.Utils
-import dev.kr3st1k.piucompanion.core.modules.DbManager
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl.getLatestScores
+import dev.kr3st1k.piucompanion.di.DbManager
+import dev.kr3st1k.piucompanion.di.InternetManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -25,8 +26,9 @@ class HistoryViewModel : ViewModel() {
 
     @OptIn(DelicateCoroutinesApi::class)
     fun fetchAndAddToDb() {
-        viewModelScope.launch {
-            isRefreshing.value = true
+        isRefreshing.value = true
+        if (InternetManager().hasInternetStatus())
+            viewModelScope.launch {
             val tmp = getLatestScores(50)
             tmp?.forEach {
                 GlobalScope.async {
@@ -51,6 +53,8 @@ class HistoryViewModel : ViewModel() {
             scores.value = GlobalScope.async { scoresDao.getAllLatestScores() }.await()
             isRefreshing.value = false
         }
+        else
+            isRefreshing.value = false
     }
 
     @OptIn(DelicateCoroutinesApi::class)

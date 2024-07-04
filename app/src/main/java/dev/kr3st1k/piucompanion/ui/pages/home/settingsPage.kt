@@ -15,7 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.core.modules.LoginManager
+import dev.kr3st1k.piucompanion.di.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithTwoButton
 import dev.kr3st1k.piucompanion.ui.pages.Screen
 

@@ -1,30 +1,31 @@
 package dev.kr3st1k.piucompanion.ui.pages.home
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.kr3st1k.piucompanion.core.modules.BgManager
 import dev.kr3st1k.piucompanion.core.viewmodels.BestUserViewModel
+import dev.kr3st1k.piucompanion.di.BgManager
+import dev.kr3st1k.piucompanion.di.InternetManager
 import dev.kr3st1k.piucompanion.ui.components.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyBestScore
-import org.koin.core.Koin
-import org.koin.core.context.GlobalContext.get
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun BestUserPage(
     viewModel: BestUserViewModel,
     listState: LazyGridState,
-)
-{
-    val koin: Koin = get()
-
-    koin.get<BgManager>().checkAndSaveNewUpdatedFiles()
+) {
+    BgManager().checkAndSaveNewUpdatedFiles()
 
     val scores by viewModel.scores.collectAsStateWithLifecycle()
-    val options by viewModel.options.collectAsStateWithLifecycle()
-    val selectedOption by viewModel.selectedOption.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     LazyBestScore(
@@ -32,10 +33,10 @@ fun BestUserPage(
         onRefresh = { viewModel.loadScores() },
         dropDownMenu = {
             DropdownMenuBestScores(
-                options,
-                selectedOption,
+                viewModel.options,
+                viewModel.selectedOption.value,
                 onUpdate = {
-//                        viewModel.refreshScores(it)
+                    viewModel.refreshScores(it)
                 }
             )
         },
@@ -43,10 +44,26 @@ fun BestUserPage(
         listState = listState
     )
     if (scores.isEmpty()) {
-        YouSpinMeRightRoundBabyRightRound(
-            "Getting best scores... ${viewModel.nowPage.intValue}/${viewModel.pageCount.intValue}",
-            progress = (viewModel.nowPage.intValue.toFloat() / viewModel.pageCount.intValue)
-        )
+        if (InternetManager().hasInternetStatus()) {
+            if (!viewModel.isLoaded.value)
+                YouSpinMeRightRoundBabyRightRound(
+                    "Getting best scores... ${viewModel.nowPage.intValue}/${viewModel.pageCount.intValue}",
+                    progress = (viewModel.nowPage.intValue.toFloat() / viewModel.pageCount.intValue)
+                )
+            else
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No Scores")
+                }
+        } else
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "No information.\nPlease reopen app when will be internet")
+            }
     }
 
 }

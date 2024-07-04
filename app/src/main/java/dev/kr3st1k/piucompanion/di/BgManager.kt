@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.core.modules
+package dev.kr3st1k.piucompanion.di
 
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
@@ -18,15 +18,16 @@ class BgManager : KoinComponent {
     private val jsonWorker = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
     fun checkAndSaveNewUpdatedFiles() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val newUpdateValue = NetworkRepositoryImpl.getUpdateInfo().replace("\n", "") // WTF
-            val currentValue = readUpdateValue()
-            if (currentValue != newUpdateValue) {
-                saveNewUpdateValue(newUpdateValue)
-                val bgJson = NetworkRepositoryImpl.getBgJson()
-                saveBgJson(bgJson)
+        if (InternetManager().hasInternetStatus())
+            CoroutineScope(Dispatchers.IO).launch {
+                val newUpdateValue = NetworkRepositoryImpl.getUpdateInfo().replace("\n", "") // WTF
+                val currentValue = readUpdateValue()
+                if (currentValue != newUpdateValue) {
+                    saveNewUpdateValue(newUpdateValue)
+                    val bgJson = NetworkRepositoryImpl.getBgJson()
+                    saveBgJson(bgJson)
+                }
             }
-        }
     }
 
     fun readBgJson(): MutableList<BgInfo> {

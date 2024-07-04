@@ -9,4 +9,5 @@ data class TopLevelDestination(
     val iconText: String,
     val showTitle: Boolean = true,
     val summary: String? = null,
+    val availableAtOffline: Boolean = false
 )

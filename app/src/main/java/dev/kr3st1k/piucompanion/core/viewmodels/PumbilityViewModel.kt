@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
 import dev.kr3st1k.piucompanion.core.db.data.PumbilityScore
 import dev.kr3st1k.piucompanion.core.helpers.Utils
-import dev.kr3st1k.piucompanion.core.modules.DbManager
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.User
+import dev.kr3st1k.piucompanion.di.DbManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -63,14 +63,6 @@ class PumbilityViewModel : ViewModel() {
         viewModelScope.launch {
             scores.value = GlobalScope.async { scoresDao.getAllPumbilityScores() }.await()
             fetchAndAddToDb()
-//            scores.value = mutableListOf()
-//            val data = NetworkRepositoryImpl.getPumbilityInfo()
-//            if (data == null) {
-//                scores.value = null
-//            } else {
-//                scores.value = data.scores
-//                user.value = data.user
-//            }
         }
     }
 }

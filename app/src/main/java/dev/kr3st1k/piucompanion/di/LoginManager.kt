@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.core.modules
+package dev.kr3st1k.piucompanion.di
 
 import android.content.SharedPreferences
 import org.koin.core.component.KoinComponent
