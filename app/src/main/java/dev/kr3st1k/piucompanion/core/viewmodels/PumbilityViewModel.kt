@@ -12,6 +12,7 @@ import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.di.DbManager
 import dev.kr3st1k.piucompanion.di.InternetManager
+import dev.kr3st1k.piucompanion.di.LoginManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -82,7 +83,13 @@ class PumbilityViewModel : ViewModel() {
 
                 scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
                 scores.value = scores.value.sortedBy { it.pumbilityScore }.reversed()
-                user.value = NetworkRepositoryImpl.getUserInfo()
+                user.value = LoginManager().getUserData()
+                if (InternetManager().hasInternetStatus()) {
+                    val tmpUser = NetworkRepositoryImpl.getUserInfo()
+                    user.value = tmpUser
+                    if (tmpUser != null)
+                        LoginManager().saveUserData(tmpUser)
+                }
                 isRefreshing.value = false
                 isLoaded.value = true
             }
@@ -90,7 +97,7 @@ class PumbilityViewModel : ViewModel() {
             viewModelScope.launch {
                 scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
                 scores.value = scores.value.sortedBy { it.pumbilityScore }.reversed()
-                user.value = NetworkRepositoryImpl.getUserInfo()
+                user.value = LoginManager().getUserData()
                 isRefreshing.value = false
             }
         }
@@ -101,11 +108,13 @@ class PumbilityViewModel : ViewModel() {
         viewModelScope.launch {
             scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
             scores.value = scores.value.sortedBy { it.pumbilityScore }.reversed()
-            user.value = NetworkRepositoryImpl.getUserInfo()
-            var pumbility = 0
-            for (value in scores.value.subList(0, 50))
-                pumbility += value.pumbilityScore
-            println(pumbility)
+            user.value = LoginManager().getUserData()
+            if (InternetManager().hasInternetStatus()) {
+                val tmp = NetworkRepositoryImpl.getUserInfo()
+                user.value = tmp
+                if (tmp != null)
+                    LoginManager().saveUserData(tmp)
+            }
             fetchAndAddToDb()
         }
     }

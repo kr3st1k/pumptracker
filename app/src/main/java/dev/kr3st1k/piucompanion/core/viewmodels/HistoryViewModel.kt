@@ -7,9 +7,12 @@ import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
 import dev.kr3st1k.piucompanion.core.db.data.LatestScore
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.convertDateToLocalDateTime
+import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl.getLatestScores
+import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.di.DbManager
 import dev.kr3st1k.piucompanion.di.InternetManager
+import dev.kr3st1k.piucompanion.di.LoginManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -70,6 +73,14 @@ class HistoryViewModel : ViewModel() {
             scores.value = GlobalScope.async { scoresDao.getAllLatestScores() }.await()
             scores.value =
                 scores.value.sortedBy { convertDateToLocalDateTime(it.datetime) }.reversed()
+            var tmpUser: User? = LoginManager().getUserData()
+            if (InternetManager().hasInternetStatus()) {
+                tmpUser = NetworkRepositoryImpl.getUserInfo()
+                if (tmpUser != null)
+                    LoginManager().saveUserData(tmpUser)
+                else
+                    needAuth.value = true
+            }
             fetchAndAddToDb()
         }
     }

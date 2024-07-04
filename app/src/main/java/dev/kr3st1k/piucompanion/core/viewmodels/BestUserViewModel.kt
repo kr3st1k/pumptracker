@@ -8,8 +8,10 @@ import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
 import dev.kr3st1k.piucompanion.core.db.data.BestScore
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
+import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.di.DbManager
 import dev.kr3st1k.piucompanion.di.InternetManager
+import dev.kr3st1k.piucompanion.di.LoginManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -94,12 +96,28 @@ class BestUserViewModel : ViewModel() {
                     }.await()
 
                 scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
+                var tmpUser: User? = LoginManager().getUserData()
+                if (InternetManager().hasInternetStatus()) {
+                    tmpUser = NetworkRepositoryImpl.getUserInfo()
+                    if (tmpUser != null)
+                        LoginManager().saveUserData(tmpUser)
+                    else
+                        needAuth.value = true
+                }
                 isRefreshing.value = false
                 isLoaded.value = true
             }
         else {
             viewModelScope.launch {
                 scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
+                var tmpUser: User? = LoginManager().getUserData()
+                if (InternetManager().hasInternetStatus()) {
+                    tmpUser = NetworkRepositoryImpl.getUserInfo()
+                    if (tmpUser != null)
+                        LoginManager().saveUserData(tmpUser!!)
+                    else
+                        needAuth.value = true
+                }
                 isRefreshing.value = false
             }
         }
@@ -109,6 +127,14 @@ class BestUserViewModel : ViewModel() {
     fun loadScores() {
         viewModelScope.launch {
             scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
+            var tmpUser: User? = LoginManager().getUserData()
+            if (InternetManager().hasInternetStatus()) {
+                tmpUser = NetworkRepositoryImpl.getUserInfo()
+                if (tmpUser != null)
+                    LoginManager().saveUserData(tmpUser)
+                else
+                    needAuth.value = true
+            }
             if (selectedOption.value.second != 0)
                 scores.value = scores.value.filter {
                     it.difficulty.filter { it2 -> it2.isDigit() }
@@ -124,6 +150,14 @@ class BestUserViewModel : ViewModel() {
         viewModelScope.launch {
             selectedOption.value = value
             scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
+            var tmpUser: User? = LoginManager().getUserData()
+            if (InternetManager().hasInternetStatus()) {
+                tmpUser = NetworkRepositoryImpl.getUserInfo()
+                if (tmpUser != null)
+                    LoginManager().saveUserData(tmpUser)
+                else
+                    needAuth.value = true
+            }
             if (value.second != 0)
                 scores.value = scores.value.filter {
                     it.difficulty.filter { it2 -> it2.isDigit() }

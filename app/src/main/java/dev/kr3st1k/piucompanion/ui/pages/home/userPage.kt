@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.viewmodels.UserViewModel
+import dev.kr3st1k.piucompanion.di.InternetManager
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.pages.Screen
@@ -33,6 +34,10 @@ fun UserScreen(
     viewModel: UserViewModel,
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
+
+    val dests =
+        if (InternetManager().hasInternetStatus()) homeDestinations else homeDestinations.filter { it.availableAtOffline }
+
     if (user == null)
         navController.navigate(Screen.AuthLoadingPage.route) {
             popUpTo(navController.graph.id)
@@ -61,7 +66,7 @@ fun UserScreen(
             }
             Spacer(modifier = Modifier.size(8.dp))
         }
-        items(homeDestinations) {
+        items(dests) {
             ListItem(
                 headlineContent = {
                     Text(text = it.iconText)

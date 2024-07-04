@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import dev.kr3st1k.piucompanion.di.InternetManager
 import dev.kr3st1k.piucompanion.ui.components.home.HomeBottomBar
 import kotlinx.coroutines.launch
 
@@ -51,15 +50,13 @@ val topLevelDestinations = listOf(
         route = Screen.BestUserPage.route,
         selectedIcon = Icons.Filled.FormatListNumbered,
         unselectedIcon = Icons.Outlined.FormatListNumbered,
-        iconText = "Best Scores",
-        availableAtOffline = true
+        iconText = "Best Scores"
     ),
     TopLevelDestination(
         route = Screen.HistoryPage.route,
         selectedIcon = Icons.Filled.History,
         unselectedIcon = Icons.Outlined.History,
-        iconText = "History",
-        availableAtOffline = true
+        iconText = "History"
     ),
     TopLevelDestination(
         route = Screen.UserPage.route,
@@ -82,7 +79,8 @@ public val homeDestinations = listOf(
         selectedIcon = Icons.Filled.Analytics,
         unselectedIcon = Icons.Filled.Analytics,
         iconText = "PUMBILITY",
-        summary = "Best 50 scores"
+        summary = "Best 50 scores",
+        availableAtOffline = true
     ),
 //    TopLevelDestination(
 //        route = Screen.NewsPage.route,
@@ -110,7 +108,8 @@ public val homeDestinations = listOf(
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Filled.Settings,
         iconText = "Settings",
-        summary = "He he"
+        summary = "He he",
+        availableAtOffline = true
     )
 )
 @OptIn(ExperimentalMaterial3Api::class)
@@ -169,7 +168,7 @@ fun HomeScreen(showNavigationRail: Boolean) {
             if (!showNavigationRail)
                 if (currentRoute in topLevelDestinations.map { it.route } || currentRoute in homeDestinations.map { it.route }) {
                     HomeBottomBar(
-                        destinations = if (InternetManager().hasInternetStatus()) topLevelDestinations else topLevelDestinations.filter { it.availableAtOffline },
+                        destinations = topLevelDestinations,
                         onListUp = {
                             coroutineScope.launch {
                                 listState.animateScrollToItem(0)
@@ -222,10 +221,7 @@ fun HomeScreen(showNavigationRail: Boolean) {
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom)
                     ) {
-                        var dests = topLevelDestinations
-                        if (!InternetManager().hasInternetStatus())
-                            dests = dests.filter { route -> route.availableAtOffline }
-                        dests.forEach { destination ->
+                        topLevelDestinations.forEach { destination ->
                             val selected =
                                 navControllerLocal.currentBackStackEntryAsState().value?.destination?.hierarchy?.any { it.route == destination.route } == true
                             NavigationRailItem(

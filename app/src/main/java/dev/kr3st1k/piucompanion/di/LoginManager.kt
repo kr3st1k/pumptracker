@@ -1,6 +1,7 @@
 package dev.kr3st1k.piucompanion.di
 
 import android.content.SharedPreferences
+import dev.kr3st1k.piucompanion.core.network.data.User
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -25,5 +26,30 @@ class LoginManager : KoinComponent {
     fun removeLoginData() {
         sharedPreferences.edit().remove("login").apply()
         sharedPreferences.edit().remove("password").apply()
+    }
+
+    fun getUserData(): User {
+        if (sharedPreferences.getString("username", "") == "")
+            return User()
+        return User(
+            sharedPreferences.getString("username", "")!!,
+            sharedPreferences.getString("titleName", "")!!,
+            sharedPreferences.getString("backgroundUri", "")!!,
+            sharedPreferences.getString("avatarUri", "")!!,
+            sharedPreferences.getString("recentGameAccess", "")!!,
+            sharedPreferences.getString("coinValue", "")!!,
+            sharedPreferences.getString("pumbility", "")!!,
+            true,
+        )
+    }
+
+    fun saveUserData(user: User) {
+        sharedPreferences.edit().putString("username", user.username).apply()
+        sharedPreferences.edit().putString("avatarUri", user.avatarUri).apply()
+        sharedPreferences.edit().putString("backgroundUri", user.backgroundUri).apply()
+        sharedPreferences.edit().putString("recentGameAccess", user.recentGameAccess).apply()
+        sharedPreferences.edit().putString("titleName", user.titleName).apply()
+        sharedPreferences.edit().putString("coinValue", user.coinValue).apply()
+        sharedPreferences.edit().putString("pumbility", user.pumbility).apply()
     }
 }

@@ -36,9 +36,12 @@ object Utils
         if (score >= 950000) return 1.1F    // AAA
         if (score >= 925000) return 1.05F   // AA+
         if (score >= 900000) return 1F      // AA
-        if (score >= 825000) return 0.9F   // A+
+        if (score >= 825000) return 0.9F    // A+
         if (score >= 750000) return 0.8F    // A
-        return 0F
+        if (score >= 650000) return 0.7F    // B
+        if (score >= 550000) return 0.6F    // C
+        if (score >= 450000) return 0.5F    // D
+        return 0.4F
     }
 
     private fun levelMultiplier(value: Int): Float {
@@ -47,7 +50,6 @@ object Utils
         return (value - 10) * 10 + levelMultiplier(value - 1);
     }
 
-    @SuppressLint("DefaultLocale")
     fun getPoints(lvl: String, score: String): Int {
         val points = levelMultiplier(lvl.filter { it2 -> it2.isDigit() }
             .map { it2 -> it2.toString().toInt() }.joinToString("")
