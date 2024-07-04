@@ -11,13 +11,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun YouSpinMeRightRoundBabyRightRound(text: String? = null)
-{
+fun YouSpinMeRightRoundBabyRightRound(
+    text: String? = null,
+    progress: Float? = null
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        if (progress == null)
+            CircularProgressIndicator()
+        else
+            CircularProgressIndicator(
+                progress = { progress }
+            )
         if (text != null) {
             Text(
                 text = text,

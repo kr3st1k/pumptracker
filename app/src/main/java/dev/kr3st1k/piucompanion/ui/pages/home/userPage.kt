@@ -19,19 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
-import dev.kr3st1k.piucompanion.core.network.data.User
+import dev.kr3st1k.piucompanion.core.viewmodels.UserViewModel
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.pages.Screen
 import dev.kr3st1k.piucompanion.ui.pages.homeDestinations
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 @Composable
 fun UserScreen(
@@ -88,24 +82,6 @@ fun UserScreen(
                         navController.navigate(it.route)
                     }
             )
-        }
-    }
-}
-
-
-class UserViewModel : ViewModel() {
-
-    private val _user = MutableStateFlow<User?>(User())
-    val user: StateFlow<User?> = _user
-
-    init {
-        getUserInfo()
-    }
-
-    private fun getUserInfo() {
-        viewModelScope.launch {
-            _user.value =
-                NetworkRepositoryImpl.getUserInfo()
         }
     }
 }

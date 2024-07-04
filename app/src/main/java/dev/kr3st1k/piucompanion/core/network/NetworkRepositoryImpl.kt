@@ -57,6 +57,7 @@ object NetworkRepositoryImpl : NetworkRepository {
             }
 
         }
+
         val requestText: String = request.body()
 
         if (checkLogin && !checkIfLoginSuccess(requestText)) {
@@ -208,10 +209,10 @@ object NetworkRepositoryImpl : NetworkRepository {
         params: Parameters,
         resList: MutableList<T>,
         onRequest: suspend (url: Parameters) -> LoadableList<T>?,
-    ): Boolean? {
+    ): Pair<Boolean, Int>? {
         val result = onRequest(params) ?: return null
         resList.addAll(result.res)
-        return result.isLoadMore
+        return Pair(result.isLoadMore, result.lastPageNumber)
     }
 
     private suspend fun <T> buildRequestScorePagination(
@@ -221,7 +222,7 @@ object NetworkRepositoryImpl : NetworkRepository {
         onRequest: suspend (url: Parameters) -> LoadableList<T>?,
     ): LoadableList<T>? {
         var isLoadMore = true
-
+        var pageCount = 1
         if (page == null) {
             for (i in 1..2) {
                 if (!isLoadMore)
@@ -230,16 +231,18 @@ object NetworkRepositoryImpl : NetworkRepository {
                     append("lv", lvl)
                     append("page", i.toString())
                 }, resList, onRequest) ?: return null
-                isLoadMore = result
+                isLoadMore = result.first
+                pageCount = result.second
             }
         } else {
             val result = reqAndAddAll(Parameters.build {
                 append("lv", lvl)
                 append("page", page.toString())
             }, resList, onRequest) ?: return null
-            isLoadMore = result
+            isLoadMore = result.first
+            pageCount = result.second
         }
-        return LoadableList(resList, isLoadMore)
+        return LoadableList(resList, isLoadMore, pageCount)
     }
 
     override suspend fun getBestUserScores(

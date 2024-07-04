@@ -25,10 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import dev.kr3st1k.piucompanion.core.db.data.LatestScore
+import dev.kr3st1k.piucompanion.core.db.data.PumbilityScore
+import dev.kr3st1k.piucompanion.core.db.data.Score
 import dev.kr3st1k.piucompanion.core.helpers.Utils.removeUrlParameters
-import dev.kr3st1k.piucompanion.core.network.data.LatestScore
-import dev.kr3st1k.piucompanion.core.network.data.PumbilityScore
-import dev.kr3st1k.piucompanion.core.network.data.Score
 
 @Composable
 fun ScoreCard(score: Score) {
@@ -41,7 +41,7 @@ fun ScoreCard(score: Score) {
     ) {
         Box {
             AsyncImage(
-                model = removeUrlParameters(score.songBackgroundUri),
+                model = score.songBackgroundUri?.let { removeUrlParameters(it) },
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),

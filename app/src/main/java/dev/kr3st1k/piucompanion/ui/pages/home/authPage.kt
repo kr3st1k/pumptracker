@@ -32,18 +32,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import dev.kr3st1k.piucompanion.core.helpers.Crypto
-import dev.kr3st1k.piucompanion.core.modules.LoginManager
-import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
+import dev.kr3st1k.piucompanion.core.viewmodels.LoginViewModel
 import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithButton
 import dev.kr3st1k.piucompanion.ui.pages.Screen
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
@@ -135,31 +129,4 @@ fun LoginPage(viewModel: LoginViewModel, navController: NavController) {
         }
 }
 
-class LoginViewModel : ViewModel() {
-    val username = mutableStateOf(TextFieldValue())
-    val password = mutableStateOf(TextFieldValue())
-    val showFailedDialog = mutableStateOf(false)
-    val enterHomeScreen = mutableStateOf(false)
-    val isLoading = mutableStateOf(false)
 
-    fun onLoginClicked() {
-        if (username.value.text == "" || password.value.text == "") {
-            showFailedDialog.value = true
-            return
-        }
-        viewModelScope.launch {
-            isLoading.value = true
-            val r = NetworkRepositoryImpl.loginToAmPass(username.value.text, password.value.text)
-            if (r) {
-                Crypto.encryptData(username.value.text)
-                    ?.let {
-                        Crypto.encryptData(password.value.text)
-                            ?.let { it1 -> LoginManager().saveLoginData(it, it1) }
-                    }
-                enterHomeScreen.value = true
-            } else
-                showFailedDialog.value = true
-            isLoading.value = false
-        }
-    }
-}

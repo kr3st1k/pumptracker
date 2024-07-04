@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "latest_scores")
-data class LatestScore(
+@Entity(tableName = "pumbility_scores")
+data class PumbilityScore(
     override val songName: String,
     override var songBackgroundUri: String?,
     override val difficulty: String,

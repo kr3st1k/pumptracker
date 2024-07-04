@@ -9,33 +9,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
-import dev.kr3st1k.piucompanion.core.network.data.AvatarItem
-import dev.kr3st1k.piucompanion.core.network.data.User
+import dev.kr3st1k.piucompanion.core.viewmodels.AvatarShopViewModel
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.avatars.LazyAvatar
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.pages.Screen
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 @Composable
 fun AvatarShopScreen(
-    viewModel: AvatarShopModel,
+    viewModel: AvatarShopViewModel,
     navController: NavHostController,
     listState: LazyGridState
 ) {
     val avatars by viewModel.avatars.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     if (avatars == null && viewModel.user.value == null) {
         navController.navigate(Screen.AuthLoadingPage.route) {
@@ -48,7 +41,9 @@ fun AvatarShopScreen(
         LazyAvatar(
             avatars!!,
             onRefresh = { viewModel.loadAvatars() },
-            onUpdate = { viewModel.updateAvatars() },
+            onSetAvatar = { value -> viewModel.setAvatar(value) },
+            onBuyAvatar = { value -> viewModel.buyAvatar(value) },
+            isRefreshing = isRefreshing,
             item = {
                 Column(
                     modifier = Modifier
@@ -77,37 +72,3 @@ fun AvatarShopScreen(
 
 }
 
-class AvatarShopModel : ViewModel() {
-    val avatars = MutableStateFlow<List<AvatarItem>?>(mutableListOf())
-    val user: MutableState<User?> = mutableStateOf(null)
-
-    init {
-        loadAvatars()
-    }
-
-    fun loadAvatars() {
-        viewModelScope.launch {
-            avatars.value = mutableListOf()
-            val data = NetworkRepositoryImpl.getAvatarShopInfo()
-            if (data == null) {
-                avatars.value = null
-            } else {
-                avatars.value = data.items
-                user.value = data.user
-            }
-        }
-    }
-
-    fun updateAvatars() {
-        viewModelScope.launch {
-            val data = NetworkRepositoryImpl.getAvatarShopInfo()
-            if (data == null) {
-                avatars.value = null
-            } else {
-                avatars.value = data.items
-                user.value = data.user
-            }
-        }
-    }
-
-}

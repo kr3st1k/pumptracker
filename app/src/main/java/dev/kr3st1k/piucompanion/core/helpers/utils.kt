@@ -27,8 +27,13 @@ object Utils
         return androidId
     }
 
-    fun generateHashForScore(score: String, difficulty: String, score1: String): String {
-        val input = "$score-$difficulty-$score1"
+    fun generateHashForScore(
+        score: String,
+        difficulty: String,
+        songName: String,
+        date: String = "0"
+    ): String {
+        val input = "$score-$difficulty-$songName-$date"
         val md = MessageDigest.getInstance("SHA-256")
         val byteArray = md.digest(input.toByteArray())
         return byteArray.joinToString("") { String.format("%02x", it) }

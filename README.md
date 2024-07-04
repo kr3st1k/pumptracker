@@ -13,13 +13,13 @@
 * User Best Scores
 * 50 Latest scores
 * Avatar Shop
+* Pumbility Stats
 
 # ToDo
 
 * Local Caching
 * Titles with progress
-* Over 20lvl Leaderboard
-* Step ranking
+* ALL Rankings from site
 * Notifications
 
 Goals of project: Learn more about Mobile Developing after Desktop Development

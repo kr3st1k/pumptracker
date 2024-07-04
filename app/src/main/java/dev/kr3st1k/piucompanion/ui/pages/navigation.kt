@@ -67,7 +67,6 @@ fun HomeNavHost(
 
             composable(route = Screen.HistoryPage.route) {
                 HistoryPage(
-                    navController = navController,
                     viewModel = viewModel(),
                     listState = listState
                 )
@@ -75,7 +74,6 @@ fun HomeNavHost(
 
             composable(route = Screen.PumbilityPage.route) {
                 PumbilityScreen(
-                    navController = navController,
                     viewModel = viewModel(),
                     listState = listState
                 )
@@ -97,7 +95,6 @@ fun HomeNavHost(
 
             composable(route = Screen.BestUserPage.route) {
                 BestUserPage(
-                    navController = navController,
                     viewModel = viewModel(),
                     listState = listState
                 )

@@ -2,23 +2,16 @@ package dev.kr3st1k.piucompanion.core.network.parsers
 
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
-import dev.kr3st1k.piucompanion.core.modules.BgManager
 import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
-import dev.kr3st1k.piucompanion.core.network.data.BgInfo
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.koin.core.Koin
-import org.koin.core.context.GlobalContext
 import java.util.Locale
 
 object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
-    private val koin: Koin = GlobalContext.get()
 
-    private fun parseBestScore(element: Element, bgs: MutableList<BgInfo>): BestUserScore? {
+    private fun parseBestScore(element: Element): BestUserScore? {
         val songName = element.select("div.song_name").select("p").first()?.text() ?: return null
-        var bg = bgs.find { tt -> tt.song_name == songName }?.jacket
-        if (bg == null) bg = "https://www.piugame.com/l_img/bg1.png"
 
         val diffElements = element.select("div.numw.flex.vc.hc")
         val typeDiffImgUri = getBackgroundImg(
@@ -35,13 +28,13 @@ object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
         val rank = Utils.parseRankFromUri(rankImg).toString()
             .uppercase(Locale.ENGLISH).replace("_p", "+").replace("_P", "+")
 
-        return BestUserScore(songName, bg, diff, score, rank)
+        return BestUserScore(songName, diff, score, rank)
     }
 
     override fun parse(document: Document): LoadableList<BestUserScore> {
         val resList = mutableListOf<BestUserScore>()
         var isLoadMore = false
-        val bgs = koin.get<BgManager>().readBgJson()
+        var lastPage = 1
 
         if (document.select("div.no_con").isNotEmpty()) {
             resList.add(
@@ -54,12 +47,16 @@ object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
             }
 
             for (element in scores) {
-                val bestUserScore = parseBestScore(element, bgs) ?: BestUserScore()
+                val bestUserScore = parseBestScore(element) ?: BestUserScore()
                 resList.add(bestUserScore)
             }
             isLoadMore = document.select("i.xi.last").isNotEmpty()
-
+            if (isLoadMore) {
+                val attr =
+                    document.select("i.xi.last").first()!!.parent()!!.attr("onclick")
+                lastPage = attr[attr.length - 2].digitToInt()
+            }
         }
-        return LoadableList(resList, isLoadMore)
+        return LoadableList(resList, isLoadMore, lastPage)
     }
 }

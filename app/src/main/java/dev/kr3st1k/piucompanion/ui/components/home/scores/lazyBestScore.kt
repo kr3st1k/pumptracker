@@ -1,78 +1,39 @@
 package dev.kr3st1k.piucompanion.ui.components.home.scores
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
-import dev.kr3st1k.piucompanion.core.network.data.Score
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import dev.kr3st1k.piucompanion.core.db.data.BestScore
+import dev.kr3st1k.piucompanion.core.modules.BgManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LazyBestScore(
-    scores: List<BestUserScore>,
+    scores: List<BestScore>,
     onRefresh: () -> Unit,
-    onLoadNext: () -> Unit,
-    isLoadMoreFlow: StateFlow<Boolean>,
     dropDownMenu: @Composable () -> Unit,
     listState: LazyGridState,
+    isRefreshing: Boolean,
 ) {
-    var isRefreshing by remember {
-        mutableStateOf(false)
-    }
     val state = rememberPullToRefreshState()
-    val isLoadMore by isLoadMoreFlow.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    var lastDrawnScore: Score? by remember {
-        mutableStateOf(null)
-    }
-    val scaleFraction = {
-        if (isRefreshing) 0f
-        else LinearOutSlowInEasing.transform(state.distanceFraction).coerceIn(0f, 1f)
-    }
+    val bgs = BgManager().readBgJson()
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull() }
-            .collect { lastVisibleItem ->
-                lastVisibleItem?.let {
-                    if (it.index == listState.layoutInfo.totalItemsCount - 1) {
-                        if (isLoadMore) {
-                            onLoadNext()
-                        }
-                    }
-                }
-            }
-    }
     Box(
         contentAlignment = Alignment.TopCenter
     ) {
@@ -87,14 +48,7 @@ fun LazyBestScore(
                 .pullToRefresh(
                     state = state,
                     isRefreshing = isRefreshing,
-                    onRefresh = {
-                        scope.launch {
-                            state.animateToHidden()
-                            isRefreshing = true
-                            onRefresh()
-                            isRefreshing = false
-                        }
-                    }
+                    onRefresh = onRefresh
                 )
         ) {
             item(span = {
@@ -103,20 +57,9 @@ fun LazyBestScore(
                 dropDownMenu()
             }
             items(scores) { data ->
+                data.songBackgroundUri = bgs.find { tt -> tt.song_name == data.songName }?.jacket
+                    ?: "https://www.piugame.com/l_img/bg1.png"
                 ScoreCard(data)
-                lastDrawnScore = data
-            }
-            item(span = {
-                GridItemSpan(maxLineSpan)
-            }) {
-                if (scores.indexOf(lastDrawnScore) == scores.count() - 1 && isLoadMore)
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Spacer(modifier = Modifier.size(2.dp))
-                        CircularProgressIndicator()
-                    }
             }
         }
 
@@ -124,10 +67,6 @@ fun LazyBestScore(
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .graphicsLayer {
-                    scaleX = scaleFraction()
-                    scaleY = scaleFraction()
-                }
         ) {
             if (scores.isNotEmpty())
                 PullToRefreshDefaults.Indicator(state = state, isRefreshing = isRefreshing)
