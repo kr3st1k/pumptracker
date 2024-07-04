@@ -86,6 +86,18 @@ object Utils
         return ""
     }
 
+    fun convertDateToLocalDateTime(date: String): ZonedDateTime? {
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val inputZoneOffset = date.substring(date.lastIndexOf("(") + 1, date.lastIndexOf(")"))
+        val inputZoneId = ZoneId.of(inputZoneOffset)
+        val inputDateTime = LocalDateTime.parse(date.substring(0, 19), inputFormatter)
+        val inputZonedDateTime = ZonedDateTime.of(inputDateTime, inputZoneId)
+
+        val outputZoneId = ZoneId.systemDefault()
+        val outputDateTime = inputZonedDateTime.withZoneSameInstant(outputZoneId)
+        return outputDateTime
+    }
+
     fun convertDateFromSite(date: String): String {
         val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val inputZoneOffset = date.substring(date.lastIndexOf("(") + 1, date.lastIndexOf(")"))

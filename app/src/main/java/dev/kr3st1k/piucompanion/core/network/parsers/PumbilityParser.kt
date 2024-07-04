@@ -53,7 +53,7 @@ object PumbilityParser : Parser<Pumbility>() {
             diff,
             score,
             rank,
-            Utils.convertDateFromSite(datePlay)
+            datePlay
         )
     }
 

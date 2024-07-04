@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
 import dev.kr3st1k.piucompanion.core.db.data.LatestScore
 import dev.kr3st1k.piucompanion.core.helpers.Utils
+import dev.kr3st1k.piucompanion.core.helpers.Utils.convertDateToLocalDateTime
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl.getLatestScores
 import dev.kr3st1k.piucompanion.di.DbManager
 import dev.kr3st1k.piucompanion.di.InternetManager
@@ -55,6 +56,8 @@ class HistoryViewModel : ViewModel() {
                 }.await()
             }
             scores.value = GlobalScope.async { scoresDao.getAllLatestScores() }.await()
+                scores.value =
+                    scores.value.sortedBy { convertDateToLocalDateTime(it.datetime) }.reversed()
             isRefreshing.value = false
         }
         else
@@ -65,6 +68,8 @@ class HistoryViewModel : ViewModel() {
     fun loadScores() {
         viewModelScope.launch {
             scores.value = GlobalScope.async { scoresDao.getAllLatestScores() }.await()
+            scores.value =
+                scores.value.sortedBy { convertDateToLocalDateTime(it.datetime) }.reversed()
             fetchAndAddToDb()
         }
     }

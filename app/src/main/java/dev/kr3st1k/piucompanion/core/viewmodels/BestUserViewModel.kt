@@ -59,6 +59,7 @@ class BestUserViewModel : ViewModel() {
                 if (tmp == null)
                     needAuth.value = true
                 pageCount.intValue = tmp!!.lastPageNumber
+                val scoresTmp = mutableListOf<BestScore>()
                 while (tmp?.isLoadMore == true && !isInside) {
                     for (it in tmp.res) {
                         val score = BestScore(
@@ -78,15 +79,19 @@ class BestUserViewModel : ViewModel() {
                             break
                         }
 
-                        GlobalScope.async {
-                            scoresDao.insertBest(
-                                score
-                            )
-                        }.await()
+                        scoresTmp.add(score)
                     }
                     nowPage.intValue += 1
                     tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
                 }
+
+                for (value in scoresTmp.reversed())
+                    GlobalScope.async {
+                        scoresDao.insertBest(
+                            value
+                        )
+                    }.await()
+
                 scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
                 isRefreshing.value = false
                 isLoaded.value = false

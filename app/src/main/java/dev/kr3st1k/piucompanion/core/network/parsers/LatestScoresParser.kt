@@ -48,7 +48,7 @@ object LatestScoresParser : Parser<MutableList<LatestScore>>() {
             diff,
             score,
             rank,
-            Utils.convertDateFromSite(datePlay)
+            datePlay
         )
     }
 

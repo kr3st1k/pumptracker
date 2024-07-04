@@ -56,7 +56,7 @@ fun LazyBestScore(
             }) {
                 dropDownMenu()
             }
-            items(scores) { data ->
+            items(scores.reversed()) { data ->
                 data.songBackgroundUri = bgs.find { tt -> tt.song_name == data.songName }?.jacket
                     ?: "https://www.piugame.com/l_img/bg1.png"
                 ScoreCard(data)

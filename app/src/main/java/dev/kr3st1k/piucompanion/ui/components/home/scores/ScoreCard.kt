@@ -28,6 +28,7 @@ import coil.compose.AsyncImage
 import dev.kr3st1k.piucompanion.core.db.data.LatestScore
 import dev.kr3st1k.piucompanion.core.db.data.PumbilityScore
 import dev.kr3st1k.piucompanion.core.db.data.Score
+import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.removeUrlParameters
 
 @Composable
@@ -108,14 +109,14 @@ fun ScoreCard(score: Score) {
                             )
                         if (score is LatestScore)
                             Text(
-                                text = score.datetime,
+                                text = Utils.convertDateFromSite(score.datetime),
                                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
                                 color = Color(0xffadadad),
                                 textAlign = TextAlign.End
                             )
                         if (score is PumbilityScore)
                             Text(
-                                text = score.datetime,
+                                text = Utils.convertDateFromSite(score.datetime),
                                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
                                 color = Color(0xffadadad),
                                 textAlign = TextAlign.End

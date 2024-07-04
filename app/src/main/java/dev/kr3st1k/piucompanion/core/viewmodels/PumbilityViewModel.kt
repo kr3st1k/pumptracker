@@ -57,6 +57,7 @@ class PumbilityViewModel : ViewModel() {
                 }.await()
             }
             scores.value = GlobalScope.async { scoresDao.getAllPumbilityScores() }.await()
+            scores.value = scores.value.sortedBy { it.score }.reversed()
             isRefreshing.value = false
         }
     }
@@ -65,6 +66,7 @@ class PumbilityViewModel : ViewModel() {
     fun loadScores() {
         viewModelScope.launch {
             scores.value = GlobalScope.async { scoresDao.getAllPumbilityScores() }.await()
+            scores.value = scores.value.sortedBy { it.score }.reversed()
             fetchAndAddToDb()
         }
     }
