@@ -12,6 +12,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.ceil
 
 
 object Utils
@@ -22,6 +23,39 @@ object Utils
     private const val RANK = "https://www\\.piugame\\.com\\/l_img\\/grade\\/(\\w+)\\.png"
 
     private var androidId: String = ""
+
+    private fun pointMultiplier(value: String): Float {
+        val score = value.replace(",", "").toInt()
+        if (score >= 995000) return 1.5F    // SSS+
+        if (score >= 990000) return 1.44F   // SSS
+        if (score >= 985000) return 1.38F   // SS+
+        if (score >= 980000) return 1.32F   // SS
+        if (score >= 975000) return 1.26F   // S+
+        if (score >= 970000) return 1.2F    // S
+        if (score >= 960000) return 1.15F   // AAA+
+        if (score >= 950000) return 1.1F    // AAA
+        if (score >= 925000) return 1.05F   // AA+
+        if (score >= 900000) return 1F      // AA
+        if (score >= 825000) return 0.9F   // A+
+        if (score >= 750000) return 0.8F    // A
+        return 0F
+    }
+
+    private fun levelMultiplier(value: Int): Float {
+        if (value < 10) return 0F;
+        if (value == 10) return 100F;
+        return (value - 10) * 10 + levelMultiplier(value - 1);
+    }
+
+    @SuppressLint("DefaultLocale")
+    fun getPoints(lvl: String, score: String): Int {
+        val points = levelMultiplier(lvl.filter { it2 -> it2.isDigit() }
+            .map { it2 -> it2.toString().toInt() }.joinToString("")
+            .toInt()
+        ) * pointMultiplier(score)
+        return ceil(points).toInt()
+    }
+
 
     fun getAndroidId(): String {
         return androidId

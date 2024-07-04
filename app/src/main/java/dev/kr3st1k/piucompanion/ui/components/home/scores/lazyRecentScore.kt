@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.pullToRefresh
@@ -18,8 +19,10 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.kr3st1k.piucompanion.core.db.data.Score
+import dev.kr3st1k.piucompanion.di.BgManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +35,8 @@ fun LazyLatestScore(
 ) {
 
     val state = rememberPullToRefreshState()
+
+    val bgs = BgManager().readBgJson()
 
     Box(
         contentAlignment = Alignment.TopCenter
@@ -57,9 +62,36 @@ fun LazyLatestScore(
                 if (item != null)
                     item()
             }
-            items(scores) { data ->
-                ScoreCard(data)
+            if (scores.isNotEmpty())
+                items(scores.subList(0, 50)) { data ->
+                    if (data.songBackgroundUri == null)
+                        data.songBackgroundUri =
+                            bgs.find { tt -> tt.song_name == data.songName }?.jacket
+                                ?: "https://www.piugame.com/l_img/bg1.png"
+                    ScoreCard(data)
+
+                }
+            item(span = {
+                GridItemSpan(maxLineSpan)
+            }) {
+                if (scores.isNotEmpty() && scores.count() > 50) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        thickness = 2.dp,
+                        color = Color(0xFF222933)
+                    )
+                }
             }
+            if (scores.isNotEmpty() && scores.count() > 50)
+                items(scores.subList(51, scores.count())) { data ->
+                    if (data.songBackgroundUri == null)
+                        data.songBackgroundUri =
+                            bgs.find { tt -> tt.song_name == data.songName }?.jacket
+                                ?: "https://www.piugame.com/l_img/bg1.png"
+                    ScoreCard(data)
+
+                }
+
         }
 
         Box(

@@ -11,5 +11,6 @@ data class BestScore(
     override val difficulty: String,
     override val score: String,
     override val rank: String,
+    @ColumnInfo(name = "pumbility_score") val pumbilityScore: Int,
     @PrimaryKey @ColumnInfo(name = "hash") val hash: String,
 ) : Score(songName, null, difficulty, score, rank)

@@ -20,7 +20,7 @@ class BestUserViewModel : ViewModel() {
 
     private val db = DbManager()
     private val scoresDao: ScoresDao = db.getScoreDao()
-    val isLoaded = mutableStateOf(true)
+    val isLoaded = mutableStateOf(false)
     val pageCount = mutableIntStateOf(1)
     val nowPage = mutableIntStateOf(1)
     val isRefreshing = MutableStateFlow(false)
@@ -51,7 +51,7 @@ class BestUserViewModel : ViewModel() {
         if (InternetManager().hasInternetStatus())
             viewModelScope.launch {
                 isRefreshing.value = true
-                isLoaded.value = true
+                isLoaded.value = false
                 nowPage.intValue = 1
                 pageCount.intValue = 1
                 var isInside = false
@@ -60,8 +60,8 @@ class BestUserViewModel : ViewModel() {
                     needAuth.value = true
                 pageCount.intValue = tmp!!.lastPageNumber
                 val scoresTmp = mutableListOf<BestScore>()
-                while (tmp?.isLoadMore == true && !isInside) {
-                    for (it in tmp.res) {
+                while (nowPage.intValue != pageCount.intValue + 1 && !isInside) {
+                    for (it in tmp!!.res) {
                         val score = BestScore(
                             songName = it.songName,
                             difficulty = it.difficulty,
@@ -71,7 +71,8 @@ class BestUserViewModel : ViewModel() {
                                 "0",
                                 it.difficulty,
                                 it.songName
-                            )
+                            ),
+                            pumbilityScore = Utils.getPoints(it.difficulty, it.score)
                         )
 
                         if (scores.value.contains(score)) {
@@ -94,7 +95,7 @@ class BestUserViewModel : ViewModel() {
 
                 scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
                 isRefreshing.value = false
-                isLoaded.value = false
+                isLoaded.value = true
             }
         else {
             viewModelScope.launch {

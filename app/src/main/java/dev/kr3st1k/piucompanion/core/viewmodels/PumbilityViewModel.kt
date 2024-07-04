@@ -1,15 +1,17 @@
 package dev.kr3st1k.piucompanion.core.viewmodels
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
-import dev.kr3st1k.piucompanion.core.db.data.PumbilityScore
+import dev.kr3st1k.piucompanion.core.db.data.BestScore
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.di.DbManager
+import dev.kr3st1k.piucompanion.di.InternetManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -17,9 +19,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class PumbilityViewModel : ViewModel() {
-    val scores = MutableStateFlow<List<PumbilityScore>>(mutableListOf())
+    val scores = MutableStateFlow<List<BestScore>>(mutableListOf())
     val user: MutableState<User?> = mutableStateOf(null)
     private val db = DbManager()
+    val isLoaded = mutableStateOf(false)
+    val pageCount = mutableIntStateOf(1)
+    val nowPage = mutableIntStateOf(1)
     private val scoresDao: ScoresDao = db.getScoreDao()
     val isRefreshing = MutableStateFlow(false)
     val needAuth = mutableStateOf(false)
@@ -30,43 +35,77 @@ class PumbilityViewModel : ViewModel() {
 
     @OptIn(DelicateCoroutinesApi::class)
     fun fetchAndAddToDb() {
-        viewModelScope.launch {
-            isRefreshing.value = true
-            val tmp = NetworkRepositoryImpl.getPumbilityInfo()
-            if (tmp == null)
-                needAuth.value = true
-            user.value = tmp?.user
-            tmp?.scores?.forEach {
-                GlobalScope.async {
-                    scoresDao.insertPumbility(
-                        PumbilityScore(
+        isRefreshing.value = true
+        if (InternetManager().hasInternetStatus())
+            viewModelScope.launch {
+                isRefreshing.value = true
+                nowPage.intValue = 1
+                pageCount.intValue = 1
+                var isInside = false
+                var tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
+                if (tmp == null)
+                    needAuth.value = true
+                pageCount.intValue = tmp!!.lastPageNumber
+                val scoresTmp = mutableListOf<BestScore>()
+                while (nowPage.intValue != pageCount.intValue + 1 && !isInside) {
+                    for (it in tmp!!.res) {
+                        val score = BestScore(
                             songName = it.songName,
-                            songBackgroundUri = it.songBackgroundUri,
                             difficulty = it.difficulty,
                             score = it.score,
                             rank = it.rank,
-                            datetime = it.datetime,
                             hash = Utils.generateHashForScore(
-                                it.score,
+                                "0",
                                 it.difficulty,
-                                it.songName,
-                                it.datetime
-                            )
+                                it.songName
+                            ),
+                            pumbilityScore = Utils.getPoints(it.difficulty, it.score)
                         )
-                    )
-                }.await()
+
+                        if (scores.value.contains(score)) {
+                            isInside = true
+                            break
+                        }
+
+                        scoresTmp.add(score)
+                    }
+                    nowPage.intValue += 1
+                    tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
+                }
+
+                for (value in scoresTmp.reversed())
+                    GlobalScope.async {
+                        scoresDao.insertBest(
+                            value
+                        )
+                    }.await()
+
+                scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
+                scores.value = scores.value.sortedBy { it.pumbilityScore }.reversed()
+                user.value = NetworkRepositoryImpl.getUserInfo()
+                isRefreshing.value = false
+                isLoaded.value = true
             }
-            scores.value = GlobalScope.async { scoresDao.getAllPumbilityScores() }.await()
-            scores.value = scores.value.sortedBy { it.score }.reversed()
-            isRefreshing.value = false
+        else {
+            viewModelScope.launch {
+                scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
+                scores.value = scores.value.sortedBy { it.pumbilityScore }.reversed()
+                user.value = NetworkRepositoryImpl.getUserInfo()
+                isRefreshing.value = false
+            }
         }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun loadScores() {
         viewModelScope.launch {
-            scores.value = GlobalScope.async { scoresDao.getAllPumbilityScores() }.await()
-            scores.value = scores.value.sortedBy { it.score }.reversed()
+            scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
+            scores.value = scores.value.sortedBy { it.pumbilityScore }.reversed()
+            user.value = NetworkRepositoryImpl.getUserInfo()
+            var pumbility = 0
+            for (value in scores.value.subList(0, 50))
+                pumbility += value.pumbilityScore
+            println(pumbility)
             fetchAndAddToDb()
         }
     }

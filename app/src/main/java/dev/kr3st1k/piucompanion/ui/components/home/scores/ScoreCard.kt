@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import dev.kr3st1k.piucompanion.core.db.data.BestScore
 import dev.kr3st1k.piucompanion.core.db.data.LatestScore
-import dev.kr3st1k.piucompanion.core.db.data.PumbilityScore
 import dev.kr3st1k.piucompanion.core.db.data.Score
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.removeUrlParameters
@@ -40,6 +40,7 @@ fun ScoreCard(score: Score) {
             .height(115.dp)
             .heightIn(min = 115.dp)
     ) {
+
         Box {
             AsyncImage(
                 model = score.songBackgroundUri?.let { removeUrlParameters(it) },
@@ -99,11 +100,18 @@ fun ScoreCard(score: Score) {
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.End
                         )
+                        if (score is BestScore)
+                            Text(
+                                text = score.pumbilityScore.toString(),
+                                fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                                color = Color.White.copy(0.7f),
+                                textAlign = TextAlign.End
+                            )
                         if (score.rank != "F")
                             Text(
                                 text = score.rank,
                                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                color = Color(0xffd1cfcf),
+                                color = Color.White.copy(0.6f),
 
                                 textAlign = TextAlign.End
                             )
@@ -111,17 +119,9 @@ fun ScoreCard(score: Score) {
                             Text(
                                 text = Utils.convertDateFromSite(score.datetime),
                                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                                color = Color(0xffadadad),
+                                color = Color.White.copy(0.5f),
                                 textAlign = TextAlign.End
                             )
-                        if (score is PumbilityScore)
-                            Text(
-                                text = Utils.convertDateFromSite(score.datetime),
-                                fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                                color = Color(0xffadadad),
-                                textAlign = TextAlign.End
-                            )
-
                     }
                 }
             }
