@@ -14,10 +14,10 @@
 * 50 Latest scores
 * Avatar Shop
 * Pumbility Stats
+* Local Caching
 
 # ToDo
 
-* Local Caching
 * Titles with progress
 * ALL Rankings from site
 * Notifications
