@@ -7,7 +7,7 @@ data class User(
     val avatarUri: String,
     val recentGameAccess: String,
     val coinValue: String,
-    val pumbility: String,
+    var pumbility: String? = null,
     val trueUser: Boolean = false
 ) {
     constructor() : this(

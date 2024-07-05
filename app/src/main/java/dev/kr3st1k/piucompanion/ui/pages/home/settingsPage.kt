@@ -13,12 +13,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.di.DbManager
 import dev.kr3st1k.piucompanion.di.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithTwoButton
 import dev.kr3st1k.piucompanion.ui.pages.Screen
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun SettingsPage(
     navController: NavController,
@@ -26,6 +33,8 @@ fun SettingsPage(
     val showLogoutDialogue = remember {
         mutableStateOf(false)
     }
+
+    val scope = rememberCoroutineScope()
 
     AlertDialogWithTwoButton(
         showDialog = showLogoutDialogue.value,
@@ -35,12 +44,18 @@ fun SettingsPage(
             showLogoutDialogue.value = false
         },
         onConfirm = {
-            LoginManager().removeLoginData()
-            showLogoutDialogue.value = false
-            navController.navigate(Screen.LoginPage.route) {
-                popUpTo(navController.graph.id)
-                {
-                    inclusive = true
+            scope.launch {
+                LoginManager().removeLoginData()
+                GlobalScope.async {
+                    DbManager().getScoreDao().deleteAllBest()
+                    DbManager().getScoreDao().deleteAllLatest()
+                }.await()
+                showLogoutDialogue.value = false
+                navController.navigate(Screen.LoginPage.route) {
+                    popUpTo(navController.graph.id)
+                    {
+                        inclusive = true
+                    }
                 }
             }
         }

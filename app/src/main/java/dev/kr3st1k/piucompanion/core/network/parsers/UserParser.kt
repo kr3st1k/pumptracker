@@ -32,15 +32,10 @@ object UserParser : Parser<User>() {
         val coinValue = document.select("i.tt.en")
             .first()!!
             .text()
-        val pumbility = document.select("div.pumbility_total_wrap")
-            .first()
-            ?.select("p.t2.en")
-            ?.first()
-            ?.text() ?: "null"
 
         return User(
             name, title, backgroundUrl, avatarUrl,
-            recentGameLocation, coinValue, pumbility, true
+            recentGameLocation, coinValue, null, true
         )
     }
 

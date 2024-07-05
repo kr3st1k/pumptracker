@@ -63,7 +63,7 @@ fun LazyLatestScore(
                     item()
             }
             if (scores.isNotEmpty())
-                items(scores.subList(0, 50)) { data ->
+                items(scores.take(50)) { data ->
                     if (data.songBackgroundUri == null)
                         data.songBackgroundUri =
                             bgs.find { tt -> tt.song_name == data.songName }?.jacket

@@ -48,7 +48,7 @@ class PumbilityViewModel : ViewModel() {
                     needAuth.value = true
                 pageCount.intValue = tmp!!.lastPageNumber
                 val scoresTmp = mutableListOf<BestScore>()
-                while (nowPage.intValue != pageCount.intValue + 1 && !isInside) {
+                while (nowPage.intValue <= pageCount.intValue && !isInside) {
                     for (it in tmp!!.res) {
                         val score = BestScore(
                             songName = it.songName,
@@ -70,8 +70,12 @@ class PumbilityViewModel : ViewModel() {
 
                         scoresTmp.add(score)
                     }
-                    nowPage.intValue += 1
-                    tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
+                    if (nowPage.intValue < pageCount.intValue) {
+                        nowPage.intValue += 1
+                        tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
+                    } else {
+                        break
+                    }
                 }
 
                 for (value in scoresTmp.reversed())
@@ -87,8 +91,11 @@ class PumbilityViewModel : ViewModel() {
                 if (InternetManager().hasInternetStatus()) {
                     val tmpUser = NetworkRepositoryImpl.getUserInfo()
                     user.value = tmpUser
+                    var pumbility = 0
+                    scores.value.take(50).forEach { pumbility += it.pumbilityScore }
+                    user.value?.pumbility = pumbility.toString()
                     if (tmpUser != null)
-                        LoginManager().saveUserData(tmpUser)
+                        LoginManager().saveUserData(user.value!!)
                 }
                 isRefreshing.value = false
                 isLoaded.value = true
@@ -112,8 +119,11 @@ class PumbilityViewModel : ViewModel() {
             if (InternetManager().hasInternetStatus()) {
                 val tmp = NetworkRepositoryImpl.getUserInfo()
                 user.value = tmp
+                var pumbility = 0
+                scores.value.take(50).forEach { pumbility += it.pumbilityScore }
+                user.value?.pumbility = pumbility.toString()
                 if (tmp != null)
-                    LoginManager().saveUserData(tmp)
+                    LoginManager().saveUserData(user.value!!)
             }
             fetchAndAddToDb()
         }

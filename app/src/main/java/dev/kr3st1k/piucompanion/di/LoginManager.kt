@@ -26,6 +26,13 @@ class LoginManager : KoinComponent {
     fun removeLoginData() {
         sharedPreferences.edit().remove("login").apply()
         sharedPreferences.edit().remove("password").apply()
+        sharedPreferences.edit().remove("username").apply()
+        sharedPreferences.edit().remove("titleName").apply()
+        sharedPreferences.edit().remove("backgroundUri").apply()
+        sharedPreferences.edit().remove("avatarUri").apply()
+        sharedPreferences.edit().remove("recentGameAccess").apply()
+        sharedPreferences.edit().remove("coinValue").apply()
+        sharedPreferences.edit().remove("pumbility").apply()
     }
 
     fun getUserData(): User {
@@ -38,7 +45,7 @@ class LoginManager : KoinComponent {
             sharedPreferences.getString("avatarUri", "")!!,
             sharedPreferences.getString("recentGameAccess", "")!!,
             sharedPreferences.getString("coinValue", "")!!,
-            sharedPreferences.getString("pumbility", "")!!,
+            sharedPreferences.getString("pumbility", null),
             true,
         )
     }
@@ -50,6 +57,7 @@ class LoginManager : KoinComponent {
         sharedPreferences.edit().putString("recentGameAccess", user.recentGameAccess).apply()
         sharedPreferences.edit().putString("titleName", user.titleName).apply()
         sharedPreferences.edit().putString("coinValue", user.coinValue).apply()
-        sharedPreferences.edit().putString("pumbility", user.pumbility).apply()
+        if (user.pumbility != null)
+            sharedPreferences.edit().putString("pumbility", user.pumbility).apply()
     }
 }

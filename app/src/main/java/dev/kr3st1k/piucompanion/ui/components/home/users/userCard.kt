@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.kr3st1k.piucompanion.core.network.data.User
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun UserCard(user: User, small: Boolean = false, hideLocation: Boolean = false)
@@ -80,9 +82,12 @@ fun UserCard(user: User, small: Boolean = false, hideLocation: Boolean = false)
                         color = Color.White.copy(0.7f)
                     )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (user.pumbility != "null")
+                    if (user.pumbility != null)
                         Text(
-                            text = "${user.pumbility}pp",
+                            text = "${
+                                NumberFormat.getNumberInstance(Locale.US)
+                                    .format(user.pumbility!!.toInt())
+                            }pp",
                             fontSize = MaterialTheme.typography.titleMedium.fontSize,
                             color = Color.White.copy(0.9f) // or any other color you want
                         )

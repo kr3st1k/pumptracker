@@ -2,6 +2,7 @@ package dev.kr3st1k.piucompanion.ui.pages.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,12 +33,16 @@ import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.pages.Screen
 import dev.kr3st1k.piucompanion.ui.pages.homeDestinations
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserScreen(
     navController: NavController,
     viewModel: UserViewModel,
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
+
+    val state = rememberPullToRefreshState()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     val dests =
         if (InternetManager().hasInternetStatus()) homeDestinations else homeDestinations.filter { it.availableAtOffline }
@@ -48,6 +57,11 @@ fun UserScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .pullToRefresh(
+                state = state,
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.getUserInfo() }
+            )
     ) {
         item {
             Column(
@@ -88,5 +102,11 @@ fun UserScreen(
                     }
             )
         }
+    }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        PullToRefreshDefaults.Indicator(state = state, isRefreshing = isRefreshing)
     }
 }
