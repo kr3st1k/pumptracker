@@ -4,9 +4,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.kr3st1k.piucompanion.core.db.data.title.PhoenixTitleList
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.core.network.data.title.TitleItem
+import dev.kr3st1k.piucompanion.di.DbManager
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -19,6 +24,7 @@ class TitleShopViewModel : ViewModel() {
         loadTitles()
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun loadTitles() {
         viewModelScope.launch {
             isRefreshing.value = true
@@ -26,6 +32,17 @@ class TitleShopViewModel : ViewModel() {
             if (data == null) {
                 titles.value = null
             } else {
+                val scores =
+                    GlobalScope.async { DbManager().db.scoresDao().getAllBestScores() }.await()
+                data.titles.forEach { title ->
+                    val titleInfo = PhoenixTitleList.titles.find { it.name == title.name }
+                    if (titleInfo != null && !title.isAchieved) {
+                        title.titleInfo = titleInfo
+                        title.progress = titleInfo.completionProgress(scores)
+                        title.progressValue = titleInfo.completionProgressValue(scores)
+                    }
+                }
+
                 titles.value = data.titles
                 user.value = data.user
             }

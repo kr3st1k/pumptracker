@@ -91,7 +91,25 @@ fun LazyTitle(
                         color = Color(0xFF222933)
                     )
             }
-            items(titles.filter { !it.isAchieved }) { data ->
+            items(titles.filter { it.progress != null }.filter { it.progress != 0F }
+                .sortedBy { it.progress }.reversed()) { data ->
+                TitleCard(
+                    data,
+                    action = { }
+                )
+            }
+            item(span = {
+                GridItemSpan(maxLineSpan)
+            }) {
+                if (titles.isNotEmpty())
+                    HorizontalDivider(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        thickness = 2.dp,
+                        color = Color(0xFF222933)
+                    )
+            }
+            items(titles.filter { !it.isAchieved }
+                .filter { it.progress == 0F || it.progress == null }) { data ->
                 TitleCard(
                     data,
                     action = { }

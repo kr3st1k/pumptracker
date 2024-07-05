@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -71,6 +72,21 @@ fun TitleCard(title: TitleItem, action: () -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            if (title.progressValue != null && title.titleInfo != null && title.progress != null)
+                if (title.progress != 0F) {
+
+                    Text(
+                        text = title.progressValue!!,
+                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                        color = Color.White.copy(0.6f),
+                        maxLines = 1,
+                    )
+                    LinearProgressIndicator(
+                        progress = { title.progress!! },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                }
             Text(
                 modifier = Modifier.basicMarquee(),
                 text = title.description,

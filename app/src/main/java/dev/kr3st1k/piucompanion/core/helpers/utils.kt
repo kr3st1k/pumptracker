@@ -24,7 +24,7 @@ object Utils
 
     private var androidId: String = ""
 
-    private fun pointMultiplier(value: String): Float {
+    fun pointMultiplier(value: String): Float {
         val score = value.replace(",", "").toInt()
         if (score >= 995000) return 1.5F    // SSS+
         if (score >= 990000) return 1.44F   // SSS
