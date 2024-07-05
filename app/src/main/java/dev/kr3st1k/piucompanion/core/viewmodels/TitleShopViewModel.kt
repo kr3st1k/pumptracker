@@ -41,7 +41,7 @@ class TitleShopViewModel : ViewModel() {
                         title.titleInfo = PhoenixTitle(name = title.name)
                     else {
                         title.titleInfo = titleInfo
-                        if (!title.isAchieved) {
+                        if (!title.isAchieved && scores.isNotEmpty()) {
                             title.progress = titleInfo.completionProgress(scores)
                             title.progressValue = titleInfo.completionProgressValue(scores)
                         }
