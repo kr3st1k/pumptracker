@@ -15,10 +15,10 @@
 * Avatar Shop
 * Pumbility Stats
 * Local Caching
+* Titles with progress
 
 # ToDo
 
-* Titles with progress
 * ALL Rankings from site
 * Notifications
 
