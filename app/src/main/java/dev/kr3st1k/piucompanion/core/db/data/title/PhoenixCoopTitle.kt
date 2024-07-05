@@ -8,7 +8,7 @@ import kotlin.math.ceil
 class PhoenixCoopTitle(
     name: String,
     private val ratingMax: Int
-) : PhoenixTitle(name, "CO-OP") {
+) : PhoenixTitle(name, PhoenixCategoryItem.Coop) {
 
     override fun completionProgress(scores: List<Score>): Float {
         if (scores.last() is BestScore) {

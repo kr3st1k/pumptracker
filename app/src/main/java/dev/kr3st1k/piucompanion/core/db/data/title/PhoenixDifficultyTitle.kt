@@ -7,7 +7,7 @@ class PhoenixDifficultyTitle(
     name: String,
     private val difficultyNumber: Int,
     private val ratingMax: Int
-) : PhoenixTitle(name, "Difficulty") {
+) : PhoenixTitle(name, PhoenixCategoryItem.Difficulty) {
 
     override fun completionProgress(scores: List<Score>): Float {
         if (scores.last() is BestScore) {

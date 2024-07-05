@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.kr3st1k.piucompanion.core.db.data.title.PhoenixTitle
 import dev.kr3st1k.piucompanion.core.db.data.title.PhoenixTitleList
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.User
@@ -36,10 +37,14 @@ class TitleShopViewModel : ViewModel() {
                     GlobalScope.async { DbManager().db.scoresDao().getAllBestScores() }.await()
                 data.titles.forEach { title ->
                     val titleInfo = PhoenixTitleList.titles.find { it.name == title.name }
-                    if (titleInfo != null && !title.isAchieved) {
+                    if (titleInfo == null)
+                        title.titleInfo = PhoenixTitle(name = title.name)
+                    else {
                         title.titleInfo = titleInfo
-                        title.progress = titleInfo.completionProgress(scores)
-                        title.progressValue = titleInfo.completionProgressValue(scores)
+                        if (!title.isAchieved) {
+                            title.progress = titleInfo.completionProgress(scores)
+                            title.progressValue = titleInfo.completionProgressValue(scores)
+                        }
                     }
                 }
 

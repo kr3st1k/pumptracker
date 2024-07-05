@@ -6,7 +6,7 @@ class PhoenixBossBreakerTitle(
     name: String,
     val songName: String,
     val difficulty: String
-) : PhoenixTitle(name, "Boss Breaker") {
+) : PhoenixTitle(name, PhoenixCategoryItem.BossBreaker) {
 
     override fun completionProgress(scores: List<Score>): Float {
         for (score in scores) {
