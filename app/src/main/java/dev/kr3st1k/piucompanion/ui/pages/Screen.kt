@@ -11,4 +11,5 @@ sealed class Screen(val route: String)
     data object PumbilityPage : Screen("pumbility_page")
     data object SettingsPage : Screen("settings_page")
     data object AvatarShopPage : Screen("avatar_page")
+    data object TitleShopPage : Screen("title_page")
 }

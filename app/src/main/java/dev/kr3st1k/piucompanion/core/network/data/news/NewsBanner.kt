@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.core.network.data
+package dev.kr3st1k.piucompanion.core.network.data.news
 
 data class NewsBanner(
     val id: Int,

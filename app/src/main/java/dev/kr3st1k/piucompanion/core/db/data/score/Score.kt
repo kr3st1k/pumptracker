@@ -1,4 +1,4 @@
-package dev.kr3st1k.piucompanion.core.db.data
+package dev.kr3st1k.piucompanion.core.db.data.score
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

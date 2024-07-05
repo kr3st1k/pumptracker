@@ -1,8 +1,8 @@
 package dev.kr3st1k.piucompanion.core.network.parsers
 
 import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
-import dev.kr3st1k.piucompanion.core.network.data.AvatarItem
-import dev.kr3st1k.piucompanion.core.network.data.AvatarShop
+import dev.kr3st1k.piucompanion.core.network.data.avatar.AvatarItem
+import dev.kr3st1k.piucompanion.core.network.data.avatar.AvatarShop
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 

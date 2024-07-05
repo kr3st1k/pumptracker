@@ -18,6 +18,7 @@ import dev.kr3st1k.piucompanion.ui.pages.home.LoginPage
 import dev.kr3st1k.piucompanion.ui.pages.home.NewsScreen
 import dev.kr3st1k.piucompanion.ui.pages.home.PumbilityScreen
 import dev.kr3st1k.piucompanion.ui.pages.home.SettingsPage
+import dev.kr3st1k.piucompanion.ui.pages.home.TitleShopScreen
 import dev.kr3st1k.piucompanion.ui.pages.home.UserScreen
 @Composable
 fun HomeNavHost(
@@ -84,6 +85,14 @@ fun HomeNavHost(
             composable(route = Screen.SettingsPage.route) {
                 SettingsPage(
                     navController = navController
+                )
+            }
+
+            composable(route = Screen.TitleShopPage.route) {
+                TitleShopScreen(
+                    viewModel = viewModel(),
+                    navController = navController,
+                    listState = listState
                 )
             }
 

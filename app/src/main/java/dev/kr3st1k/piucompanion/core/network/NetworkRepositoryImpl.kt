@@ -1,22 +1,24 @@
 package dev.kr3st1k.piucompanion.core.network
 
 import dev.kr3st1k.piucompanion.core.helpers.Utils.checkIfLoginSuccess
-import dev.kr3st1k.piucompanion.core.network.data.AvatarShop
-import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
-import dev.kr3st1k.piucompanion.core.network.data.LatestScore
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
-import dev.kr3st1k.piucompanion.core.network.data.News
-import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
-import dev.kr3st1k.piucompanion.core.network.data.Pumbility
 import dev.kr3st1k.piucompanion.core.network.data.ReleaseResponse
 import dev.kr3st1k.piucompanion.core.network.data.User
+import dev.kr3st1k.piucompanion.core.network.data.avatar.AvatarShop
+import dev.kr3st1k.piucompanion.core.network.data.news.News
+import dev.kr3st1k.piucompanion.core.network.data.news.NewsBanner
+import dev.kr3st1k.piucompanion.core.network.data.score.BestUserScore
+import dev.kr3st1k.piucompanion.core.network.data.score.LatestScore
+import dev.kr3st1k.piucompanion.core.network.data.score.Pumbility
+import dev.kr3st1k.piucompanion.core.network.data.title.TitleShop
 import dev.kr3st1k.piucompanion.core.network.parsers.AvatarShopParser
 import dev.kr3st1k.piucompanion.core.network.parsers.BestUserScoresParser
 import dev.kr3st1k.piucompanion.core.network.parsers.LatestScoresParser
 import dev.kr3st1k.piucompanion.core.network.parsers.NewsBannerParser
 import dev.kr3st1k.piucompanion.core.network.parsers.NewsListParser
 import dev.kr3st1k.piucompanion.core.network.parsers.PumbilityParser
+import dev.kr3st1k.piucompanion.core.network.parsers.TitleShopParser
 import dev.kr3st1k.piucompanion.core.network.parsers.UserParser
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -167,6 +169,20 @@ object NetworkRepositoryImpl : NetworkRepository {
     override suspend fun getAvatarShopInfo(): AvatarShop? {
         val document = getDocument(BASEPIUURL, "my_page/avatar_shop.php") ?: return null
         return AvatarShopParser.parse(document)
+    }
+
+    override suspend fun getTitleShopInfo(): TitleShop? {
+        val document = getDocument(BASEPIUURL, "my_page/title.php") ?: return null
+        return TitleShopParser.parse(document)
+    }
+
+    override suspend fun setTitle(value: String): Boolean? {
+        return formPost(
+            BASEPIUURL,
+            "logic/user_title_update.php",
+            parameters {
+                append("no", value)
+            })
     }
 
     override suspend fun setAvatar(value: String): Boolean? {

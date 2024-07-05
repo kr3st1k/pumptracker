@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Dvr
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.FormatListNumbered
@@ -89,13 +90,13 @@ public val homeDestinations = listOf(
 //        iconText = "Leaderboard",
 //        summary = "Let's see who sniped FEFEMZ's scores"
 //    ),
-//    TopLevelDestination(
-//        route = Screen.NewsPage.route,
-//        selectedIcon = Icons.AutoMirrored.Filled.Dvr,
-//        unselectedIcon = Icons.AutoMirrored.Filled.Dvr,
-//        iconText = "Title Changer",
-//        summary = "Select the most beautiful title available"
-//    ),
+    TopLevelDestination(
+        route = Screen.TitleShopPage.route,
+        selectedIcon = Icons.AutoMirrored.Filled.Dvr,
+        unselectedIcon = Icons.AutoMirrored.Filled.Dvr,
+        iconText = "Title Shop",
+        summary = "Rizz your title"
+    ),
     TopLevelDestination(
         route = Screen.AvatarShopPage.route,
         selectedIcon = Icons.Filled.AccountCircle,

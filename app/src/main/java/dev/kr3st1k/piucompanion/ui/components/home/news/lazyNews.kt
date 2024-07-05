@@ -18,8 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.core.network.data.News
-import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
+import dev.kr3st1k.piucompanion.core.network.data.news.News
+import dev.kr3st1k.piucompanion.core.network.data.news.NewsBanner
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 
 @OptIn(ExperimentalMaterial3Api::class)

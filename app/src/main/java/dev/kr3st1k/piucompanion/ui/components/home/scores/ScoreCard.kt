@@ -25,9 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import dev.kr3st1k.piucompanion.core.db.data.BestScore
-import dev.kr3st1k.piucompanion.core.db.data.LatestScore
-import dev.kr3st1k.piucompanion.core.db.data.Score
+import dev.kr3st1k.piucompanion.core.db.data.score.BestScore
+import dev.kr3st1k.piucompanion.core.db.data.score.LatestScore
+import dev.kr3st1k.piucompanion.core.db.data.score.Score
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.removeUrlParameters
 

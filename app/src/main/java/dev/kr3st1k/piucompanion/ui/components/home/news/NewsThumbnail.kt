@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.core.network.data.News
+import dev.kr3st1k.piucompanion.core.network.data.news.News
 
 @Composable
 fun NewsThumbnail(news: News)

@@ -1,15 +1,16 @@
 package dev.kr3st1k.piucompanion.core.network
 
-import dev.kr3st1k.piucompanion.core.network.data.AvatarShop
-import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
-import dev.kr3st1k.piucompanion.core.network.data.LatestScore
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
-import dev.kr3st1k.piucompanion.core.network.data.News
-import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
-import dev.kr3st1k.piucompanion.core.network.data.Pumbility
 import dev.kr3st1k.piucompanion.core.network.data.ReleaseResponse
 import dev.kr3st1k.piucompanion.core.network.data.User
+import dev.kr3st1k.piucompanion.core.network.data.avatar.AvatarShop
+import dev.kr3st1k.piucompanion.core.network.data.news.News
+import dev.kr3st1k.piucompanion.core.network.data.news.NewsBanner
+import dev.kr3st1k.piucompanion.core.network.data.score.BestUserScore
+import dev.kr3st1k.piucompanion.core.network.data.score.LatestScore
+import dev.kr3st1k.piucompanion.core.network.data.score.Pumbility
+import dev.kr3st1k.piucompanion.core.network.data.title.TitleShop
 import io.ktor.http.Parameters
 import org.jsoup.nodes.Document
 
@@ -38,6 +39,8 @@ interface NetworkRepository {
     suspend fun buyAvatar(value: String): Boolean?
     suspend fun getAvatarShopInfo(): AvatarShop?
     suspend fun getGithubUpdateInfo(): ReleaseResponse
+    suspend fun getTitleShopInfo(): TitleShop?
+    suspend fun setTitle(value: String): Boolean?
     suspend fun getBestUserScores(
         page: Int? = null,
         lvl: String = "",

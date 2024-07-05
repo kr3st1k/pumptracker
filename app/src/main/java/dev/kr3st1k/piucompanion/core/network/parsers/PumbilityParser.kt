@@ -3,8 +3,8 @@ package dev.kr3st1k.piucompanion.core.network.parsers
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
 import dev.kr3st1k.piucompanion.core.helpers.Utils.parseTypeDifficultyFromUri
-import dev.kr3st1k.piucompanion.core.network.data.Pumbility
-import dev.kr3st1k.piucompanion.core.network.data.PumbilityScore
+import dev.kr3st1k.piucompanion.core.network.data.score.Pumbility
+import dev.kr3st1k.piucompanion.core.network.data.score.PumbilityScore
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.Locale

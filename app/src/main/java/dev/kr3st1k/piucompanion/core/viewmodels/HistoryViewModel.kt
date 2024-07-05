@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.db.dao.ScoresDao
-import dev.kr3st1k.piucompanion.core.db.data.LatestScore
+import dev.kr3st1k.piucompanion.core.db.data.score.LatestScore
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.convertDateToLocalDateTime
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl

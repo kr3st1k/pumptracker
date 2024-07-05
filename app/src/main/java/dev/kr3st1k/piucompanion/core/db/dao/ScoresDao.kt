@@ -5,8 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import dev.kr3st1k.piucompanion.core.db.data.BestScore
-import dev.kr3st1k.piucompanion.core.db.data.LatestScore
+import dev.kr3st1k.piucompanion.core.db.data.score.BestScore
+import dev.kr3st1k.piucompanion.core.db.data.score.LatestScore
 
 @Dao
 interface ScoresDao {

@@ -2,8 +2,8 @@ package dev.kr3st1k.piucompanion.core.network.parsers
 
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
-import dev.kr3st1k.piucompanion.core.network.data.BestUserScore
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
+import dev.kr3st1k.piucompanion.core.network.data.score.BestUserScore
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.Locale

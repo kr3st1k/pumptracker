@@ -41,7 +41,7 @@ object Utils
         if (score >= 650000) return 0.7F    // B
         if (score >= 550000) return 0.6F    // C
         if (score >= 450000) return 0.5F    // D
-        return 0.4F
+        return 0.4F                         // F
     }
 
     private fun levelMultiplier(value: Int): Float {

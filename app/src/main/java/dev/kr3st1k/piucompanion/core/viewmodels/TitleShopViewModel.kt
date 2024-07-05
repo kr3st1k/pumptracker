@@ -6,42 +6,37 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.User
-import dev.kr3st1k.piucompanion.core.network.data.avatar.AvatarItem
+import dev.kr3st1k.piucompanion.core.network.data.title.TitleItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class AvatarShopViewModel : ViewModel() {
-    val avatars = MutableStateFlow<List<AvatarItem>?>(mutableListOf())
+class TitleShopViewModel : ViewModel() {
+    val titles = MutableStateFlow<List<TitleItem>?>(mutableListOf())
     val user: MutableState<User?> = mutableStateOf(null)
     val isRefreshing = MutableStateFlow(false)
 
     init {
-        loadAvatars()
+        loadTitles()
     }
 
-    fun loadAvatars() {
+    fun loadTitles() {
         viewModelScope.launch {
             isRefreshing.value = true
-            val data = NetworkRepositoryImpl.getAvatarShopInfo()
+            val data = NetworkRepositoryImpl.getTitleShopInfo()
             if (data == null) {
-                avatars.value = null
+                titles.value = null
             } else {
-                avatars.value = data.items
+                titles.value = data.titles
                 user.value = data.user
             }
             isRefreshing.value = false
         }
     }
 
-    suspend fun buyAvatar(value: String) {
-        NetworkRepositoryImpl.buyAvatar(value)
-        loadAvatars()
-    }
-
     suspend fun setAvatar(value: String) {
         isRefreshing.value = true
-        NetworkRepositoryImpl.setAvatar(value)
-        loadAvatars()
+        NetworkRepositoryImpl.setTitle(value)
+        loadTitles()
     }
 
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
+import dev.kr3st1k.piucompanion.core.network.data.news.NewsBanner
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

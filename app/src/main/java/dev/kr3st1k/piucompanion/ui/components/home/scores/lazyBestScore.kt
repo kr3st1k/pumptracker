@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.core.db.data.BestScore
+import dev.kr3st1k.piucompanion.core.db.data.score.BestScore
 import dev.kr3st1k.piucompanion.di.BgManager
 
 @OptIn(ExperimentalMaterial3Api::class)

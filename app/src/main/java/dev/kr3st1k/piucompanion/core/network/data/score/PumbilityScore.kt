@@ -1,6 +1,6 @@
-package dev.kr3st1k.piucompanion.core.network.data
+package dev.kr3st1k.piucompanion.core.network.data.score
 
-data class LatestScore(
+data class PumbilityScore(
     override val songName: String,
     override val songBackgroundUri: String,
     override val difficulty: String,

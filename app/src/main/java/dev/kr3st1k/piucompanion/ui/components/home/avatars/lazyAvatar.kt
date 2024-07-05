@@ -26,7 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.kr3st1k.piucompanion.core.network.data.AvatarItem
+import dev.kr3st1k.piucompanion.core.network.data.avatar.AvatarItem
 import dev.kr3st1k.piucompanion.ui.components.DialogWithImage
 import kotlinx.coroutines.launch
 

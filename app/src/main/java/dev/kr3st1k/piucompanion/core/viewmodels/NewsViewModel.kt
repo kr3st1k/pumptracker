@@ -3,8 +3,8 @@ package dev.kr3st1k.piucompanion.core.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
-import dev.kr3st1k.piucompanion.core.network.data.News
-import dev.kr3st1k.piucompanion.core.network.data.NewsBanner
+import dev.kr3st1k.piucompanion.core.network.data.news.News
+import dev.kr3st1k.piucompanion.core.network.data.news.NewsBanner
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
