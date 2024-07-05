@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.kr3st1k.pumptracker"
         minSdk = 31
-        versionCode = 97
+        versionCode = 98
         versionName = "0.5.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
