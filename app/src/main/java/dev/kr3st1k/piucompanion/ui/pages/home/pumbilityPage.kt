@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.viewmodels.PumbilityViewModel
+import dev.kr3st1k.piucompanion.di.BgManager
 import dev.kr3st1k.piucompanion.di.InternetManager
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
 import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyLatestScore
@@ -29,6 +30,8 @@ fun PumbilityScreen(
     viewModel: PumbilityViewModel,
     listState: LazyGridState,
 ) {
+    BgManager().checkAndSaveNewUpdatedFiles()
+
     val scores by viewModel.scores.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
