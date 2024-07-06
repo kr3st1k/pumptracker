@@ -6,7 +6,7 @@ import dev.kr3st1k.piucompanion.core.network.data.avatar.AvatarShop
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-object AvatarShopParser : Parser<AvatarShop>() {
+object AvatarShopParser : Parser<AvatarShop?>() {
 
     private fun parseAvatarItem(element: Element): AvatarItem {
 
@@ -28,10 +28,13 @@ object AvatarShopParser : Parser<AvatarShop>() {
         return AvatarItem(name, isBought, isSelected, price, bg, value)
     }
 
-    override fun parse(document: Document): AvatarShop {
+    override fun parse(document: Document): AvatarShop? {
         val avatarTable = document.select("ul.avatar_shopList2.flex.wrap")
         val boughtAvatars = avatarTable.select("li.have")
         val nonBoughtAvatars = avatarTable.select("li.buy")
+
+        if (avatarTable.first() == null)
+            return null
 
         val avatars: MutableList<AvatarItem> = mutableListOf()
 

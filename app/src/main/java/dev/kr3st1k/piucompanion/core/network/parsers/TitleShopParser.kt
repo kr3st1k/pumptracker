@@ -5,7 +5,7 @@ import dev.kr3st1k.piucompanion.core.network.data.title.TitleShop
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-object TitleShopParser : Parser<TitleShop>() {
+object TitleShopParser : Parser<TitleShop?>() {
 
     private fun parseTitleItem(element: Element): TitleItem {
 
@@ -28,10 +28,13 @@ object TitleShopParser : Parser<TitleShop>() {
 
     }
 
-    override fun parse(document: Document): TitleShop {
+    override fun parse(document: Document): TitleShop? {
         val avatarTable = document.select("ul.data_titleList2.flex.wrap")
         val boughtTitles = avatarTable.select("li.have")
         val nonBoughtTitles = avatarTable.select("li.not")
+
+        if (avatarTable.first() == null)
+            return null
 
         val titles: MutableList<TitleItem> = mutableListOf()
 

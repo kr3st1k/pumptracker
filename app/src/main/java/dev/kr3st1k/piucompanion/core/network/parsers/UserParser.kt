@@ -4,14 +4,16 @@ import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
 import dev.kr3st1k.piucompanion.core.network.data.User
 import org.jsoup.nodes.Document
 
-object UserParser : Parser<User>() {
-    override fun parse(document: Document): User {
+object UserParser : Parser<User?>() {
+    override fun parse(document: Document): User? {
         val profileBox = document.select("div.box0.inner.flex.vc.bgfix")
             .first()
+        if (profileBox == null)
+            return null
         val avatarBox = document.select("div.re.bgfix")
             .first()
 
-        val backgroundUrl = getBackgroundImg(profileBox!!)
+        val backgroundUrl = getBackgroundImg(profileBox)
         val avatarUrl = getBackgroundImg(avatarBox!!, false)
 
         val profileTitleAndNameBox = document.select("div.name_w")
