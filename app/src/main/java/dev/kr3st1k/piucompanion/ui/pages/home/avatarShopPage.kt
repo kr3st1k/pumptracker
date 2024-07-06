@@ -54,7 +54,7 @@ fun AvatarShopScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (viewModel.user.value != null) {
-                        UserCard(viewModel.user.value!!, true)
+                        UserCard(viewModel.user.value!!, true, showMoney = true)
                     } else {
                         YouSpinMeRightRoundBabyRightRound()
                     }

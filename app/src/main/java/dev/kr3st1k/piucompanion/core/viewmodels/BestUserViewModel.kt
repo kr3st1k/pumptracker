@@ -89,13 +89,12 @@ class BestUserViewModel : ViewModel() {
                         break
                     }
                 }
-
-                for (value in scoresTmp.reversed())
-                    GlobalScope.async {
+                GlobalScope.async {
+                    for (value in scoresTmp.reversed())
                         scoresDao.insertBest(
                             value
                         )
-                    }.await()
+                }.await()
 
                 scores.value = GlobalScope.async { scoresDao.getAllBestScores() }.await()
                 isRefreshing.value = false

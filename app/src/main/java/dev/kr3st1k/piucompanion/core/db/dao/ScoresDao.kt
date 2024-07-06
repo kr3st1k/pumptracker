@@ -22,7 +22,7 @@ interface ScoresDao {
     @Delete
     suspend fun deleteLatest(score: LatestScore)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBest(score: BestScore)
 
     @Delete

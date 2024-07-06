@@ -1,8 +1,11 @@
 package dev.kr3st1k.piucompanion.ui.pages.home
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.viewmodels.HistoryViewModel
@@ -26,14 +29,18 @@ fun HistoryPage(
                 inclusive = true
             }
         }
-
-    LazyLatestScore(
-        scores,
-        onRefresh = { viewModel.fetchAndAddToDb() },
-        listState = listState,
-        isRefreshing = isRefreshing
-    )
-    if (scores.isEmpty()) {
-        YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        LazyLatestScore(
+            scores,
+            onRefresh = { viewModel.fetchAndAddToDb() },
+            listState = listState,
+            isRefreshing = isRefreshing
+        )
+        if (scores.isEmpty()) {
+            YouSpinMeRightRoundBabyRightRound("Getting latest scores...")
+        }
     }
 }

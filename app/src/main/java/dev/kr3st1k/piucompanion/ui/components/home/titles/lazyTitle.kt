@@ -85,7 +85,7 @@ fun LazyTitle(
                 if (titles.isNotEmpty())
                     FlowRow(
                         modifier = Modifier
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = 4.dp)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                         verticalArrangement = Arrangement.Center

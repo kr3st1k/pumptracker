@@ -25,6 +25,7 @@ class HistoryViewModel : ViewModel() {
 
     init {
         loadScores()
+        fetchAndAddToDb()
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -32,45 +33,42 @@ class HistoryViewModel : ViewModel() {
         isRefreshing.value = true
         if (InternetManager().hasInternetStatus())
             viewModelScope.launch {
-            val tmp = getLatestScores(50)
+                val tmp = getLatestScores(50)
                 if (tmp == null)
                     needAuth.value = true
-            tmp?.forEach {
                 GlobalScope.async {
-                    scoresDao.insertLatest(
-                        LatestScore(
-                            songName = it.songName,
-                            songBackgroundUri = it.songBackgroundUri,
-                            difficulty = it.difficulty,
-                            score = it.score,
-                            rank = it.rank,
-                            datetime = it.datetime,
-                            hash = Utils.generateHashForScore(
-                                it.score,
-                                it.difficulty,
-                                it.songName,
-                                it.datetime
+                    tmp?.forEach {
+                        scoresDao.insertLatest(
+                            LatestScore(
+                                songName = it.songName,
+                                songBackgroundUri = it.songBackgroundUri,
+                                difficulty = it.difficulty,
+                                score = it.score,
+                                rank = it.rank,
+                                datetime = it.datetime,
+                                hash = Utils.generateHashForScore(
+                                    it.score,
+                                    it.difficulty,
+                                    it.songName,
+                                    it.datetime
+                                )
                             )
                         )
-                    )
+                    }
                 }.await()
+                GlobalScope.async { loadScores() }.await()
+                isRefreshing.value = false
             }
-            scores.value = GlobalScope.async { scoresDao.getAllLatestScores() }.await()
-                scores.value =
-                    scores.value.sortedBy { convertDateToLocalDateTime(it.datetime) }.reversed()
-            isRefreshing.value = false
-        }
         else
             isRefreshing.value = false
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun loadScores() {
-        viewModelScope.launch {
-            scores.value = GlobalScope.async { scoresDao.getAllLatestScores() }.await()
+        GlobalScope.launch {
+            scores.value = scoresDao.getAllLatestScores()
             scores.value =
                 scores.value.sortedBy { convertDateToLocalDateTime(it.datetime) }.reversed()
-            fetchAndAddToDb()
         }
     }
 }

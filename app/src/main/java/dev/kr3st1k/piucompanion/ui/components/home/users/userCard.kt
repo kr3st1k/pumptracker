@@ -29,7 +29,12 @@ import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
-fun UserCard(user: User, small: Boolean = false, hideLocation: Boolean = false)
+fun UserCard(
+    user: User,
+    small: Boolean = false,
+    hideLocation: Boolean = false,
+    showMoney: Boolean = false
+)
 {
     Card(
         modifier = Modifier
@@ -91,7 +96,7 @@ fun UserCard(user: User, small: Boolean = false, hideLocation: Boolean = false)
                             fontSize = MaterialTheme.typography.titleMedium.fontSize,
                             color = Color.White.copy(0.9f) // or any other color you want
                         )
-                    if (!small) {
+                    if (!small || showMoney) {
                         Spacer(modifier = Modifier.width(8.dp)) // Add some space between the two texts
                         Text(
                             text = "$${user.coinValue}",
