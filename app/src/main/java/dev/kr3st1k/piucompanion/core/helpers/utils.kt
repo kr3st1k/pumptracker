@@ -3,6 +3,11 @@ package dev.kr3st1k.piucompanion.core.helpers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.Settings
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
+import dev.kr3st1k.piucompanion.core.db.data.score.BestScore
+import dev.kr3st1k.piucompanion.core.db.repository.ScoresRepository
+import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import org.jsoup.nodes.Element
 import java.net.URL
 import java.security.MessageDigest
@@ -146,6 +151,51 @@ object Utils
         val outputDateTime = inputZonedDateTime.withZoneSameInstant(outputZoneId)
 
         return outputDateTime.format(outputFormatter)
+    }
+
+    suspend fun getNewBestScoresFromWeb(
+        nowPage: MutableIntState,
+        pageCount: MutableIntState,
+        needAuth: MutableState<Boolean>,
+        scoresRepository: ScoresRepository
+    ): List<BestScore> {
+        var isInside = false
+        var tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
+        if (tmp == null)
+            needAuth.value = true
+        pageCount.intValue = tmp!!.lastPageNumber
+        val scoresTmp = mutableListOf<BestScore>()
+        val scoresFromDb = scoresRepository.getBestScores()
+        while (nowPage.intValue <= pageCount.intValue && !isInside) {
+            for (it in tmp!!.res) {
+                val score = BestScore(
+                    songName = it.songName,
+                    difficulty = it.difficulty,
+                    score = it.score,
+                    rank = it.rank,
+                    hash = generateHashForScore(
+                        "0",
+                        it.difficulty,
+                        it.songName
+                    ),
+                    pumbilityScore = getPoints(it.difficulty, it.score)
+                )
+
+                if (scoresFromDb.contains(score)) {
+                    isInside = true
+                    break
+                }
+
+                scoresTmp.add(score)
+            }
+            if (nowPage.intValue < pageCount.intValue) {
+                nowPage.intValue += 1
+                tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
+            } else {
+                break
+            }
+        }
+        return scoresTmp
     }
 
 }

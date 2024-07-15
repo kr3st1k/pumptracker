@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,8 +20,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -50,21 +50,22 @@ fun LazyTitle(
 
     val selectedFilters = remember { mutableStateListOf<PhoenixCategoryItem>() }
 
-    Box(
-        contentAlignment = Alignment.TopCenter
+    PullToRefreshBox(
+        contentAlignment = Alignment.TopCenter,
+        state = state,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 400.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             state = listState,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .pullToRefresh(
-                    state = state,
-                    isRefreshing = isRefreshing,
-                    onRefresh = onRefresh
-                )
         ) {
             item(span = {
                 GridItemSpan(maxLineSpan)
@@ -165,13 +166,6 @@ fun LazyTitle(
                     action = { }
                 )
             }
-        }
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-        ) {
-            if (titles.isNotEmpty())
-                PullToRefreshDefaults.Indicator(state = state, isRefreshing = isRefreshing)
         }
     }
 }

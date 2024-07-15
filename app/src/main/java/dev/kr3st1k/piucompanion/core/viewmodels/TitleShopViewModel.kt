@@ -6,13 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.kr3st1k.piucompanion.core.db.data.title.PhoenixTitle
 import dev.kr3st1k.piucompanion.core.db.data.title.PhoenixTitleList
+import dev.kr3st1k.piucompanion.core.db.repository.ScoresRepository
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
 import dev.kr3st1k.piucompanion.core.network.data.User
 import dev.kr3st1k.piucompanion.core.network.data.title.TitleItem
 import dev.kr3st1k.piucompanion.di.DbManager
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -20,12 +18,12 @@ class TitleShopViewModel : ViewModel() {
     val titles = MutableStateFlow<List<TitleItem>?>(mutableListOf())
     val user: MutableState<User?> = mutableStateOf(null)
     val isRefreshing = MutableStateFlow(false)
+    private val scoresRepository = ScoresRepository(DbManager().getScoreDao())
 
     init {
         loadTitles()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun loadTitles() {
         viewModelScope.launch {
             isRefreshing.value = true
@@ -34,7 +32,7 @@ class TitleShopViewModel : ViewModel() {
                 titles.value = null
             } else {
                 val scores =
-                    GlobalScope.async { DbManager().db.scoresDao().getAllBestScores() }.await()
+                    scoresRepository.getBestScores()
                 data.titles.forEach { title ->
                     val titleInfo = PhoenixTitleList.titles.find { it.name == title.name }
                     if (titleInfo == null)

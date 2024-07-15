@@ -20,7 +20,7 @@ import dev.kr3st1k.piucompanion.core.viewmodels.PumbilityViewModel
 import dev.kr3st1k.piucompanion.di.BgManager
 import dev.kr3st1k.piucompanion.di.InternetManager
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyLatestScore
+import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyScores
 import dev.kr3st1k.piucompanion.ui.components.home.users.UserCard
 import dev.kr3st1k.piucompanion.ui.pages.Screen
 
@@ -43,9 +43,9 @@ fun PumbilityScreen(
             }
         }
 
-    LazyLatestScore(
+    LazyScores(
         scores,
-        onRefresh = { viewModel.loadScores() },
+        onRefresh = { viewModel.fetchAndAddToDb() },
         listState = listState,
         item = {
             Column(

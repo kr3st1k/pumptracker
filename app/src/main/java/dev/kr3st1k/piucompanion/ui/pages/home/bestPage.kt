@@ -16,7 +16,7 @@ import dev.kr3st1k.piucompanion.di.BgManager
 import dev.kr3st1k.piucompanion.di.InternetManager
 import dev.kr3st1k.piucompanion.ui.components.DropdownMenuBestScores
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyBestScore
+import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyScores
 import dev.kr3st1k.piucompanion.ui.pages.Screen
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -39,9 +39,9 @@ fun BestUserPage(
             }
         }
 
-    LazyBestScore(
+    LazyScores(
         scores,
-        onRefresh = { viewModel.loadScores() },
+        onRefresh = { viewModel.fetchAndAddToDb() },
         dropDownMenu = {
             DropdownMenuBestScores(
                 viewModel.options,

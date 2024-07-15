@@ -16,16 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import dev.kr3st1k.piucompanion.core.db.repository.ScoresRepository
 import dev.kr3st1k.piucompanion.di.DbManager
 import dev.kr3st1k.piucompanion.di.LoginManager
 import dev.kr3st1k.piucompanion.ui.components.AlertDialogWithTwoButton
 import dev.kr3st1k.piucompanion.ui.pages.Screen
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun SettingsPage(
     navController: NavController,
@@ -35,6 +32,7 @@ fun SettingsPage(
     }
 
     val scope = rememberCoroutineScope()
+    val scoresRepository = ScoresRepository(DbManager().getScoreDao())
 
     AlertDialogWithTwoButton(
         showDialog = showLogoutDialogue.value,
@@ -46,10 +44,7 @@ fun SettingsPage(
         onConfirm = {
             scope.launch {
                 LoginManager().removeLoginData()
-                GlobalScope.async {
-                    DbManager().getScoreDao().deleteAllBest()
-                    DbManager().getScoreDao().deleteAllLatest()
-                }.await()
+                scoresRepository.deleteScores()
                 showLogoutDialogue.value = false
                 navController.navigate(Screen.LoginPage.route) {
                     popUpTo(navController.graph.id)

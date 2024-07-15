@@ -10,7 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.kr3st1k.piucompanion.core.viewmodels.HistoryViewModel
 import dev.kr3st1k.piucompanion.ui.components.YouSpinMeRightRoundBabyRightRound
-import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyLatestScore
+import dev.kr3st1k.piucompanion.ui.components.home.scores.LazyScores
 import dev.kr3st1k.piucompanion.ui.pages.Screen
 
 @Composable
@@ -33,7 +33,7 @@ fun HistoryPage(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        LazyLatestScore(
+        LazyScores(
             scores,
             onRefresh = { viewModel.fetchAndAddToDb() },
             listState = listState,
