@@ -18,7 +18,7 @@ object ManagerModules {
             Room.databaseBuilder(
                 androidContext(),
                 AppDatabase::class.java, "db"
-            ).build()
+            ).fallbackToDestructiveMigration().build()
         }
     }
 

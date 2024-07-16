@@ -2,11 +2,11 @@ package dev.kr3st1k.piucompanion.ui.components.home.news
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import dev.kr3st1k.piucompanion.core.network.data.news.NewsBanner
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
     val pagerState = rememberPagerState(
@@ -38,12 +37,10 @@ fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
     }
     val context = LocalContext.current
     HorizontalPager(
+        snapPosition = SnapPosition.Center,
         modifier = Modifier,
         state = pagerState,
-        pageSpacing = 16.dp,
-        userScrollEnabled = true,
-        reverseLayout = false,
-        contentPadding = PaddingValues(horizontal = 32.dp),
+//        contentPadding = PaddingValues(horizontal = 16.dp),
         pageSize = PageSize.Fill,
         key = null,
         pageNestedScrollConnection = PagerDefaults.pageNestedScrollConnection(
@@ -51,16 +48,14 @@ fun NewsSlider(newsBanners: MutableList<NewsBanner>) {
         ),
         pageContent = { page ->
             Box(
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
-            )
-            {
+            ) {
                 Card(
                     colors = CardDefaults.cardColors(Color.Transparent),
                     shape = RoundedCornerShape(10.dp),
                     elevation = CardDefaults.cardElevation(0.dp),
-                    modifier = Modifier.width(400.dp),
+                    modifier = Modifier.width(420.dp),
                     onClick = {
                         val customTabsIntent = CustomTabsIntent.Builder().build()
                         customTabsIntent.launchUrl(context, Uri.parse(newsBanners[page].uri))

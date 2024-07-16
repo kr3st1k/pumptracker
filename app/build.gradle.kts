@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.kr3st1k.pumptracker"
-        minSdk = 31
+        minSdk = 28
         versionCode = 100
         versionName = "0.5.1"
 

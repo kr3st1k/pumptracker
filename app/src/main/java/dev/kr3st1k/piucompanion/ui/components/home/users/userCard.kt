@@ -39,7 +39,6 @@ fun UserCard(
     Card(
         modifier = Modifier
             .width(750.dp)
-            .clip(RoundedCornerShape(8.dp))
     ) {
         Box(
             contentAlignment = Alignment.Center
@@ -91,7 +90,7 @@ fun UserCard(
                         Text(
                             text = "${
                                 NumberFormat.getNumberInstance(Locale.US)
-                                    .format(user.pumbility!!.toInt())
+                                    .format(user.pumbility!!.replace(",", "").toInt())
                             }pp",
                             fontSize = MaterialTheme.typography.titleMedium.fontSize,
                             color = Color.White.copy(0.9f) // or any other color you want

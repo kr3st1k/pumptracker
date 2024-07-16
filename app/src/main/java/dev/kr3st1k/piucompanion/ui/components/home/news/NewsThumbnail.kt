@@ -20,25 +20,26 @@ import androidx.compose.ui.unit.dp
 import dev.kr3st1k.piucompanion.core.network.data.news.News
 
 @Composable
-fun NewsThumbnail(news: News)
-{
+fun NewsThumbnail(news: News) {
     val context = LocalContext.current
     Card(modifier = Modifier
         .fillMaxWidth()
-        .padding(start = 30.dp, end = 30.dp, top = 14.dp)
+        .padding(top = 14.dp)
+        .padding(horizontal = 32.dp)
         .clickable {
             val customTabsIntent = CustomTabsIntent
                 .Builder()
                 .build()
             customTabsIntent.launchUrl(context, Uri.parse(news.link))
         }
-        ) {
+    ) {
         Box(
             modifier = Modifier.padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Column (
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -49,22 +50,5 @@ fun NewsThumbnail(news: News)
                 )
             }
         }
-
-
-//            Text(text = news.name,
-//                fontSize = 20.sp,
-//                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-//                textAlign = TextAlign.Center)
-//            Box(
-//                modifier = Modifier
-//                    .padding(16.dp),
-//                contentAlignment = Alignment.BottomCenter
-//            ) {
-//                Text(text = news.type, fontSize = 12.sp, textAlign = TextAlign.Center)
-//            }
-
-
     }
-
-
 }

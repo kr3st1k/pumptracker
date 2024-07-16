@@ -3,6 +3,7 @@ package dev.kr3st1k.piucompanion.ui.components.home.avatars
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -13,8 +14,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,58 +63,60 @@ fun LazyAvatar(
     }
 
     val scope = rememberCoroutineScope()
-
     val state = rememberPullToRefreshState()
 
-    Box(
-        contentAlignment = Alignment.TopCenter
+    if (isBought) {
+        DialogWithImage(
+            onDismissRequest = { isBought = !isBought },
+            onConfirmation = {
+                scope.launch {
+                    onSetAvatar(avatarValue)
+                }.invokeOnCompletion {
+                    isBought = !isBought
+                }
+            },
+            uri = avatarImageUri,
+            imageDescription = "Avatar is ready!\nEquip an avatar?"
+        )
+    }
+    if (isBuying) {
+        DialogWithImage(
+            onDismissRequest = { isBuying = !isBuying },
+            onConfirmation = {
+                scope.launch {
+                    onBuyAvatar(avatarValue)
+                }.invokeOnCompletion {
+                    isBuying = false
+                    isBought = true
+                }
+            },
+            uri = avatarImageUri,
+            imageDescription = "Will you buy this avatar?\nPrice of Avatar: $$avatarPrice\nYour balance will be: $${
+                userMoney.replace(
+                    ",",
+                    ""
+                ).toInt() - avatarPrice.toInt()
+            }"
+        )
+    }
+
+    PullToRefreshBox(
+        contentAlignment = Alignment.TopCenter,
+        state = state,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        if (isBought) {
-            DialogWithImage(
-                onDismissRequest = { isBought = !isBought },
-                onConfirmation = {
-                    scope.launch {
-                        onSetAvatar(avatarValue)
-                    }.invokeOnCompletion {
-                        isBought = !isBought
-                    }
-                },
-                uri = avatarImageUri,
-                imageDescription = "Avatar is ready!\nEquip an avatar?"
-            )
-        }
-        if (isBuying) {
-            DialogWithImage(
-                onDismissRequest = { isBuying = !isBuying },
-                onConfirmation = {
-                    scope.launch {
-                        onBuyAvatar(avatarValue)
-                    }.invokeOnCompletion {
-                        isBuying = false
-                        isBought = true
-                    }
-                },
-                uri = avatarImageUri,
-                imageDescription = "Will you buy this avatar?\nPrice of Avatar: $$avatarPrice\nYour balance will be: $${
-                    userMoney.replace(
-                        ",",
-                        ""
-                    ).toInt() - avatarPrice.toInt()
-                }"
-            )
-        }
+
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 120.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             state = listState,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .pullToRefresh(
-                    state = state,
-                    isRefreshing = isRefreshing,
-                    onRefresh = onRefresh
-                )
         ) {
             item(span = {
                 GridItemSpan(maxLineSpan)
@@ -163,15 +165,6 @@ fun LazyAvatar(
                     }
                 )
             }
-        }
-
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-        ) {
-            if (avatars.isNotEmpty())
-                PullToRefreshDefaults.Indicator(state = state, isRefreshing = isRefreshing)
         }
     }
 }

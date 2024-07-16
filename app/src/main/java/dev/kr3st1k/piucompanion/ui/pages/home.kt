@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -145,8 +144,8 @@ fun HomeScreen(showNavigationRail: Boolean) {
                             }?.iconText ?: homeDestinations.find { t ->
                                 t.route == (currentRoute ?: "")
                             }?.iconText ?: "",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         )
                     },
                     expandedHeight = if (showNavigationRail) 42.dp else 64.dp,
@@ -186,7 +185,6 @@ fun HomeScreen(showNavigationRail: Boolean) {
                                     saveState = true
                                 }
                                 launchSingleTop = true
-                                restoreState = true
                             }
                         })
                 }
@@ -237,7 +235,6 @@ fun HomeScreen(showNavigationRail: Boolean) {
                                             saveState = true
                                         }
                                         launchSingleTop = true
-                                        restoreState = true
                                     }
                                 },
                                 icon = {

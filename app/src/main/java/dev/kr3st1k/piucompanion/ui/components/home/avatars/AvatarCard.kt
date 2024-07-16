@@ -35,12 +35,11 @@ fun AvatarCard(avatar: AvatarItem, action: () -> Unit) {
         modifier = Modifier
             .padding(bottom = 8.dp)
             .width(100.dp)
-            .clip(RoundedCornerShape(8.dp))
             .heightIn(min = 120.dp)
+            .clip(RoundedCornerShape(8.dp))
             .clickable {
                 action()
-            }
-            .clip(RoundedCornerShape(8.dp)),
+            },
         border = if (avatar.isSelected) BorderStroke(
             2.dp,
             MaterialTheme.colorScheme.primary
@@ -52,8 +51,7 @@ fun AvatarCard(avatar: AvatarItem, action: () -> Unit) {
         Column(
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 8.dp)
-                .background(color = Color(0xFF222933))
-                .clip(RoundedCornerShape(8.dp)),
+                .background(color = Color(0xFF222933)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
@@ -62,8 +60,7 @@ fun AvatarCard(avatar: AvatarItem, action: () -> Unit) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(100.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp)),
+                    .fillMaxWidth(),
             )
             Text(
                 modifier = Modifier.basicMarquee(),

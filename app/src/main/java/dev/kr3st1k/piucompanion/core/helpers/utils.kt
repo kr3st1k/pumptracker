@@ -161,9 +161,11 @@ object Utils
     ): List<BestScore> {
         var isInside = false
         var tmp = NetworkRepositoryImpl.getBestUserScores(page = nowPage.intValue)
-        if (tmp == null)
+        if (tmp == null) {
             needAuth.value = true
-        pageCount.intValue = tmp!!.lastPageNumber
+            return mutableListOf()
+        }
+        pageCount.intValue = tmp.lastPageNumber
         val scoresTmp = mutableListOf<BestScore>()
         val scoresFromDb = scoresRepository.getBestScores()
         while (nowPage.intValue <= pageCount.intValue && !isInside) {
