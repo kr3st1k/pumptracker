@@ -1,11 +1,13 @@
 package dev.kr3st1k.piucompanion
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +17,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import dev.kr3st1k.piucompanion.core.db.AppDatabase
 import dev.kr3st1k.piucompanion.core.helpers.DownloadApk
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
+import dev.kr3st1k.piucompanion.di.LoginManager
 import dev.kr3st1k.piucompanion.ui.pages.HomeScreen
 import dev.kr3st1k.piucompanion.ui.theme.PIUCompanionTheme
 import kotlinx.coroutines.launch
@@ -51,15 +55,38 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
+        val loginManager = LoginManager()
+        val sharedPreferences = loginManager.sharedPreferences
+
         userAgent = webView.settings.userAgentString
-//        db = AppDatabase.getInstance(this)
 
         val packageInfo = baseContext.packageManager.getPackageInfo("com.kr3st1k.pumptracker", 0)
         version = "${packageInfo.versionName} (${packageInfo.longVersionCode})"
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            PIUCompanionTheme {
+            var isDynamicColors by remember { mutableStateOf(loginManager.getIsDynamicColor()) }
+            var isDarkTheme by remember { mutableStateOf(loginManager.getIsDarkTheme()) }
+            var isSystemDefault by remember { mutableStateOf(loginManager.getIsSystemDefault()) }
+            DisposableEffect(Unit) {
+                val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                    if (key == "dynamic_color")
+                        isDynamicColors = loginManager.getIsDynamicColor()
+                    if (key == "dark_theme")
+                        isDarkTheme = loginManager.getIsDarkTheme()
+                    if (key == "system_default")
+                        isSystemDefault = loginManager.getIsSystemDefault()
+                }
+                sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+
+                onDispose {
+                    sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+                }
+            }
+            PIUCompanionTheme(
+                darkTheme = if (isSystemDefault) isSystemInDarkTheme() else isDarkTheme,
+                dynamicColor = isDynamicColors
+            ) {
                 var mustUpdate by remember { mutableStateOf(false) }
                 var uri by remember { mutableStateOf("") }
                 val windowClass = calculateWindowSizeClass(activity = this)

@@ -6,7 +6,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class LoginManager : KoinComponent {
-    private val sharedPreferences: SharedPreferences by inject()
+    val sharedPreferences: SharedPreferences by inject()
 
     fun hasLoginData(): Boolean {
         return sharedPreferences.contains("login") && sharedPreferences.contains("password")
@@ -21,6 +21,31 @@ class LoginManager : KoinComponent {
     fun saveLoginData(login: String, password: String) {
         sharedPreferences.edit().putString("login", login).apply()
         sharedPreferences.edit().putString("password", password).apply()
+    }
+
+    fun getIsDynamicColor(): Boolean {
+        return sharedPreferences.getBoolean("dynamic_color", true)
+    }
+
+    fun getIsSystemDefault(): Boolean {
+        return sharedPreferences.getBoolean("system_default", true)
+    }
+
+    fun getIsDarkTheme(): Boolean {
+        return sharedPreferences.getBoolean("dark_theme", false)
+    }
+
+    fun saveIsDynamicColor(value: Boolean) {
+        sharedPreferences.edit().putBoolean("dynamic_color", value).apply()
+    }
+
+    fun saveIsSystemDefault(value: Boolean) {
+        sharedPreferences.edit().putBoolean("system_default", value).apply()
+    }
+
+    fun saveIsDarkTheme(value: Boolean) {
+        sharedPreferences.edit().putBoolean("system_default", false).apply()
+        sharedPreferences.edit().putBoolean("dark_theme", value).apply()
     }
 
     fun removeLoginData() {
