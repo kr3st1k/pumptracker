@@ -1,8 +1,8 @@
 package dev.kr3st1k.piucompanion.core.network.parsers
 
+import com.fleeksoft.ksoup.nodes.Document
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.network.data.news.News
-import org.jsoup.nodes.Document
 
 object NewsListParser : Parser<MutableList<News>>() {
     override fun parse(document: Document): MutableList<News> {

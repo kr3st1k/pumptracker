@@ -5,10 +5,10 @@ import android.content.Context
 import android.provider.Settings
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import com.fleeksoft.ksoup.nodes.Element
 import dev.kr3st1k.piucompanion.core.db.data.score.BestScore
 import dev.kr3st1k.piucompanion.core.db.repository.ScoresRepository
 import dev.kr3st1k.piucompanion.core.network.NetworkRepositoryImpl
-import org.jsoup.nodes.Element
 import java.net.URL
 import java.security.MessageDigest
 import java.time.LocalDateTime

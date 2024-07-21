@@ -1,6 +1,7 @@
 package dev.kr3st1k.piucompanion.ui.pages.home
 
 import android.annotation.SuppressLint
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,9 +44,11 @@ fun SettingsPage(
 
     val scope = rememberCoroutineScope()
     val scoresRepository = ScoresRepository(DbManager().getScoreDao())
-    var isDarkTheme by remember { mutableStateOf(false) }
+
+    var isDarkTheme by remember { mutableStateOf(LoginManager().getIsDarkTheme()) }
     var isDynamicColor by remember { mutableStateOf(LoginManager().getIsDynamicColor()) }
     var isSystemDefault by remember { mutableStateOf(LoginManager().getIsSystemDefault()) }
+
     AlertDialogWithTwoButton(
         showDialog = showLogoutDialogue.value,
         title = "Exit from account?",
@@ -75,37 +78,39 @@ fun SettingsPage(
         item {
             ListItem(
                 headlineContent = {
-                    Text(text = "Use Dynamic Color")
-                },
-                trailingContent = {
-                    Switch(
-                        checked = isDynamicColor,
-                        onCheckedChange = null
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        LoginManager().saveIsDynamicColor(!isDynamicColor)
-                        isDynamicColor = !isDynamicColor
-                    }
-            )
-        }
-        item {
-            ListItem(
-                headlineContent = {
                     Text(
                         text = "Theme Preferences",
                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                     )
                 }
             )
-            Column(
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
+            Column {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                                text = "Use Dynamic Color"
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                                checked = isDynamicColor,
+                                onCheckedChange = null
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                LoginManager().saveIsDynamicColor(!isDynamicColor)
+                                isDynamicColor = !isDynamicColor
+                            }
+                    )
                 ListItem(
                     leadingContent = {
                         RadioButton(
+                            modifier = Modifier.padding(horizontal = 8.dp),
                             selected = isSystemDefault,
                             onClick = null
                         )
@@ -123,6 +128,7 @@ fun SettingsPage(
                 ListItem(
                     leadingContent = {
                         RadioButton(
+                            modifier = Modifier.padding(horizontal = 8.dp),
                             selected = !isSystemDefault && !isDarkTheme,
                             onClick = null
                         )
@@ -141,6 +147,7 @@ fun SettingsPage(
                 ListItem(
                     leadingContent = {
                         RadioButton(
+                            modifier = Modifier.padding(horizontal = 8.dp),
                             selected = !isSystemDefault && isDarkTheme,
                             onClick = null
                         )

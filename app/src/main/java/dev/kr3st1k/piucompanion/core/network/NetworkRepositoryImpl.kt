@@ -1,5 +1,7 @@
 package dev.kr3st1k.piucompanion.core.network
 
+import com.fleeksoft.ksoup.Ksoup
+import com.fleeksoft.ksoup.nodes.Document
 import dev.kr3st1k.piucompanion.core.helpers.Utils.checkIfLoginSuccess
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
@@ -32,8 +34,6 @@ import io.ktor.http.parameters
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 
 object NetworkRepositoryImpl : NetworkRepository {
     private const val BASEURL = "am-pass.net"
@@ -69,7 +69,7 @@ object NetworkRepositoryImpl : NetworkRepository {
             return getDocument(host, path, params, true)
         }
 
-        return Jsoup.parse(requestText)
+        return Ksoup.parse(requestText)
     }
 
     override suspend fun formPost(

@@ -1,11 +1,11 @@
 package dev.kr3st1k.piucompanion.core.network.parsers
 
+import com.fleeksoft.ksoup.nodes.Document
+import com.fleeksoft.ksoup.nodes.Element
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import dev.kr3st1k.piucompanion.core.network.data.score.BestUserScore
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import java.util.Locale
 
 object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
@@ -17,10 +17,15 @@ object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
         val typeDiffImgUri = getBackgroundImg(
             element.select("div.stepBall_in.flex.vc.col.hc.wrap.bgfix.cont").first()!!, false
         )
-        val typeDiff = Utils.parseTypeDifficultyFromUriBestScore(typeDiffImgUri)!!
+        var typeDiff = Utils.parseTypeDifficultyFromUriBestScore(typeDiffImgUri)!!
+        typeDiff = when (typeDiff) {
+            "c" -> "CO-OP x"
+            "u" -> "UCS"
+            else -> typeDiff.uppercase(Locale.ENGLISH)
+        }
 
         val diff = diffElements.select("img").map { Utils.parseDifficultyFromUri(it.attr("src")) }
-            .joinToString("").let { typeDiff.uppercase(Locale.ENGLISH) + it }
+            .joinToString("").let { typeDiff + it }
 
         val scoreInfoElement = element.select("ul.list.flex.vc.hc.wrap")
         val score = scoreInfoElement.select("span.num").text()

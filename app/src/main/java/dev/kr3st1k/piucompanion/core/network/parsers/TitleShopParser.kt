@@ -1,9 +1,9 @@
 package dev.kr3st1k.piucompanion.core.network.parsers
 
+import com.fleeksoft.ksoup.nodes.Document
+import com.fleeksoft.ksoup.nodes.Element
 import dev.kr3st1k.piucompanion.core.network.data.title.TitleItem
 import dev.kr3st1k.piucompanion.core.network.data.title.TitleShop
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 
 object TitleShopParser : Parser<TitleShop?>() {
 

@@ -46,8 +46,8 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @SuppressLint("CoroutineCreationDuringComposition")
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -56,7 +56,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val loginManager = LoginManager()
-        val sharedPreferences = loginManager.sharedPreferences
 
         userAgent = webView.settings.userAgentString
 
@@ -77,10 +76,12 @@ class MainActivity : ComponentActivity() {
                     if (key == "system_default")
                         isSystemDefault = loginManager.getIsSystemDefault()
                 }
-                sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+                loginManager.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
 
                 onDispose {
-                    sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+                    loginManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(
+                        listener
+                    )
                 }
             }
             PIUCompanionTheme(

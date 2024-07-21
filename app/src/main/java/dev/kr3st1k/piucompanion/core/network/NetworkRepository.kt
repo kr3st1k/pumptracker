@@ -1,5 +1,6 @@
 package dev.kr3st1k.piucompanion.core.network
 
+import com.fleeksoft.ksoup.nodes.Document
 import dev.kr3st1k.piucompanion.core.network.data.BgInfo
 import dev.kr3st1k.piucompanion.core.network.data.LoadableList
 import dev.kr3st1k.piucompanion.core.network.data.ReleaseResponse
@@ -12,7 +13,6 @@ import dev.kr3st1k.piucompanion.core.network.data.score.LatestScore
 import dev.kr3st1k.piucompanion.core.network.data.score.Pumbility
 import dev.kr3st1k.piucompanion.core.network.data.title.TitleShop
 import io.ktor.http.Parameters
-import org.jsoup.nodes.Document
 
 interface NetworkRepository {
     suspend fun getDocument(

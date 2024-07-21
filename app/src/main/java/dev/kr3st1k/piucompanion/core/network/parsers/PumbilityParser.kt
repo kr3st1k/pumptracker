@@ -1,12 +1,12 @@
 package dev.kr3st1k.piucompanion.core.network.parsers
 
+import com.fleeksoft.ksoup.nodes.Document
+import com.fleeksoft.ksoup.nodes.Element
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
 import dev.kr3st1k.piucompanion.core.helpers.Utils.parseTypeDifficultyFromUri
 import dev.kr3st1k.piucompanion.core.network.data.score.Pumbility
 import dev.kr3st1k.piucompanion.core.network.data.score.PumbilityScore
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import java.util.Locale
 
 object PumbilityParser : Parser<Pumbility>() {
@@ -24,7 +24,13 @@ object PumbilityParser : Parser<Pumbility>() {
 
         val typeDiffImgUri = element.select("div.tw").select("img").attr("src")
 
-        val typeDiff = parseTypeDifficultyFromUri(typeDiffImgUri)!!
+        var typeDiff = parseTypeDifficultyFromUri(typeDiffImgUri)!!
+
+        typeDiff = when (typeDiff) {
+            "c" -> "CO-OP x"
+            "u" -> "UCS"
+            else -> typeDiff.uppercase(Locale.ENGLISH)
+        }
 
         val bg = getBackgroundImg(element.select("div.re.bgfix").first()!!, false)
 
@@ -36,7 +42,7 @@ object PumbilityParser : Parser<Pumbility>() {
             diff += Utils.parseDifficultyFromUri(i.select("img").attr("src"))
         }
 
-        diff = typeDiff.uppercase(Locale.ENGLISH) + diff
+        diff = typeDiff + diff
 
 
         val rankImg = element.select("div.grade_wrap").first()!!.select("img").attr("src")

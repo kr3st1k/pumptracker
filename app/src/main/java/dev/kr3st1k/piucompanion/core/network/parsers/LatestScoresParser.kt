@@ -1,11 +1,11 @@
 package dev.kr3st1k.piucompanion.core.network.parsers
 
+import com.fleeksoft.ksoup.nodes.Document
+import com.fleeksoft.ksoup.nodes.Element
 import dev.kr3st1k.piucompanion.core.helpers.Utils
 import dev.kr3st1k.piucompanion.core.helpers.Utils.getBackgroundImg
 import dev.kr3st1k.piucompanion.core.helpers.Utils.parseTypeDifficultyFromUri
 import dev.kr3st1k.piucompanion.core.network.data.score.LatestScore
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import java.util.Locale
 
 object LatestScoresParser : Parser<MutableList<LatestScore>>() {
@@ -14,7 +14,13 @@ object LatestScoresParser : Parser<MutableList<LatestScore>>() {
 
         val typeDiffImgUri = element.select("div.tw").select("img").attr("src")
 
-        val typeDiff = parseTypeDifficultyFromUri(typeDiffImgUri)!!
+        var typeDiff = parseTypeDifficultyFromUri(typeDiffImgUri)!!
+
+        typeDiff = when (typeDiff) {
+            "c" -> "CO-OP x"
+            "u" -> "UCS"
+            else -> typeDiff.uppercase(Locale.ENGLISH)
+        }
 
         val bg = getBackgroundImg(element.select("div.in.bgfix").first()!!, false)
 
@@ -26,7 +32,7 @@ object LatestScoresParser : Parser<MutableList<LatestScore>>() {
             diff += Utils.parseDifficultyFromUri(i.select("img").attr("src"))
         }
 
-        diff = typeDiff.uppercase(Locale.ENGLISH) + diff
+        diff = typeDiff + diff
 
         val scoreRankElement = element.select("div.li_in.ac")
 
