@@ -4,8 +4,11 @@
 
 ---
 
-* PoC of Pump it Up Info-Application which takes info from [piugame.com](https://piugame.com) made
-  in Kotlin/Compose
+* PoC of Pump it Up Info-Application which takes info from [piugame.com](https://piugame.com)
+
+![img.png](img.png)
+
+---
 
 # What does it have already?
 
