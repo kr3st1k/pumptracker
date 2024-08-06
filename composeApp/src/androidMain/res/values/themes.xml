@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NightAdjusted.Theme.PIUCompanion" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.PIUCompanion" parent="NightAdjusted.Theme.PIUCompanion" />
+
+<!--    parent="NightAdjusted.Theme.Splash"-->
+    <style name="Theme.PIUCompanion.Splash">
+        <item name="postSplashScreenTheme">@style/Theme.PIUCompanion</item>
+    </style>
+
+<!--    <style name="NightAdjusted.Theme.Splash" parent="Theme.PIUCompanion.Splash">-->
+<!--        <item name="android:windowLightStatusBar">true</item>-->
+<!--    </style>-->
+</resources>

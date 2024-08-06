@@ -1,19 +1,37 @@
+rootProject.name = "PumpTracker"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
-        google()
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven { url = uri("https://jitpack.io") }
+        maven("https://jitpack.io")
+        maven("https://packages.jetbrains.team/maven/p/kpm/public/")
     }
 }
 
-rootProject.name = "PIU Companion"
-include(":app")
- 
+dependencyResolutionManagement {
+    repositories {
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
+        mavenCentral()
+        maven("https://jitpack.io")
+        maven("https://packages.jetbrains.team/maven/p/kpm/public/")
+        maven("https://www.jetbrains.com/intellij-repository/releases")
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    }
+}
+
+include(":composeApp")
