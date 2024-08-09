@@ -84,7 +84,7 @@ actual fun decryptAES(data: String): String {
 }
 
 actual fun openSiteInBrowser(site: String) {
-    if (Desktop.isDesktopSupported()) {
+    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
         Desktop.getDesktop().browse(URI(site))
     }
 }

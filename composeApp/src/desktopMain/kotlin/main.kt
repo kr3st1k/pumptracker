@@ -66,7 +66,10 @@ fun main() {
     else
         "trollface"
 
-    sn = sn?.substring(0, if (sn!!.length >= 8) ((sn!!.length / 8) * 8) else sn!!.length)
+    sn = sn?.substring(0, if (sn!!.length >= 16) 16 else sn!!.length)
+
+    while (sn?.length!! < 16)
+        sn += "0"
 
     val isUpdateRequired =  mutableStateOf(false)
     val updateLink = mutableStateOf("")

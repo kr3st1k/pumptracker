@@ -144,7 +144,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg,
-                TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage,
+                TargetFormat.Deb, TargetFormat.Rpm,
                           TargetFormat.Exe, TargetFormat.Msi, TargetFormat.Pkg)
             packageName = "PumpTracker"
             packageVersion = "1.1.0"

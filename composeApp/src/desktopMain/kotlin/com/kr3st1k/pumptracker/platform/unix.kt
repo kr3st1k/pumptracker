@@ -9,10 +9,7 @@ import java.io.OutputStream
 
 fun getSNNix(): String? {
     if (sn == null) {
-        readDmidecode();
-    }
-    if (sn == null) {
-        readLshal();
+        readUname();
     }
     if (sn == null) {
         print("Huh")
@@ -22,20 +19,15 @@ fun getSNNix(): String? {
     return sn;
 }
 
-fun readLshal() {
+fun readUname() {
     var line: String? = null
-    val marker = "system.hardware.serial ="
     var br: BufferedReader? = null
 
     try {
-        br = read("lshal")
+        br = read("uname --nodename")
         while ((br.readLine().also { line = it }) != null) {
-            if (line!!.indexOf(marker) != -1) {
-                sn = line!!.split(marker.toRegex()).dropLastWhile { it.isEmpty() }
-                    .toTypedArray()[1].replace("\\(string\\)|(\\')".toRegex(), "")
-                    .trim { it <= ' ' }
-                break
-            }
+            sn = line!!.trim()
+            break
         }
     } catch (e: IOException) {
         throw java.lang.RuntimeException(e)
@@ -72,31 +64,4 @@ fun read(command: String): BufferedReader {
     }
 
     return BufferedReader(InputStreamReader(`is`))
-}
-
-fun readDmidecode() {
-    var line: String? = null
-    val marker = "Serial Number:"
-    var br: BufferedReader? = null
-
-    try {
-        br = read("dmidecode -t system")
-        while ((br.readLine().also { line = it }) != null) {
-            if (line!!.indexOf(marker) != -1) {
-                sn = line!!.split(marker.toRegex()).dropLastWhile { it.isEmpty() }
-                    .toTypedArray()[1].trim { it <= ' ' }
-                break
-            }
-        }
-    } catch (e: IOException) {
-        throw RuntimeException(e)
-    } finally {
-        if (br != null) {
-            try {
-                br.close()
-            } catch (e: IOException) {
-                throw RuntimeException(e)
-            }
-        }
-    }
 }
