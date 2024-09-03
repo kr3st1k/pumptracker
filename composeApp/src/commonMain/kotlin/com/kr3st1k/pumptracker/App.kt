@@ -3,11 +3,11 @@ package com.kr3st1k.pumptracker
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import coil3.ImageLoader
@@ -17,11 +17,10 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import com.kr3st1k.pumptracker.di.LoginManager
+import com.kr3st1k.pumptracker.nav.RootComponent
+import com.kr3st1k.pumptracker.nav.RootComponentImpl
 import com.kr3st1k.pumptracker.ui.components.dialogs.UpdateModal
-
-import com.kr3st1k.pumptracker.ui.pages.HomeScreen
 import com.kr3st1k.pumptracker.ui.theme.PIUCompanionTheme
-import kotlinx.coroutines.launch
 import okio.Path
 
 var isDynamicColors = mutableStateOf(LoginManager().getIsDynamicColor())
@@ -33,6 +32,7 @@ var updateFrame = {}
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun App(
+    root: RootComponent,
     seedColor: Color = Color.Unspecified,
     showNavigationRail: Boolean = true,
     isUpdateRequired: MutableState<Boolean> = mutableStateOf(false),
@@ -62,7 +62,8 @@ fun App(
                         changelog = "*Nice\n*Cock\nBro"
                     )
                 } else {
-                    HomeScreen(
+                    RootComponentImpl(
+                        root,
                         showNavigationRail
                     )
                 }

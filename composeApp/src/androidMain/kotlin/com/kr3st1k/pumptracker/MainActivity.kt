@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -23,9 +22,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.arkivanov.decompose.retainedComponent
+import com.kr3st1k.pumptracker.nav.RootComponent
 
 
 class MainActivity : ComponentActivity() {
+    private lateinit var component: RootComponent
     @SuppressLint("HardwareIds")
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +39,12 @@ class MainActivity : ComponentActivity() {
             ctx = LocalContext.current
             DeviceId = Settings.Secure.getString(ctx.contentResolver, Settings.Secure.ANDROID_ID)
 
-            BackHandler(enabled = true) {
-
+//            BackHandler(enabled = true) {
+//
+//            }
+            component = retainedComponent {
+                RootComponent(it)
             }
-
             val windowClass = calculateWindowSizeClass()
             val showNavigationRail =
                 windowClass.widthSizeClass != WindowWidthSizeClass.Compact
@@ -66,6 +70,7 @@ class MainActivity : ComponentActivity() {
             }
             
             App(
+                root = component,
                 isUpdateRequired = isUpdateRequired,
                 seedColor = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
                     dynamicDarkColorScheme(this).primary

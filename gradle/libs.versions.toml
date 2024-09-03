@@ -54,7 +54,7 @@ slf4jNop = "2.0.12"
 roomCommon = "2.7.0-alpha05"
 roomCompiler = "2.7.0-alpha05"
 materialKolor = "1.4.0-rc03"
-decompose = "3.0.0-beta01"
+decompose = "3.1.0"
 roomKtx = "2.6.1"
 ksp = "2.0.0-1.0.23"
 navigationRuntimeKtx = "2.8.0-alpha08"
@@ -102,7 +102,6 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 decompose-base = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
 decompose-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
 
-
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
@@ -145,6 +144,7 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+conveyor = { id = "dev.hydraulic.conveyor", version = "1.5" }
 room = { id = "androidx.room", version.ref = "roomCommon" }
 [bundles]
 decompose = ["decompose-base", "decompose-compose"]

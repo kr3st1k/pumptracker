@@ -6,16 +6,15 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import com.kr3st1k.pumptracker.ui.pages.TopLevelDestination
+import com.kr3st1k.pumptracker.nav.RootComponent
+import com.kr3st1k.pumptracker.nav.TopLevelDestination
 import kotlinx.coroutines.Job
 
 @Composable
 fun HomeBottomBar(
     destinations: List<TopLevelDestination>,
-    currentDestination: NavDestination?,
-    onNavigateToDestination: (route: String) -> Unit,
+    currentDestination: RootComponent.TopLevelConfiguration,
+    onNavigateToDestination: (route: RootComponent.TopLevelConfiguration) -> Unit,
     onListUp: () -> Job
 ) {
 
@@ -25,7 +24,7 @@ fun HomeBottomBar(
     ) {
         destinations.forEach { destination ->
             val selected =
-                currentDestination?.hierarchy?.any { it.route == destination.route } == true
+                currentDestination == destination.route
             NavigationBarItem(
                 selected = selected,
                 onClick = {

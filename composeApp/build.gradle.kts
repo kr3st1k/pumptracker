@@ -22,8 +22,8 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-    
-    jvm("desktop")
+
+    jvm()
     
 //    listOf(
 //        iosX64(),
@@ -37,8 +37,7 @@ kotlin {
 //    }
     
     sourceSets {
-        val desktopMain by getting
-        
+
 //        iosMain.dependencies {
 //            implementation(libs.ktor.client.darwin)
 //        }
@@ -50,6 +49,7 @@ kotlin {
             implementation(libs.android.core.splashscreen)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.decompose.base)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -77,10 +77,11 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.bundles.decompose)
             implementation(libs.sqlite)
             implementation(compose.components.uiToolingPreview)
         }
-        desktopMain.dependencies {
+        jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(compose.desktop.currentOs)
             implementation(compose.desktop.common)
@@ -108,6 +109,10 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 105
         versionName = "0.6"
+
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+        }
     }
     packaging {
         resources {
@@ -145,7 +150,8 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg,
                 TargetFormat.Deb, TargetFormat.Rpm,
-                          TargetFormat.Exe, TargetFormat.Msi, TargetFormat.Pkg)
+                TargetFormat.Exe
+            )
             packageName = "PumpTracker"
             packageVersion = "1.1.0"
             description = "Pump It Up Companion App"
@@ -156,10 +162,10 @@ compose.desktop {
 
             macOS {
                 iconFile.set(pathToIcon.resolve("icon.icns"))
+                dockName = "PumpTracker"
             }
             windows {
                 perUserInstall = true
-                dirChooser = true
                 shortcut = true
                 iconFile.set(pathToIcon.resolve("icon.ico"))
             }
@@ -186,7 +192,7 @@ room {
 dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
-    add("kspDesktop", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
     add("kspAndroid", libs.androidx.room.compiler)
 //    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 //    add("kspIosX64", libs.androidx.room.compiler)
