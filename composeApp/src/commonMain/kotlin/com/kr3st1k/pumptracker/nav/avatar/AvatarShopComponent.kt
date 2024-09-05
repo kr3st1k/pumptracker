@@ -3,6 +3,7 @@ package com.kr3st1k.pumptracker.nav.avatar
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.doOnResume
 import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
 import com.kr3st1k.pumptracker.core.network.data.User
 import com.kr3st1k.pumptracker.core.network.data.avatar.AvatarItem
@@ -23,7 +24,9 @@ class AvatarShopComponent(
     val isRefreshing = MutableStateFlow(false)
 
     init {
-        loadAvatars()
+        lifecycle.doOnResume {
+            loadAvatars()
+        }
     }
 
     fun loadAvatars() {

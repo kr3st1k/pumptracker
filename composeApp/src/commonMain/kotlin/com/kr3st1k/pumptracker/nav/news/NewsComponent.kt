@@ -1,6 +1,7 @@
 package com.kr3st1k.pumptracker.nav.news
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.doOnResume
 import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
 import com.kr3st1k.pumptracker.core.network.data.news.News
 import com.kr3st1k.pumptracker.core.network.data.news.NewsBanner
@@ -19,7 +20,9 @@ class NewsComponent(
     val isRefreshing = MutableStateFlow(false)
 
     init {
-        loadNews()
+        lifecycle.doOnResume {
+            loadNews()
+        }
     }
 
     private fun loadNews() {

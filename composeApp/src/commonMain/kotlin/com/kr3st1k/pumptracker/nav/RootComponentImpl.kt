@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.kr3st1k.pumptracker.getPlatform
 import com.kr3st1k.pumptracker.nav.auth.AuthComponentImpl
@@ -183,7 +185,10 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
                                     listGridState.animateScrollToItem(0)
                                 }
                             } else {
-                                rootComponent.navigateAndReset(it)
+                                rootComponent.navigateTo(it)
+                                coroutineScope.launch {
+                                    listGridState.scrollToItem(0)
+                                }
                             }
                         }
                     )
@@ -229,7 +234,10 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
                                                 listGridState.animateScrollToItem(0)
                                             }
                                         } else {
-                                            rootComponent.navigateAndReset(destination.route)
+                                            rootComponent.navigateTo(destination.route)
+                                            coroutineScope.launch {
+                                                listGridState.scrollToItem(0)
+                                            }
                                         }
                                     },
                                     icon = {
@@ -249,6 +257,7 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
 
 
         Children(
+            animation = stackAnimation(fade()),
             modifier = Modifier
                 .padding(it)
                 .padding(start = if (showNavigationRail && (stack.items.last().configuration in topLevelDestinations.map { it2 -> it2.route } || stack.items.last().configuration in homeDestinations.map { it2 -> it2.route })) 80.dp else 0.dp)

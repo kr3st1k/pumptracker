@@ -34,16 +34,13 @@ class RootComponent(
     )
 
     fun popBack() {
-        stack.pop()
+        stack.bringToFront(childStack.items[childStack.items.lastIndex - 1].configuration)
     }
 
     fun navigateTo(configuration: TopLevelConfiguration) {
-        stack.push(configuration)
+        stack.bringToFront(configuration)
     }
 
-    fun navigateAndReset(configuration: TopLevelConfiguration) {
-        stack.replaceAll(configuration)
-    }
 
     private fun createChild(
         config: TopLevelConfiguration,
