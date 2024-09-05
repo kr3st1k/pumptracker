@@ -1,7 +1,7 @@
 package com.kr3st1k.pumptracker.nav.title
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -14,10 +14,9 @@ import com.kr3st1k.pumptracker.ui.components.home.users.UserCard
 import com.kr3st1k.pumptracker.ui.components.spinners.YouSpinMeRightRoundBabyRightRound
 
 @Composable
-fun TitleShopComponentImpl(viewModel: TitleShopComponent) {
+fun TitleShopComponentImpl(viewModel: TitleShopComponent, listState: LazyGridState) {
     val titles by viewModel.titles.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    val listState = rememberLazyGridState()
     refreshFunction.value = { viewModel.loadTitles() }
 
 

@@ -124,3 +124,5 @@
 ## An annotation used for build tooling, won't be directly accessed.
 
 -keep class coil3.network.ktor.internal.*
+
+-keep class com.arkivanov.decompose.extensions.compose.mainthread.SwingMainThreadChecker

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Dvr
@@ -19,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.kr3st1k.pumptracker.getPlatform
 import com.kr3st1k.pumptracker.nav.auth.AuthComponentImpl
@@ -115,7 +114,8 @@ var isOffline = false
 @Composable
 fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean) {
     val stack by rootComponent.childStack.subscribeAsState()
-    val listState = rememberLazyGridState()
+    val listGridState = rememberLazyGridState()
+    val listListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val currentInstance = stack.items.last()
 
@@ -159,7 +159,7 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
                             indication = null,
                             onClick = {
                                 coroutineScope.launch {
-                                    listState.animateScrollToItem(0)
+                                    listGridState.animateScrollToItem(0)
                                 }
                             }
                         )
@@ -173,14 +173,14 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
                         destinations = topLevelDestinations,
                         onListUp = {
                             coroutineScope.launch {
-                                listState.animateScrollToItem(0)
+                                listGridState.animateScrollToItem(0)
                             }
                         },
                         currentDestination = stack.items.last().configuration,
                         onNavigateToDestination = {
                             if (stack.items.last().configuration == it) {
                                 coroutineScope.launch {
-                                    listState.animateScrollToItem(0)
+                                    listGridState.animateScrollToItem(0)
                                 }
                             } else {
                                 rootComponent.navigateAndReset(it)
@@ -194,91 +194,92 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
         navigateUp =
             if (stack.items.last().configuration in homeDestinations.map { curr -> curr.route }) goBack else null
 
-        if (showNavigationRail && (currentInstance.configuration in topLevelDestinations.map { it2 -> it2.route } || currentInstance.configuration in homeDestinations.map { it2 -> it2.route })) {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.inverseOnSurface)
-                    .offset(x = (-1).dp)
-            ) {
-                NavigationRail(
-                    header = {
-                        if (getPlatform().type == "Mobile")
-                            if (currentInstance.configuration in homeDestinations.map { curr -> curr.route })
-                                IconButton(onClick = {
-                                    rootComponent.popBack()
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = "Back"
-                                    )
-                                }
-                    }
+        if (showNavigationRail)
+            if (currentInstance.configuration in topLevelDestinations.map { it2 -> it2.route } || currentInstance.configuration in homeDestinations.map { it2 -> it2.route }) {
+                Column(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.inverseOnSurface)
+                        .offset(x = (-1).dp)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom)
-                    ) {
-                        topLevelDestinations.forEach { destination ->
-                            val selected = stack.items.last().configuration == destination.route
-                            NavigationRailItem(
-                                selected = selected,
-                                onClick = {
-                                    if (currentInstance.configuration == destination.route) {
-                                        coroutineScope.launch {
-                                            listState.animateScrollToItem(0)
-                                        }
-                                    } else {
-                                        rootComponent.navigateAndReset(destination.route)
+                    NavigationRail(
+                        header = {
+                            if (getPlatform().type == "Mobile")
+                                if (currentInstance.configuration in homeDestinations.map { curr -> curr.route })
+                                    IconButton(onClick = {
+                                        rootComponent.popBack()
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
                                     }
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = if (selected) destination.selectedIcon
-                                        else destination.unselectedIcon,
-                                        contentDescription = null
-                                    )
-                                }
-                            )
+                        }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxHeight(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom)
+                        ) {
+                            topLevelDestinations.forEach { destination ->
+                                val selected = stack.items.last().configuration == destination.route
+                                NavigationRailItem(
+                                    selected = selected,
+                                    onClick = {
+                                        if (currentInstance.configuration == destination.route) {
+                                            coroutineScope.launch {
+                                                listGridState.animateScrollToItem(0)
+                                            }
+                                        } else {
+                                            rootComponent.navigateAndReset(destination.route)
+                                        }
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = if (selected) destination.selectedIcon
+                                            else destination.unselectedIcon,
+                                            contentDescription = null
+                                        )
+                                    }
+                                )
 
+                            }
                         }
                     }
                 }
-            }
         }
-        Row(
+
+
+        Children(
             modifier = Modifier
                 .padding(it)
                 .padding(start = if (showNavigationRail && (stack.items.last().configuration in topLevelDestinations.map { it2 -> it2.route } || stack.items.last().configuration in homeDestinations.map { it2 -> it2.route })) 80.dp else 0.dp)
-                .padding(top = if (getPlatform().type == "Desktop") 8.dp else 0.dp)
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-            ) {
-                Children(
-                    animation = stackAnimation(fade()),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    stack = stack
-                ) { child ->
-                    when (val instance = child.instance) {
-                        is RootComponent.TopLevelChild.HistoryPage -> HistoryComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.AuthLoadingPage -> AuthLoadingComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.AuthPage -> AuthComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.AvatarShopPage -> AvatarShopComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.BestUserPage -> BestUserComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.NewsPage -> NewsComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.PumbilityPage -> PumbilityComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.SettingsPage -> SettingsComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.TitleShopPage -> TitleShopComponentImpl(instance.component)
-                        is RootComponent.TopLevelChild.UserPage -> UserComponentImpl(instance.component)
-                    }
+                .padding(top = if (getPlatform().type == "Desktop") 8.dp else 0.dp),
+            stack = stack
+        ) { child ->
+            when (val instance = child.instance) {
+                is RootComponent.TopLevelChild.HistoryPage -> HistoryComponentImpl(instance.component, listGridState)
+                is RootComponent.TopLevelChild.AuthLoadingPage -> AuthLoadingComponentImpl(instance.component)
+                is RootComponent.TopLevelChild.AuthPage -> AuthComponentImpl(instance.component)
+                is RootComponent.TopLevelChild.AvatarShopPage -> AvatarShopComponentImpl(
+                    instance.component,
+                    listGridState
+                )
 
-                }
+                is RootComponent.TopLevelChild.BestUserPage -> BestUserComponentImpl(instance.component, listGridState)
+                is RootComponent.TopLevelChild.NewsPage -> NewsComponentImpl(instance.component, listListState)
+                is RootComponent.TopLevelChild.PumbilityPage -> PumbilityComponentImpl(
+                    instance.component,
+                    listGridState
+                )
+
+                is RootComponent.TopLevelChild.SettingsPage -> SettingsComponentImpl(instance.component)
+                is RootComponent.TopLevelChild.TitleShopPage -> TitleShopComponentImpl(
+                    instance.component,
+                    listGridState
+                )
+
+                is RootComponent.TopLevelChild.UserPage -> UserComponentImpl(instance.component)
             }
+
         }
 
     }

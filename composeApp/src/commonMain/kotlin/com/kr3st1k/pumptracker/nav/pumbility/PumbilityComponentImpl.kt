@@ -1,7 +1,7 @@
 package com.kr3st1k.pumptracker.nav.pumbility
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,12 +17,11 @@ import com.kr3st1k.pumptracker.ui.components.home.users.UserCard
 import com.kr3st1k.pumptracker.ui.components.spinners.YouSpinMeRightRoundBabyRightRound
 
 @Composable
-fun PumbilityComponentImpl(viewModel: PumbilityComponent) {
+fun PumbilityComponentImpl(viewModel: PumbilityComponent, listState: LazyGridState) {
     BgManager().checkAndSaveNewUpdatedFiles()
 
     val scores by viewModel.scores.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    val listState = rememberLazyGridState()
 
     refreshFunction.value = { viewModel.fetchAndAddToDb() }
 
