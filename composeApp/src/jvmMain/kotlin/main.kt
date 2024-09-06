@@ -110,6 +110,7 @@ fun main() {
         }
         val stack by root.childStack.subscribeAsState()
         IntUiTheme(
+            swingCompatMode = true,
             theme = if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition(),
             styling = if (isDark) ComponentStyling.default()
                 .decoratedWindow(titleBarStyle = TitleBarStyle.dark()) else ComponentStyling.default()

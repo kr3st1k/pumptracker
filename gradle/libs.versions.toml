@@ -9,7 +9,7 @@ browser = "1.8.0"
 coil = "3.0.0-alpha08"
 composeMaterial3Pullrefresh = "1.1.1"
 datastorePreferences = "1.1.1"
-jewelIntUiStandaloneX41 = "0.18.1"
+jewelIntUiStandaloneX41 = "0.22.2"
 jsoup = "1.17.2"
 konnection = "1.4.1"
 sqlite = "2.4.0"
@@ -27,7 +27,7 @@ kotlinxCoroutinesAndroid = "1.8.1"
 kotlinxCoroutinesCore = "1.8.1"
 multiplatformSettingsCoroutines = "1.1.1"
 multiplatformSettingsNoArg = "1.1.1"
-navigationComposeVersion = "2.8.0-alpha08"
+navigationComposeVersion = "2.8.1"
 splashscreen = "1.0.1"
 kotlinxSerializationJsonVersion = "1.6.3"
 ktorClientEncoding = "2.3.12"
@@ -41,7 +41,7 @@ ktorClientContentNegotiationJvm = "2.3.10"
 ktorClientCore = "2.3.12"
 ktorClientJson = "2.3.12"
 ktorClientLogging = "2.3.12"
-compose-plugin = "1.7.0-alpha01"
+compose-plugin = "1.7.0-beta01"
 ktorClientOkhttp = "2.3.12"
 ktorSerializationKotlinxJsonJvm = "2.3.10"
 lifecycleRuntimeKtx = "2.8.4"
@@ -122,7 +122,7 @@ logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettingsCoroutines" }
 multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettingsNoArg" }
-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+navigation-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "navigationComposeVersion" }
 slf4j-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 slf4j-nop-v2012 = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }

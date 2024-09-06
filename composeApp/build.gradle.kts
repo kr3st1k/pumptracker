@@ -190,7 +190,7 @@ room {
 }
 
 dependencies {
-    implementation(libs.androidx.navigation.runtime.ktx)
+//    implementation(libs.androidx.navigation.runtime.ktx)
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
     add("kspJvm", libs.androidx.room.compiler)
     add("kspAndroid", libs.androidx.room.compiler)
