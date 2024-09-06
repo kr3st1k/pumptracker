@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Dvr
@@ -14,7 +12,9 @@ import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +28,7 @@ import com.kr3st1k.pumptracker.nav.auth.AuthComponentImpl
 import com.kr3st1k.pumptracker.nav.authloading.AuthLoadingComponentImpl
 import com.kr3st1k.pumptracker.nav.avatar.AvatarShopComponentImpl
 import com.kr3st1k.pumptracker.nav.best.BestUserComponentImpl
+import com.kr3st1k.pumptracker.nav.helper.IScrollToUp
 import com.kr3st1k.pumptracker.nav.history.HistoryComponentImpl
 import com.kr3st1k.pumptracker.nav.news.NewsComponentImpl
 import com.kr3st1k.pumptracker.nav.pumbility.PumbilityComponentImpl
@@ -35,7 +36,6 @@ import com.kr3st1k.pumptracker.nav.settings.SettingsComponentImpl
 import com.kr3st1k.pumptracker.nav.title.TitleShopComponentImpl
 import com.kr3st1k.pumptracker.nav.user.UserComponentImpl
 import com.kr3st1k.pumptracker.ui.components.home.HomeBottomBar
-import kotlinx.coroutines.launch
 
 val topLevelDestinations = listOf(
     TopLevelDestination(
@@ -105,27 +105,11 @@ public val homeDestinations = listOf(
     )
 )
 
-var refreshFunction: MutableState<(() -> Unit)?> = mutableStateOf(null)
-
-var currentPage: String? = null
-
-var navigateUp: (() -> Unit)? = null
-var isOffline = false
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean) {
     val stack by rootComponent.childStack.subscribeAsState()
-    val listGridState = rememberLazyGridState()
-    val listListState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
     val currentInstance = stack.items.last()
-
-    currentPage = topLevelDestinations.find { t ->
-        t.route == (currentInstance.configuration ?: "")
-    }?.iconText ?: homeDestinations.find { t ->
-        t.route == (currentInstance.configuration ?: "")
-    }?.iconText
 
     Scaffold(
         topBar = {
@@ -160,9 +144,8 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {
-                                coroutineScope.launch {
-                                    listGridState.animateScrollToItem(0)
-                                }
+                                if (currentInstance.instance.component is IScrollToUp)
+                                    (currentInstance.instance.component as IScrollToUp).scrollUp()
                             }
                         )
                 )
@@ -174,31 +157,18 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
                     HomeBottomBar(
                         destinations = topLevelDestinations,
                         onListUp = {
-                            coroutineScope.launch {
-                                listGridState.animateScrollToItem(0)
-                            }
+                            if (currentInstance.instance.component is IScrollToUp)
+                                (currentInstance.instance.component as IScrollToUp).scrollUp()
                         },
                         currentDestination = stack.items.last().configuration,
                         onNavigateToDestination = {
-                            if (stack.items.last().configuration == it) {
-                                coroutineScope.launch {
-                                    listGridState.animateScrollToItem(0)
-                                }
-                            } else {
+                            if (stack.items.last().configuration != it)
                                 rootComponent.navigateTo(it)
-                                coroutineScope.launch {
-                                    listGridState.scrollToItem(0)
-                                }
-                            }
                         }
                     )
                 }
         }
     ) {
-        val goBack = { rootComponent.popBack() }
-        navigateUp =
-            if (stack.items.last().configuration in homeDestinations.map { curr -> curr.route }) goBack else null
-
         if (showNavigationRail)
             if (currentInstance.configuration in topLevelDestinations.map { it2 -> it2.route } || currentInstance.configuration in homeDestinations.map { it2 -> it2.route }) {
                 Column(
@@ -229,16 +199,11 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
                                 NavigationRailItem(
                                     selected = selected,
                                     onClick = {
-                                        if (currentInstance.configuration == destination.route) {
-                                            coroutineScope.launch {
-                                                listGridState.animateScrollToItem(0)
-                                            }
-                                        } else {
+                                        if (!selected)
                                             rootComponent.navigateTo(destination.route)
-                                            coroutineScope.launch {
-                                                listGridState.scrollToItem(0)
-                                            }
-                                        }
+                                        else if (currentInstance.instance.component is IScrollToUp)
+                                            (currentInstance.instance.component as IScrollToUp).scrollUp()
+
                                     },
                                     icon = {
                                         Icon(
@@ -265,27 +230,15 @@ fun RootComponentImpl(rootComponent: RootComponent, showNavigationRail: Boolean)
             stack = stack
         ) { child ->
             when (val instance = child.instance) {
-                is RootComponent.TopLevelChild.HistoryPage -> HistoryComponentImpl(instance.component, listGridState)
+                is RootComponent.TopLevelChild.HistoryPage -> HistoryComponentImpl(instance.component)
                 is RootComponent.TopLevelChild.AuthLoadingPage -> AuthLoadingComponentImpl(instance.component)
                 is RootComponent.TopLevelChild.AuthPage -> AuthComponentImpl(instance.component)
-                is RootComponent.TopLevelChild.AvatarShopPage -> AvatarShopComponentImpl(
-                    instance.component,
-                    listGridState
-                )
-
-                is RootComponent.TopLevelChild.BestUserPage -> BestUserComponentImpl(instance.component, listGridState)
-                is RootComponent.TopLevelChild.NewsPage -> NewsComponentImpl(instance.component, listListState)
-                is RootComponent.TopLevelChild.PumbilityPage -> PumbilityComponentImpl(
-                    instance.component,
-                    listGridState
-                )
-
+                is RootComponent.TopLevelChild.AvatarShopPage -> AvatarShopComponentImpl(instance.component)
+                is RootComponent.TopLevelChild.BestUserPage -> BestUserComponentImpl(instance.component)
+                is RootComponent.TopLevelChild.NewsPage -> NewsComponentImpl(instance.component)
+                is RootComponent.TopLevelChild.PumbilityPage -> PumbilityComponentImpl(instance.component)
                 is RootComponent.TopLevelChild.SettingsPage -> SettingsComponentImpl(instance.component)
-                is RootComponent.TopLevelChild.TitleShopPage -> TitleShopComponentImpl(
-                    instance.component,
-                    listGridState
-                )
-
+                is RootComponent.TopLevelChild.TitleShopPage -> TitleShopComponentImpl(instance.component)
                 is RootComponent.TopLevelChild.UserPage -> UserComponentImpl(instance.component)
             }
 

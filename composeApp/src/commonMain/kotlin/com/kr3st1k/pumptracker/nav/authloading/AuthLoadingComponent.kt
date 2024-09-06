@@ -6,7 +6,6 @@ import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
 import com.kr3st1k.pumptracker.di.InternetManager
 import com.kr3st1k.pumptracker.di.LoginManager
 import com.kr3st1k.pumptracker.nav.RootComponent
-import com.kr3st1k.pumptracker.nav.isOffline
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +38,6 @@ class AuthLoadingComponent(
                 navigateTo(RootComponent.TopLevelConfiguration.HistoryPage)
             }
         } else {
-            isOffline = true
             navigateTo(RootComponent.TopLevelConfiguration.HistoryPage)
         }
     }

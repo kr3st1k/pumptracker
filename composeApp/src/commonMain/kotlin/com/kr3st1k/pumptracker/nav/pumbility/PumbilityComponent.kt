@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.essenty.lifecycle.doOnResume
 import com.kr3st1k.pumptracker.core.db.data.score.BestScore
 import com.kr3st1k.pumptracker.core.db.repository.ScoresRepository
@@ -14,8 +15,8 @@ import com.kr3st1k.pumptracker.di.DbManager
 import com.kr3st1k.pumptracker.di.InternetManager
 import com.kr3st1k.pumptracker.di.LoginManager
 import com.kr3st1k.pumptracker.nav.RootComponent
-import com.kr3st1k.pumptracker.nav.currentPage
-import com.kr3st1k.pumptracker.nav.navigateUp
+import com.kr3st1k.pumptracker.nav.helper.IScrollToUp
+import com.kr3st1k.pumptracker.nav.helper.IUpdateList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +27,7 @@ class PumbilityComponent(
     val navigateTo: (RootComponent.TopLevelConfiguration) -> Unit,
     val navigateToLogin: () -> Unit,
     componentContext: ComponentContext
-) : ComponentContext by componentContext, KoinComponent {
+) : ComponentContext by componentContext, KoinComponent, IUpdateList, IScrollToUp {
     val viewModelScope = CoroutineScope(Dispatchers.Main.immediate)
 
     val scores = MutableStateFlow<List<BestScore>>(mutableListOf())
@@ -57,8 +58,8 @@ class PumbilityComponent(
                     nowPage, pageCount, needAuth, scoresRepository
                 )
                 if (needAuth.value) {
-                    currentPage = null
-                    navigateUp = null
+
+
                     navigateToLogin()
                     return@launch
                 }
@@ -86,8 +87,8 @@ class PumbilityComponent(
             if (InternetManager().hasInternetStatus()) {
                 val tmp = NetworkRepositoryImpl.getUserInfo()
                 if (tmp == null) {
-                    currentPage = null
-                    navigateUp = null
+
+
                     navigateToLogin()
                     return@launch
                 }
@@ -96,5 +97,15 @@ class PumbilityComponent(
             user.value?.pumbility = pumbility.toString()
             LoginManager().saveUserData(user.value!!)
         }
+    }
+
+    override val isScrollable = MutableValue(false)
+
+    override fun scrollUp() {
+        isScrollable.value = isScrollable.value.not()
+    }
+
+    override fun refreshFun() {
+        fetchAndAddToDb()
     }
 }

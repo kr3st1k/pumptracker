@@ -7,6 +7,7 @@ import com.kr3st1k.pumptracker.nav.auth.AuthComponent
 import com.kr3st1k.pumptracker.nav.authloading.AuthLoadingComponent
 import com.kr3st1k.pumptracker.nav.avatar.AvatarShopComponent
 import com.kr3st1k.pumptracker.nav.best.BestUserComponent
+import com.kr3st1k.pumptracker.nav.helper.IUpdateList
 import com.kr3st1k.pumptracker.nav.history.HistoryComponent
 import com.kr3st1k.pumptracker.nav.news.NewsComponent
 import com.kr3st1k.pumptracker.nav.pumbility.PumbilityComponent
@@ -34,11 +35,17 @@ class RootComponent(
     )
 
     fun popBack() {
-        stack.bringToFront(childStack.items[childStack.items.lastIndex - 1].configuration)
+        stack.pop()
     }
 
     fun navigateTo(configuration: TopLevelConfiguration) {
         stack.bringToFront(configuration)
+    }
+
+
+    fun refreshValues() {
+        if (childStack.active.instance.component is IUpdateList)
+            (childStack.active.instance.component as IUpdateList).refreshFun()
     }
 
 
@@ -176,7 +183,6 @@ class RootComponent(
         @Serializable
         data object AvatarShopPage : TopLevelConfiguration()
 
-        //        data class Screen(val text: String) : Configuration()
         @Serializable
         data object TitleShopPage : TopLevelConfiguration()
     }

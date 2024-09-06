@@ -3,6 +3,7 @@ package com.kr3st1k.pumptracker.nav.history
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.essenty.lifecycle.doOnResume
 import com.kr3st1k.pumptracker.core.db.data.score.LatestScore
 import com.kr3st1k.pumptracker.core.db.repository.ScoresRepository
@@ -12,18 +13,17 @@ import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl.getLatestScore
 import com.kr3st1k.pumptracker.di.DbManager
 import com.kr3st1k.pumptracker.di.InternetManager
 import com.kr3st1k.pumptracker.nav.RootComponent
-import com.kr3st1k.pumptracker.nav.currentPage
-import com.kr3st1k.pumptracker.nav.navigateUp
+import com.kr3st1k.pumptracker.nav.helper.IScrollToUp
+import com.kr3st1k.pumptracker.nav.helper.IUpdateList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
 
 class HistoryComponent(
     val navigateTo: (RootComponent.TopLevelConfiguration) -> Unit,
     val navigateToLogin: () -> Unit,
     componentContext: ComponentContext
-) : ComponentContext by componentContext, KoinComponent {
+) : ComponentContext by componentContext, IScrollToUp, IUpdateList {
     val viewModelScope = CoroutineScope(Dispatchers.Main.immediate)
     val scores = mutableStateListOf<LatestScore>()
     private val scoresRepository: ScoresRepository = ScoresRepository(DbManager().getScoreDao())
@@ -42,8 +42,8 @@ class HistoryComponent(
             viewModelScope.launch {
                 val tmp = getLatestScores(50)
                 if (tmp == null) {
-                    currentPage = null
-                    navigateUp = null
+
+
                     navigateToLogin()
                 }
                 scoresRepository.insertLatestScores(
@@ -80,6 +80,16 @@ class HistoryComponent(
                     .reversed()
             )
         }
+    }
+
+    override val isScrollable = MutableValue(false)
+
+    override fun scrollUp() {
+        isScrollable.value = isScrollable.value.not()
+    }
+
+    override fun refreshFun() {
+        fetchAndAddToDb()
     }
 
 

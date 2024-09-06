@@ -8,14 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.kr3st1k.pumptracker.nav.RootComponent
 import com.kr3st1k.pumptracker.nav.TopLevelDestination
-import kotlinx.coroutines.Job
 
 @Composable
 fun HomeBottomBar(
     destinations: List<TopLevelDestination>,
     currentDestination: RootComponent.TopLevelConfiguration,
     onNavigateToDestination: (route: RootComponent.TopLevelConfiguration) -> Unit,
-    onListUp: () -> Job
+    onListUp: () -> Unit
 ) {
 
     NavigationBar(

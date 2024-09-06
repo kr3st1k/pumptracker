@@ -9,9 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.kr3st1k.pumptracker.nav.currentPage
-import com.kr3st1k.pumptracker.nav.navigateUp
-import com.kr3st1k.pumptracker.nav.refreshFunction
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.kr3st1k.pumptracker.nav.RootComponent
+import com.kr3st1k.pumptracker.nav.helper.IUpdateList
+import com.kr3st1k.pumptracker.nav.homeDestinations
+import com.kr3st1k.pumptracker.nav.topLevelDestinations
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
@@ -25,26 +27,34 @@ import org.jetbrains.jewel.window.styling.TitleBarStyle
 @Composable
 fun DecoratedWindowScope.TitleBarView(
     titleBarStyle: TitleBarStyle,
+    rootComponent: RootComponent,
+    stack: ChildStack<RootComponent.TopLevelConfiguration, RootComponent.TopLevelChild>,
     isDark: Boolean
 ) {
+    val title = topLevelDestinations.find { t ->
+        t.route == stack.active.configuration
+    }?.iconText ?: homeDestinations.find { t ->
+        t.route == stack.active.configuration
+    }?.iconText
+
     TitleBar(Modifier.newFullscreenControls(), style = titleBarStyle) {
         Row(modifier = Modifier.align(Alignment.Start)) {
-            if (navigateUp != null)
+            if (homeDestinations.any { it.route == stack.active.configuration })
                 Tooltip({
                     Text("Back")
                 }) {
                     IconButton(
-                        {navigateUp!!()},
+                        rootComponent::popBack,
                         Modifier.size(40.dp).padding(5.dp)) {
                         Icon(if (isDark) painterResource("drawable/left_dark.svg") else painterResource("drawable/left.svg"), "Back")
                     }
                 }
-            if(refreshFunction.value != null)
+            if (stack.active.instance.component is IUpdateList)
                 Tooltip({
                     Text("Refresh the data")
                 }) {
                     IconButton(
-                        refreshFunction.value!!,
+                        rootComponent::refreshValues,
                         Modifier.size(40.dp).padding(5.dp)) {
                         Icon(if (isDark) painterResource("drawable/refresh_dark.xml") else painterResource("drawable/refresh.xml"), "Update Page")
                     }
@@ -57,11 +67,7 @@ fun DecoratedWindowScope.TitleBarView(
                 Modifier.align(Alignment.CenterVertically),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("PumpTracker")
-                if (currentPage != null) {
-                    Text(" | ")
-                    Text(currentPage!!)
-                }
+                Text("PumpTracker${title?.let { " | $it" } ?: ""}")
             }
         }
     }

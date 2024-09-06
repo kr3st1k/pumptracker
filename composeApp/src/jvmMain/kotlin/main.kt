@@ -1,5 +1,6 @@
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -13,13 +14,13 @@ import androidx.compose.ui.window.rememberWindowState
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.kr3st1k.pumptracker.*
 import com.kr3st1k.pumptracker.core.db.AppDatabase
 import com.kr3st1k.pumptracker.di.ManagerModules
 import com.kr3st1k.pumptracker.nav.RootComponent
-import com.kr3st1k.pumptracker.nav.navigateUp
-import com.kr3st1k.pumptracker.nav.refreshFunction
+import com.kr3st1k.pumptracker.nav.homeDestinations
 import com.kr3st1k.pumptracker.platform.getSNMacintosh
 import com.kr3st1k.pumptracker.platform.getSNNix
 import com.kr3st1k.pumptracker.platform.getSNWindows
@@ -104,6 +105,10 @@ fun main() {
 
         val isDark = ((isSystemDefault.value && isSystemInDarkTheme()) || isDarkTheme.value)
         LifecycleController(lifecycle, windowState)
+        val root = remember {
+            RootComponent(DefaultComponentContext(lifecycle))
+        }
+        val stack by root.childStack.subscribeAsState()
         IntUiTheme(
             theme = if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition(),
             styling = if (isDark) ComponentStyling.default()
@@ -116,29 +121,21 @@ fun main() {
                 onCloseRequest = ::exitApplication,
                 state = windowState,
                 onKeyEvent = {
-                    if (
-                        it.key == Key.Escape &&
-                        navigateUp != null
-                    ) {
-                        navigateUp!!()
-                        true
-                    } else if(
-                        it.key == Key.F5 &&
-                        refreshFunction.value != null
-                    ) {
-                        refreshFunction.value?.let { it1 -> it1() }
-                        true
-                    } else {
-                        false
+                    when (it.key) {
+                        Key.F5 -> root.refreshValues()
+                        Key.Escape -> {
+                            if (homeDestinations.any { destination -> destination.route == stack.active.configuration })
+                                root.popBack()
+                        }
                     }
+                    true
                 }
             ) {
-                val root = remember {
-                    RootComponent(DefaultComponentContext(lifecycle))
-                }
                 this.window.minimumSize = Dimension(1100, 620)
                 TitleBarView(
                     titleBarStyle = if (isDark) TitleBarStyle.dark(colors = TitleBarColors.dark(inactiveBackground = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.98F), backgroundColor = MaterialTheme.colorScheme.onBackground)) else TitleBarStyle.lightWithLightHeader(),
+                    rootComponent = root,
+                    stack = stack,
                     isDark = isDark
                 )
                 App(

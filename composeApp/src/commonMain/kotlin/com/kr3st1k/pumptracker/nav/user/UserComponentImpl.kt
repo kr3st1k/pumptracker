@@ -19,7 +19,6 @@ import com.kr3st1k.pumptracker.ScrollBarForDesktop
 import com.kr3st1k.pumptracker.di.InternetManager
 import com.kr3st1k.pumptracker.getPlatform
 import com.kr3st1k.pumptracker.nav.homeDestinations
-import com.kr3st1k.pumptracker.nav.refreshFunction
 import com.kr3st1k.pumptracker.ui.components.home.users.UserCard
 import com.kr3st1k.pumptracker.ui.components.spinners.YouSpeenMeRightRoundBabyRightRoundTop
 import com.kr3st1k.pumptracker.ui.components.spinners.YouSpinMeRightRoundBabyRightRound
@@ -36,8 +35,6 @@ fun UserComponentImpl(viewModel: UserComponent) {
 
     val dests =
         if (InternetManager().hasInternetStatus()) homeDestinations else homeDestinations.filter { it.availableAtOffline }
-
-    refreshFunction.value = { viewModel.getUserInfo() }
 
     Box(
         contentAlignment = Alignment.TopCenter,

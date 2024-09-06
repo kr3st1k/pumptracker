@@ -1,19 +1,25 @@
 package com.kr3st1k.pumptracker.nav.news
 
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kr3st1k.pumptracker.nav.refreshFunction
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.kr3st1k.pumptracker.ui.components.home.news.LazyNews
 import com.kr3st1k.pumptracker.ui.components.spinners.YouSpinMeRightRoundBabyRightRound
 
 @Composable
-fun NewsComponentImpl(viewModel: NewsComponent, listState: LazyListState) {
+fun NewsComponentImpl(viewModel: NewsComponent) {
     val newsBanners by viewModel.newsBanners.collectAsStateWithLifecycle()
     val news = viewModel.news.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    refreshFunction.value = { viewModel.refreshNews() }
+    val listState = rememberLazyListState()
+    val tappedState by viewModel.isScrollable.subscribeAsState()
+
+    LaunchedEffect(tappedState) {
+        listState.animateScrollToItem(0)
+    }
 
     LazyNews(
         news = news.value,

@@ -1,29 +1,34 @@
 package com.kr3st1k.pumptracker.nav.pumbility
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.kr3st1k.pumptracker.di.BgManager
 import com.kr3st1k.pumptracker.di.InternetManager
-import com.kr3st1k.pumptracker.nav.refreshFunction
 import com.kr3st1k.pumptracker.ui.components.home.scores.LazyScores
 import com.kr3st1k.pumptracker.ui.components.home.users.UserCard
 import com.kr3st1k.pumptracker.ui.components.spinners.YouSpinMeRightRoundBabyRightRound
 
 @Composable
-fun PumbilityComponentImpl(viewModel: PumbilityComponent, listState: LazyGridState) {
+fun PumbilityComponentImpl(viewModel: PumbilityComponent) {
     BgManager().checkAndSaveNewUpdatedFiles()
 
     val scores by viewModel.scores.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val listState = rememberLazyGridState()
+    val tappedState by viewModel.isScrollable.subscribeAsState()
 
-    refreshFunction.value = { viewModel.fetchAndAddToDb() }
+    LaunchedEffect(tappedState) {
+        listState.animateScrollToItem(0)
+    }
 
     LazyScores(
         scores,

@@ -1,23 +1,29 @@
 package com.kr3st1k.pumptracker.nav.title
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kr3st1k.pumptracker.nav.refreshFunction
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.kr3st1k.pumptracker.ui.components.home.titles.LazyTitle
 import com.kr3st1k.pumptracker.ui.components.home.users.UserCard
 import com.kr3st1k.pumptracker.ui.components.spinners.YouSpinMeRightRoundBabyRightRound
 
 @Composable
-fun TitleShopComponentImpl(viewModel: TitleShopComponent, listState: LazyGridState) {
+fun TitleShopComponentImpl(viewModel: TitleShopComponent) {
     val titles by viewModel.titles.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    refreshFunction.value = { viewModel.loadTitles() }
+    val listState = rememberLazyGridState()
+    val tappedState by viewModel.isScrollable.subscribeAsState()
+
+    LaunchedEffect(tappedState) {
+        listState.animateScrollToItem(0)
+    }
 
 
     LazyTitle(

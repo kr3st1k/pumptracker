@@ -9,8 +9,7 @@ import com.kr3st1k.pumptracker.di.DbManager
 import com.kr3st1k.pumptracker.di.InternetManager
 import com.kr3st1k.pumptracker.di.LoginManager
 import com.kr3st1k.pumptracker.nav.RootComponent
-import com.kr3st1k.pumptracker.nav.currentPage
-import com.kr3st1k.pumptracker.nav.navigateUp
+import com.kr3st1k.pumptracker.nav.helper.IUpdateList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +19,7 @@ class UserComponent(
     val navigateTo: (RootComponent.TopLevelConfiguration) -> Unit,
     val navigateToLogin: () -> Unit,
     componentContext: ComponentContext
-) : ComponentContext by componentContext {
+) : ComponentContext by componentContext, IUpdateList {
     val viewModelScope = CoroutineScope(Dispatchers.Main.immediate)
 
     val user = MutableStateFlow<User?>(User())
@@ -40,8 +39,8 @@ class UserComponent(
             if (InternetManager().hasInternetStatus()) {
                 val tmp = NetworkRepositoryImpl.getUserInfo()
                 if (tmp == null) {
-                    currentPage = null
-                    navigateUp = null
+
+
                     navigateToLogin()
                 }
                 user.value = tmp
@@ -57,5 +56,9 @@ class UserComponent(
             LoginManager().saveUserData(user.value!!)
             isRefreshing.value = false
         }
+    }
+
+    override fun refreshFun() {
+        getUserInfo()
     }
 }

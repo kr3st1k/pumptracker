@@ -17,9 +17,6 @@ import com.kr3st1k.pumptracker.core.db.repository.ScoresRepository
 import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
 import com.kr3st1k.pumptracker.di.DbManager
 import com.kr3st1k.pumptracker.di.LoginManager
-import com.kr3st1k.pumptracker.nav.currentPage
-import com.kr3st1k.pumptracker.nav.navigateUp
-import com.kr3st1k.pumptracker.nav.refreshFunction
 import com.kr3st1k.pumptracker.ui.components.dialogs.AlertDialogWithTwoButtons
 import kotlinx.coroutines.launch
 
@@ -28,8 +25,6 @@ fun SettingsComponentImpl(viewModel: SettingsComponent) {
     val showLogoutDialogue = remember {
         mutableStateOf(false)
     }
-
-    refreshFunction.value = null
 
     val scope = rememberCoroutineScope()
     val scoresRepository = ScoresRepository(DbManager().getScoreDao())
@@ -51,9 +46,8 @@ fun SettingsComponentImpl(viewModel: SettingsComponent) {
                 LoginManager().removeLoginData()
                 scoresRepository.deleteScores()
                 showLogoutDialogue.value = false
-                refreshFunction.value = null
-                currentPage = null
-                navigateUp = null
+
+
                 viewModel.navigateToStart()
             }
         }
