@@ -1,7 +1,7 @@
 package com.kr3st1k.pumptracker.nav.user
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.lifecycle.doOnResume
+import com.arkivanov.essenty.lifecycle.doOnStart
 import com.kr3st1k.pumptracker.core.db.repository.ScoresRepository
 import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
 import com.kr3st1k.pumptracker.core.network.data.User
@@ -27,7 +27,7 @@ class UserComponent(
     val isRefreshing = MutableStateFlow(false)
 
     init {
-        lifecycle.doOnResume {
+        lifecycle.doOnStart {
             getUserInfo()
         }
     }

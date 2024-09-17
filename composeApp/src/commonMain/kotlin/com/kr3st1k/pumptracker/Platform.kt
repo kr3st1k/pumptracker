@@ -4,9 +4,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.ktor.client.engine.*
+import io.ktor.client.*
 import okio.Path
-import java.util.*
 
 interface Platform {
     val type: String
@@ -17,7 +16,7 @@ expect fun getPlatform(): Platform
 
 expect fun getUserDirectory(): Path
 
-expect fun getPlatformHttpClient(): HttpClientEngineFactory<HttpClientEngineConfig>
+expect fun getPlatformHttpClient(): HttpClient
 
 expect fun encryptAES(data: String): String
 

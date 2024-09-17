@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
-import com.arkivanov.essenty.lifecycle.doOnResume
+import com.arkivanov.essenty.lifecycle.doOnStart
 import com.kr3st1k.pumptracker.core.db.data.title.PhoenixTitle
 import com.kr3st1k.pumptracker.core.db.data.title.PhoenixTitleList
 import com.kr3st1k.pumptracker.core.db.repository.ScoresRepository
@@ -31,7 +31,7 @@ class TitleShopComponent(
     private val scoresRepository = ScoresRepository(DbManager().getScoreDao())
 
     init {
-        lifecycle.doOnResume {
+        lifecycle.doOnStart {
             loadTitles()
         }
     }

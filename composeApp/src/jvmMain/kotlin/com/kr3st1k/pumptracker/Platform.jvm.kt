@@ -13,8 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.kr3st1k.pumptracker.core.db.AppDatabase
-import io.ktor.client.engine.*
+import com.kr3st1k.pumptracker.core.network.SslSettings
+import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.cache.*
+import io.ktor.client.plugins.compression.*
+import io.ktor.client.plugins.cookies.*
 import okio.Path
 import okio.Path.Companion.toPath
 import sn
@@ -45,8 +50,33 @@ fun createDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
     ).fallbackToDestructiveMigration(true)
 }
 
-actual fun getPlatformHttpClient(): HttpClientEngineFactory<HttpClientEngineConfig> {
-    return OkHttp
+actual fun getPlatformHttpClient(): HttpClient {
+    return HttpClient(OkHttp) {
+        engine {
+            config {
+                sslSocketFactory(SslSettings.getSslContext().socketFactory, SslSettings.getTrustManager())
+            }
+//            addInterceptor(logInterceptor())
+        }
+
+
+        install(HttpCache)
+
+        install(ContentEncoding) {
+            gzip()
+        }
+
+        install(UserAgent) {
+            agent =
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+        }
+
+        install(HttpCookies) {
+            storage = AcceptAllCookiesStorage()
+        }
+
+        followRedirects = true
+    }
 }
 
 actual fun getUserDirectory(): Path {

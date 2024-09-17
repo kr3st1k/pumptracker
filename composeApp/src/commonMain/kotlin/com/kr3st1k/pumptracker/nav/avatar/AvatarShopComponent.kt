@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
-import com.arkivanov.essenty.lifecycle.doOnResume
+import com.arkivanov.essenty.lifecycle.doOnStart
 import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
 import com.kr3st1k.pumptracker.core.network.data.User
 import com.kr3st1k.pumptracker.core.network.data.avatar.AvatarItem
@@ -27,7 +27,7 @@ class AvatarShopComponent(
     val isRefreshing = MutableStateFlow(false)
 
     init {
-        lifecycle.doOnResume {
+        lifecycle.doOnStart {
             loadAvatars()
         }
     }

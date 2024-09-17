@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
-import com.arkivanov.essenty.lifecycle.doOnResume
+import com.arkivanov.essenty.lifecycle.doOnStart
 import com.kr3st1k.pumptracker.core.db.data.score.LatestScore
 import com.kr3st1k.pumptracker.core.db.repository.ScoresRepository
 import com.kr3st1k.pumptracker.core.helpers.Utils
@@ -30,7 +30,7 @@ class HistoryComponent(
     val isRefreshing = mutableStateOf(false)
 
     init {
-        lifecycle.doOnResume {
+        lifecycle.doOnStart {
             loadScores()
             fetchAndAddToDb()
         }
