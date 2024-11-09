@@ -107,8 +107,8 @@ android {
         applicationId = "com.kr3st1k.kmp.pumptracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 105
-        versionName = "0.6"
+        versionCode = 117
+        versionName = "0.7"
 
         ndk {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
