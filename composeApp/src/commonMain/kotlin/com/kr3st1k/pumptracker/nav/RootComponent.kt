@@ -64,7 +64,9 @@ class RootComponent(
             is TopLevelConfiguration.AuthLoadingPage -> TopLevelChild.AuthLoadingPage(
                 AuthLoadingComponent(
                     componentContext = context,
-                    navigateTo = { stack.replaceAll(it) }
+                    navigateTo = {
+                        stack.replaceAll(it)
+                    }
                 )
             )
 

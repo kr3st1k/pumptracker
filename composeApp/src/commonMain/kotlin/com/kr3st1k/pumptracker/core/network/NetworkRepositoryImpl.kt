@@ -1,5 +1,6 @@
 package com.kr3st1k.pumptracker.core.network
 
+//import io.ktor.client.engine.okhttp.OkHttp
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Document
 import com.kr3st1k.pumptracker.core.helpers.Utils.checkIfLoginSuccess
@@ -14,35 +15,22 @@ import com.kr3st1k.pumptracker.core.network.data.score.BestUserScore
 import com.kr3st1k.pumptracker.core.network.data.score.LatestScore
 import com.kr3st1k.pumptracker.core.network.data.score.Pumbility
 import com.kr3st1k.pumptracker.core.network.data.title.TitleShop
-import com.kr3st1k.pumptracker.core.network.parsers.AvatarShopParser
-import com.kr3st1k.pumptracker.core.network.parsers.BestUserScoresParser
-import com.kr3st1k.pumptracker.core.network.parsers.LatestScoresParser
-import com.kr3st1k.pumptracker.core.network.parsers.NewsBannerParser
-import com.kr3st1k.pumptracker.core.network.parsers.NewsListParser
-import com.kr3st1k.pumptracker.core.network.parsers.PumbilityParser
-import com.kr3st1k.pumptracker.core.network.parsers.TitleShopParser
-import com.kr3st1k.pumptracker.core.network.parsers.UserParser
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.*
-//import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import com.kr3st1k.pumptracker.core.network.parsers.*
+import com.kr3st1k.pumptracker.getNakedHttpClient
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.util.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okio.FileSystem
 import okio.Path
 import okio.buffer
-import okio.use
-import java.io.FileOutputStream
 
 object NetworkRepositoryImpl : NetworkRepository {
     private const val BASEURL = "am-pass.net"
@@ -52,7 +40,7 @@ object NetworkRepositoryImpl : NetworkRepository {
     private const val BGJSONURL = "piu/piu_bg_database.json"
     private const val LOGINPOSTPATH = "bbs/login_check.php"
     private val jsonWorker = Json { isLenient = true }
-    private val client: HttpClient = KtorInstance.getHttpClient()
+    var client: HttpClient = getNakedHttpClient()
     override suspend fun getDocument(
         host: String,
         path: String,
@@ -115,6 +103,26 @@ object NetworkRepositoryImpl : NetworkRepository {
         val res: ReleaseResponse = req.body()
 
         return res
+    }
+
+    suspend fun downloadJKS(platform: String, destination: Path) {
+        var bytesSize = 0L
+        val outputStream = FileSystem.SYSTEM.sink(destination).buffer()
+        client.prepareGet("https://kr3st1k.me/piu/jks/$platform.jks").execute { httpResponse ->
+            val channel: ByteReadChannel = httpResponse.bodyAsChannel()
+            while (!channel.isClosedForRead) {
+                val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
+                while (!packet.isEmpty) {
+                    val bytes = packet.readBytes()
+                    outputStream.write(bytes)
+                    bytesSize += bytes.size
+                    if (bytesSize == httpResponse.contentLength()!!)
+                        outputStream.close()
+                }
+            }
+        }
+        client = KtorInstance.getHttpClient()
+
     }
 
     suspend fun downloadUpdate(url: String, destination: Path, onProgress: (Long, Long) -> Unit) {

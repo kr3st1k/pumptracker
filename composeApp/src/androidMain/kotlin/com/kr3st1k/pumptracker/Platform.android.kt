@@ -114,3 +114,25 @@ actual fun getDownloadsFolder(): Path =
 
 actual fun openFile(file: Path) {
 }
+
+actual fun getNakedHttpClient(): HttpClient {
+    return HttpClient(OkHttp) {
+
+        install(HttpCache)
+
+        install(ContentEncoding) {
+            gzip()
+        }
+
+        install(UserAgent) {
+            agent =
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+        }
+
+        install(HttpCookies) {
+            storage = AcceptAllCookiesStorage()
+        }
+
+        followRedirects = true
+    }
+}

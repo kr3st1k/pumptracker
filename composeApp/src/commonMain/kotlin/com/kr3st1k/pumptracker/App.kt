@@ -16,11 +16,17 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
+import coil3.network.CacheStrategy
+import coil3.network.NetworkFetcher
+import coil3.network.ktor.asNetworkClient
+import com.kr3st1k.pumptracker.core.network.KtorInstance.getHttpClient
+import com.kr3st1k.pumptracker.di.BgManager
 import com.kr3st1k.pumptracker.di.LoginManager
 import com.kr3st1k.pumptracker.nav.RootComponent
 import com.kr3st1k.pumptracker.nav.RootComponentImpl
 import com.kr3st1k.pumptracker.ui.components.dialogs.UpdateModal
 import com.kr3st1k.pumptracker.ui.theme.PIUCompanionTheme
+import kotlinx.coroutines.runBlocking
 import okio.Path
 
 var isDynamicColors = mutableStateOf(LoginManager().getIsDynamicColor())
@@ -39,10 +45,12 @@ fun App(
     updateLink: MutableState<String> = mutableStateOf(""),
     updateFrameFromAndroid: () -> Unit = {}
 ) {
+    runBlocking {
+        BgManager().saveJKS()
+    }
     setSingletonImageLoaderFactory { context ->
         newImageLoader(context, getUserDirectory().resolve("image_cache"))
     }
-
     updateFrame = updateFrameFromAndroid
     PIUCompanionTheme(
         darkTheme = if (isSystemDefault.value) isSystemInDarkTheme() else isDarkTheme.value,
@@ -71,11 +79,24 @@ fun App(
         }
     }
 }
+
+@OptIn(ExperimentalCoilApi::class)
+@JvmName("factory")
+fun KtorNetworkFetcherFactory() = NetworkFetcher.Factory(
+    networkClient = { getHttpClient().asNetworkClient() },
+    cacheStrategy = { CacheStrategy() },
+)
+
 fun newImageLoader(ctx: PlatformContext, dir: Path): ImageLoader {
     return ImageLoader.Builder(ctx)
+        .components {
+            add(
+                factory = KtorNetworkFetcherFactory()
+            )
+        }
         .memoryCache {
             MemoryCache.Builder()
-                .maxSizePercent(ctx,0.20)
+                .maxSizePercent(ctx, 0.20)
                 .build()
         }
         .diskCache {

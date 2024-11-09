@@ -25,3 +25,4 @@ captures
 /.idea/assetWizardSettings.xml
 /build
 /captures
+/composeApp/src/commonMain/kotlin/com/kr3st1k/pumptracker/ssl/

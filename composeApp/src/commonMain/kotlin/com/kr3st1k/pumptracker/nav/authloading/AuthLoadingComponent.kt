@@ -3,12 +3,14 @@ package com.kr3st1k.pumptracker.nav.authloading
 import com.arkivanov.decompose.ComponentContext
 import com.kr3st1k.pumptracker.core.helpers.Crypto
 import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
+import com.kr3st1k.pumptracker.di.BgManager
 import com.kr3st1k.pumptracker.di.InternetManager
 import com.kr3st1k.pumptracker.di.LoginManager
 import com.kr3st1k.pumptracker.nav.RootComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.koin.core.component.KoinComponent
 
 class AuthLoadingComponent(
@@ -22,6 +24,9 @@ class AuthLoadingComponent(
     }
 
     private fun startAuth() {
+        runBlocking {
+            BgManager().saveJKS()
+        }
         val loginData = LoginManager().getLoginData()
         if (InternetManager().hasInternetStatus()) {
             viewModelScope.launch {
