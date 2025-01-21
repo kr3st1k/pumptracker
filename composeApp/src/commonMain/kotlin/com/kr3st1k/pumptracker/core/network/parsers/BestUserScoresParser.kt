@@ -41,7 +41,7 @@ object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
         val resList = mutableListOf<BestUserScore>()
         var isLoadMore = false
         var lastPage = 1
-
+        var scoreCount = 0
         if (document.select("div.no_con").isNotEmpty()) {
             resList.add(
                 BestUserScore()
@@ -57,12 +57,15 @@ object BestUserScoresParser : Parser<LoadableList<BestUserScore>>() {
                 resList.add(bestUserScore)
             }
             isLoadMore = document.select("i.xi.last").isNotEmpty()
+            scoreCount = document.selectFirst("div.left.total_wrap > i.tt.t2")!!.text().toInt()
+
             if (isLoadMore) {
                 val attr =
                     document.select("i.xi.last").first()!!.parent()!!.attr("onclick")
                 lastPage = attr[attr.length - 2].digitToInt()
             }
+
         }
-        return LoadableList(resList, isLoadMore, lastPage)
+        return LoadableList(resList, isLoadMore, lastPage, scoreCount)
     }
 }

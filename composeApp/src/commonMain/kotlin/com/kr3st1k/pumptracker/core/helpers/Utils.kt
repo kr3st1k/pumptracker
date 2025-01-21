@@ -1,6 +1,5 @@
 package com.kr3st1k.pumptracker.core.helpers
 
-import kotlinx.datetime.*
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import com.fleeksoft.ksoup.nodes.Element
@@ -8,6 +7,10 @@ import com.kr3st1k.pumptracker.core.db.data.score.BestScore
 import com.kr3st1k.pumptracker.core.db.repository.ScoresRepository
 import com.kr3st1k.pumptracker.core.network.NetworkRepositoryImpl
 import korlibs.crypto.sha256
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -125,6 +128,10 @@ object Utils
         return outputDateTime
     }
 
+    fun calculateNumberOfPages(totalItems: Int, itemsPerPage: Int): Int {
+        return (totalItems + itemsPerPage - 1) / itemsPerPage
+    }
+
     fun convertDateFromSite(date: String): String {
         val inputPattern = "yyyy-MM-dd HH:mm:ss"
     
@@ -160,7 +167,8 @@ object Utils
             needAuth.value = true
             return mutableListOf()
         }
-        pageCount.intValue = tmp.lastPageNumber
+        val scoreCount = tmp.countOfElements
+        pageCount.intValue = calculateNumberOfPages(scoreCount, 12)
         val scoresTmp = mutableListOf<BestScore>()
         val scoresFromDb = scoresRepository.getBestScores()
         while (nowPage.intValue <= pageCount.intValue && !isInside) {

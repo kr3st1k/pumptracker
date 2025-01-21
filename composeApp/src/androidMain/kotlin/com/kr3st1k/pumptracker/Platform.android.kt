@@ -1,18 +1,17 @@
 package com.kr3st1k.pumptracker
 
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.util.Base64
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.kr3st1k.pumptracker.MainActivity.Companion.ctx
+import com.kr3st1k.pumptracker.MainActivity.Companion.getOkioPath
+import com.kr3st1k.pumptracker.MainActivity.Companion.openBrowser
 import com.kr3st1k.pumptracker.core.db.AppDatabase
 import com.kr3st1k.pumptracker.core.network.SslSettings
 import io.ktor.client.*
@@ -35,7 +34,7 @@ class AndroidPlatform : Platform {
 actual fun getPlatform(): Platform = AndroidPlatform()
 
 actual fun getUserDirectory(): Path {
-    return ctx.filesDir.toOkioPath()
+    return getOkioPath()
 }
 
 fun createDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AppDatabase> {
@@ -96,8 +95,7 @@ actual fun decryptAES(data: String): String {
 }
 
 actual fun openSiteInBrowser(site: String) {
-    val customTabsIntent = CustomTabsIntent.Builder().build()
-    customTabsIntent.launchUrl(ctx, Uri.parse(site))
+    openBrowser(site)
 }
 
 @Composable
